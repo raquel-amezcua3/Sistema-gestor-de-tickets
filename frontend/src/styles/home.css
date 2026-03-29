@@ -1,0 +1,128 @@
+/* Diseño general de inicio */
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+
+/* Esto es para que tenga la misma altura y cuerpo del 100% */
+html, body, #root{
+   height: 100%;
+}
+
+.container-inicio{
+   position: fixed; 
+   inset: 0; /* Tiene las 4 formas en 0*/
+
+   background-image: url('/img/FondoInicio.avif');
+   background-size: 100%; /* Cubre toda la pantalla*/
+   background-position: 50% 30%;
+   background-repeat: no-repeat; /* Para no repetir la imagen*/
+   image-rendering: auto; /* Se ve mas clara la imagen, no pixeleada */
+
+   display: flex;
+   justify-content: center;
+   align-items: center;
+
+   color: white;
+   filter: brightness(1); /* Controla el brillo de la imagen*/
+}
+
+/* Estilo del h1*/
+.titulo-home{
+   font-size: 60px;
+   margin-top: -25%;
+   margin-left: 7%;
+   position: relative;
+    left: 10%;
+    font-size: 80px;
+    font-weight: 700;
+}
+
+/* Estilo de la imagen de Tarelix */
+.imagen-logo-home{
+   width: 5%;
+   height: auto;
+   position: relative;
+   top: -26%;
+   left: -11.5%;
+}
+
+/* Estilo de los botones */
+.botones-home{
+   position: absolute;
+   bottom: 350px; /* Altura de los botones y los demas componentes*/
+   display: flex;
+   gap: 30px; /* Espacio entre los botones */
+   height: 50px;
+   left: 31.5%;
+
+   opacity: 0;
+   transform: translateY(100px); /* Esto es para la animacion de los botones, para que suban*/
+
+   animation: aparecerArriba 1s ease forwards;
+   animation-delay: .7s; /* Los botones apareen despues de este tiempo */
+}
+
+/* Funcion para que aparezcan los botones despues de cierto tiempo */
+@keyframes aparecerArriba {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilo del boton de registro */
+.btn-registro{
+  background-color: white;
+  color: blue;
+  padding: 0.7rem 4rem;
+  border-radius: 30px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+}
+
+/* Estilo del boton de inicio */
+.btn-inicio{
+  background-color: #0069FF;
+  color: white;
+  padding: 0.7rem 4rem;
+  border-radius: 30px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Boton de registro cursor y activado */
+.btn-registro:hover{
+  background-color: aqua;
+  color: black;
+}
+
+.btn-registro:active{
+  background-color: aqua;
+  color: black;
+  transform: scale(0.97);
+}
+
+/* Boton de inicio de sesion, cursor y activado */
+.btn-inicio:hover{
+  background-color: aqua;
+  color: black;
+}
+
+.btn-inicio:active{
+  background-color: aqua;
+  color: black;
+  transform: scale(0.97);
+}
+
+.frase-home{
+    position: relative;
+    top: -13%;
+    left: -15%;
+    font-size: 30px;
+    font-weight: 700;
+}

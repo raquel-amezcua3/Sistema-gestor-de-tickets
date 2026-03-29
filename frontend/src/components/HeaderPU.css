@@ -1,0 +1,58 @@
+.encabezado-principal-usuario {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 2rem;
+    align-items: center;
+    background-color: #1868DB;
+    color: white;
+    position: fixed;
+    top: 0;
+    z-index: 999;
+    font-family: 'Roboto';
+    font-size: 15px;
+    font-weight: 200;
+}
+
+
+.logo-PU{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.logo-PU img{
+    width: 160px;
+    margin-left: 20%;
+}
+
+.nav-PU{
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    font-size: 17px;
+    font-family: 'Roboto';
+    margin-left: 0%
+}
+
+.nav-PU a{
+    color: white;
+    text-decoration: none;
+    font-weight: 300;
+    line-height: 1;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.nav-PU a:hover{
+    color: #d9d7f6b9;
+    transform: scale(1.05);
+}
+
+.logo-cerrarS{
+    width: 35px;
+   margin-left: -50%;
+    margin-top: -15%;
+}

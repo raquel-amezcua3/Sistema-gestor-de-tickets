@@ -1,0 +1,93 @@
+.container-directorioU {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.contenido-directorioU {
+  padding: 40px 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Sección de búsqueda estilo image_3229d8.png */
+.seccion-busqueda-directorioU {
+  margin-top: 60px;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+.info-busqueda-directorioU {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  color: black;
+}
+
+.lupa-grande-directorioU {
+  font-size: 30px;
+}
+
+.seccion-busqueda-directorioU h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #000;
+}
+
+.input-redondeado-directorioU {
+  width: 100%;
+  padding: 12px 25px;
+  border-radius: 30px;
+  border: 2px solid #000;
+  font-size: 18px;
+  outline: none;
+  background-color: #fff;
+  color: black;
+}
+
+/* Tabla Principal - Encabezado Negro */
+.tabla-wrapper-directorioU {
+  margin-top: 60px;
+  width: 100%;
+  border: 1px solid #000;
+  border-radius: 4px;
+  overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+}
+
+.tabla-usuarios-directorioU {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-usuarios-directorioU th {
+  background-color: #000000; /* Negro según image_3229d8.png */
+  color: white;
+  text-align: center;
+  padding: 15px;
+  border-right: 1px solid #555;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.tabla-usuarios-directorioU td {
+  padding: 15px;
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  background-color: #eeeeee; 
+  color: #333;
+  text-align: center;
+  font-size: 15px;
+}
+
+.fila-usuario-directorioU:hover td {
+  background-color: #e2e2e2;
+}
+
+.tabla-usuarios-directorioU th:last-child,
+.tabla-usuarios-directorioU td:last-child {
+  border-right: none;
+}

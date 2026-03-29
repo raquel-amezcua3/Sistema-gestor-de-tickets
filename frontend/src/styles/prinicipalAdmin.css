@@ -1,0 +1,62 @@
+.container-principal-admin {
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.contenido-principal-admin {
+  padding: 40px 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  top: 100px; /* Ajuste para que no lo tape el encabezado */
+}
+
+.titulo-principal-admin {
+  color: #1a73e8; /* Azul característico del diseño */
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: left;
+}
+
+.lista-opciones-principal-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espacio entre las barras grises */
+}
+
+.fila-opcion-principal-admin {
+  background-color: #dbdbdb; /* Fondo gris de la opción */
+  display: flex;
+  align-items: center;
+  padding: 12px 25px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.fila-opcion-principal-admin:hover {
+  background-color: #b0b0b0; /* Efecto sutil al pasar el mouse */
+}
+
+.contenedor-icono-principal-admin {
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  margin-right: 20px;
+}
+
+.imagen-icono-principal-admin {
+  width: 40px;
+  height: auto;
+  object-fit: contain;
+}
+
+.texto-opcion-principal-admin {
+  font-size: 18px;
+  font-weight: 500;
+  color: #000000;
+  margin-left: 15px;
+}

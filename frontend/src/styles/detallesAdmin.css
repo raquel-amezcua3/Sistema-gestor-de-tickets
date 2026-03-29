@@ -1,0 +1,324 @@
+/* --- TU CSS ORIGINAL --- */
+.container-detalles-admin {
+  background-color: #ffffff;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.content-detalles-admin {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+  top: 90px;
+}
+
+.titulo-pagina-detalles-admin {
+  font-size: 23px;
+  font-weight: bold;
+  margin-bottom: 25px;
+  color: #000;
+  position: relative;
+  top: 11px;
+  left: -570px;
+}
+
+.card-detalles-admin {
+  background-color: #ebebeb; /* Gris claro de la tarjeta */
+  display: flex;
+  border-radius: 4px;
+  padding: 35px;
+  gap: 30px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  position: relative;
+  top: 10px;
+  left: -140px;
+  width: 126%;
+}
+
+.seccion-formulario-detalles-admin {
+  flex: 1.2;
+}
+
+.header-seccion-detalles-admin {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 35px;
+}
+
+.icon-detalles-admin {
+  width: 45px;
+}
+
+.label-header-detalles-admin {
+  font-size: 21px;
+  font-weight: bold;
+  color: black;
+  margin-left: 10px;
+}
+
+.inputs-detalles-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-align: left;
+}
+
+.grupo-input-detalles-admin label {
+  width: 170px;
+  font-weight: bold;
+  font-size: 16px;
+  color: #000;
+  text-align: left;
+}
+
+.rojo-detalles-admin {
+  color: #ff0000; /* Asterisco rojo */
+  font-weight: bold;
+  margin-right: 3px;
+  text-align: left;
+}
+
+.grupo-input-detalles-admin {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Esto separa el label del input */
+  margin-bottom: 1px;
+  width: 100%; /* Asegura que ocupe todo el ancho del formulario */
+}
+
+.grupo-input-detalles-admin label {
+  width: 170px; /* Ancho fijo para las etiquetas para que todos los inputs empiecen donde mismo */
+  font-weight: bold;
+  font-size: 16px;
+  color: #000;
+  text-align: left;
+}
+
+.grupo-input-detalles-admin input {
+  flex: none; /* Cambiamos de 1 a none para controlar el ancho manualmente */
+  width: 350px; /* Ajusta este valor para que se vea como en la imagen de referencia */
+  background-color: #fff;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 2px;
+  font-size: 16px;
+  color: black; 
+}
+
+/* Clase opcional para cuando estés en modo edición */
+.input-editable {
+  outline: 1px solid #1a73e8;
+  background-color: #ffffff !important; /* Fondo blanco al editar para mejor lectura */
+  color: #333 !important;
+}
+
+.seccion-imagen-detalles-admin {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.img-right-detalles-admin {
+  width: 100%;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.container-boton-detalles-admin {
+  display: flex;
+  gap: 60px;
+  margin-top: 45px;
+  position: relative;
+  left: 110px;
+}
+
+.btn-ok-detalles-admin {
+  background-color: #1a73e8; /* Azul */
+  color: white;
+  border: none;
+  padding: 10px 80px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-actualizar-detalles-admin {
+  background-color: #939393; /* Gris */
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-ok-detalles-admin:hover { background-color: #1557b0; }
+.btn-actualizar-detalles-admin:hover { background-color: #6c6d6f; }
+
+/* --- NUEVOS ESTILOS AGREGADOS --- */
+
+.btn-baja-detalles-admin {
+  background-color: #939393; /* Gris igual al otro */
+  color: white;
+  border: none;
+  padding: 10px 50px; /* Ajuste para que se vea equilibrado */
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-act-detalles-admin {
+  background-color: #1a73e8; /* Azul */
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-baja-detalles-admin:hover { 
+  background-color: #d9534f; /* Rojo al pasar el mouse para indicar peligro */
+}
+
+
+.btn-act-detalles-admin:hover { 
+  background-color: #1557b0; /* Rojo al pasar el mouse para indicar peligro */
+}
+
+.input-editable {
+  outline: 1px solid #1a73e8; /* Borde azul para notar que puedes escribir */
+}
+
+
+
+
+
+/* Estilos para el Modal Personalizado */
+.overlay-modal-detalle-TU {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Fondo oscuro transparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-exito-detalle-TU {
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
+  text-align: center;
+  width: 450px;
+  height: 350px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+
+
+.contenedor-check-detalle-TU {
+  margin-bottom: 20px;
+}
+
+.img-modal-icon {
+  width: 80px; /* Tamaño del icono de la imagen de referencia */
+}
+
+.img-modal-icon-actualizar {
+  width: 150px; /* Tamaño del icono de la imagen de referencia */
+  height: auto;
+}
+
+.titulo-DTU {
+  font-size: 24px;
+  margin-bottom: 30px;
+  color: #333;
+  position: relative;
+  top: -5px;
+}
+
+.btn-aceptar-detalle-TU {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 10px 50px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  position: relative;
+  top: -10px;
+}
+
+.btn-cancelar-modal {
+  background-color: #939393;
+  color: white;
+  border: none;
+  padding: 10px 40px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 15px;
+  position: relative;
+  top: -12px;
+}
+
+.container-botones-modal {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+
+
+/* Estilo de la ventana emergente de tecnico eliminadom correctamente */
+.contenedor-check {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  position: relative;
+  top: 50px;
+}
+
+.check-animado {
+  font-size: 130px;
+  color: #1a73e8;
+  transform: scaleX(-1) rotate(-45deg); /* Gira la L para que parezca un check */
+  display: inline-block;
+}
+
+
+.titulo-tecnico-Admin{
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #333;
+  position: relative;
+  top: 100px;
+  left: -88px;
+  width: 150%;
+}
+
+.btn-aceptar-tecnico-detalle-TU {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 10px 50px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  position: relative;
+  top: 100px;
+}

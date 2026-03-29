@@ -1,0 +1,111 @@
+.container-lista-admin {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.contenido-lista-admin {
+  padding: 40px 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.encabezado-seccion-lista-admin {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 25px;
+  margin-top: 100px; /* Ajuste por el header fijo */
+}
+
+.titulo-lista-admin {
+  color: black;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  position: relative;
+  left: -30px;
+}
+
+/* Buscador gris con lupa a la derecha */
+.buscador-lista-admin {
+  display: flex;
+  align-items: center;
+  background-color: #D9D9D9; 
+  padding: 2px 10px;
+  border-radius: 4px;
+  width: 450px;
+  color: black;
+}
+
+.buscador-lista-admin input {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 6px;
+  font-size: 16px;
+  color: black;
+}
+
+/* Nueva clase para la imagen de la lupa */
+.icono-lupa-lista-admin {
+  width: 22px;   
+  height: 22px;
+  object-fit: contain;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+/* Tabla con diseño de la imagen */
+.tabla-wrapper-lista-admin {
+  border: 1px solid #000;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  left: -30px;
+  width: 104.5%;
+}
+
+.tabla-datos-lista-admin {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Encabezado Negro */
+.tabla-datos-lista-admin th {
+  background-color: #000000; 
+  color: white;
+  text-align: center;
+  padding: 12px 15px;
+  border-right: 1px solid #ffffff44;
+  font-weight: bold;
+  font-size: 17px;
+}
+
+/* Celdas Grises */
+.tabla-datos-lista-admin td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #999;
+  border-right: 1px solid #999;
+  background-color: #eeeeee; 
+  color: #000;
+  font-size: 16px;
+  text-align: center;
+}
+
+.col-id-lista-admin {
+  width: 80px;
+}
+
+.fila-lista-admin {
+  cursor: pointer;
+}
+
+.fila-lista-admin:hover td {
+  background-color: #e2e2e2;
+}
+
+.tabla-datos-lista-admin th:last-child,
+.tabla-datos-lista-admin td:last-child {
+  border-right: none;
+}

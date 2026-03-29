@@ -1,0 +1,127 @@
+.container-datos-resuelto-tecnico {
+  background-color: #fff;
+  min-height: 100vh;
+}
+
+.contenido-datos-resuelto-tecnico {
+  max-width: 1170px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+  top: 80px;
+}
+
+.titulo-pagina-datos-resuelto-tecnico {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #000;
+  position: relative;
+  left: -554px; /* Ajustado según tu estilo anterior */
+}
+
+.card-datos-resuelto-tecnico {
+  width: 123%;
+  background-color: #ebebeb;
+  color: black;
+  border-radius: 4px;
+  padding: 30px 40px; 
+  position: relative;
+  left: -133px;
+}
+
+.header-card-datos-resuelto-tecnico {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 5px;
+}
+
+.icono-datos-resuelto-tecnico { 
+  width: 35px; 
+}
+
+.ticket-label-datos-resuelto-tecnico {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.aviso-azul-datos-resuelto-tecnico {
+  color: #1a73e8;
+  font-size: 13px;
+  margin-bottom: 20px;
+  position: relative;
+  left: -467px;
+}
+
+.grid-formulario-datos-resuelto-tecnico {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  color: black;
+  text-align: left;
+}
+
+.grupo-input-datos-resuelto-tecnico {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.grupo-input-datos-resuelto-tecnico label {
+  width: 160px;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.grupo-input-datos-resuelto-tecnico input {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 15px;
+  background-color: #fff;
+  color: black;
+}
+
+.estado-verde-datos-resuelto-tecnico {
+  background-color: #4caf50 !important;
+  color: black !important;
+  font-weight: bold;
+  text-align: center;
+}
+
+.tecnico-bold-datos-resuelto-tecnico {
+  font-weight: bold !important;
+  text-align: center;
+}
+
+.textarea-datos-resuelto-tecnico {
+  flex: 1;
+  height: 135px;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #fff;
+  resize: none;
+  color: black;
+}
+
+.contenedor-botones-datos-resuelto-tecnico {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-azul-datos-resuelto-tecnico {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 12px 80px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.btn-azul-datos-resuelto-tecnico:hover { background-color: #1557b0; }

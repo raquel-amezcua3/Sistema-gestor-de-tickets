@@ -1,0 +1,170 @@
+/* Contenedor Principal */
+.container-asignar-admin {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.contenido-asignar-admin {
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Cabecera: Título y Controles */
+.seccion-cabecera-asignar-admin {
+  margin-top: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 95%;
+  max-width: 1400px;
+  margin-bottom: 20px;
+}
+
+.titulo-tabla-asignar-admin {
+  font-size: 22px;
+  font-weight: bold;
+  color: #000;
+  margin: 0;
+}
+
+.controles-derecha-asignar-admin {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Botón de Filtro "Priorizar Abiertos" */
+.btn-filtro-abiertos-admin {
+  background-color: #fff;
+  border: 1.5px solid #2b78e4;
+  color: #2b78e4;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.btn-filtro-abiertos-admin.activo {
+  background-color: #2b78e4;
+  color: white;
+}
+
+/* Buscador Estilo Barra Gris */
+.buscador-wrapper-asignar-admin {
+  display: flex;
+  align-items: center;
+  background-color: #d9d9d9; /* Gris de la barra de búsqueda */
+  border-radius: 2px;
+  padding: 5px 15px;
+  width: 350px;
+  border: 1px solid #ccc;
+}
+
+.input-busqueda-asignar-admin {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 5px;
+  outline: none;
+  font-size: 16px;
+  color: #333;
+}
+
+.icono-lupa-asignar-admin {
+  font-size: 18px;
+  color: #555;
+  cursor: default;
+}
+
+/* Tabla - Estilo Base (image_130749.png) */
+.tabla-wrapper-asignar-admin {
+  width: 95%;
+  max-width: 1400px;
+  border: 1px solid #999;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.tabla-tickets-asignar-admin {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Cabecera Azul */
+.tabla-tickets-asignar-admin th {
+  background-color: #2b78e4; /* Azul vibrante de la imagen */
+  color: white;
+  text-align: center;
+  padding: 15px 10px;
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  font-weight: bold;
+  font-size: 15px;
+  text-transform: capitalize;
+}
+
+/* Celdas Grises */
+.tabla-tickets-asignar-admin td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #999;
+  border-right: 1px solid #999;
+  background-color: #d9d9d9; /* Gris claro de fondo */
+  color: #000;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Botón Asignar (Columna Tecnico) */
+.btn-accion-asignar-admin {
+  background-color: #2b78e4;
+  color: white;
+  border: none;
+  padding: 6px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.btn-accion-asignar-admin:hover {
+  background-color: #1a5bb8;
+}
+
+.nombre-tecnico-listo-admin {
+  font-weight: bold;
+  color: #333;
+  font-size: 14px;
+}
+
+/* Colores de Estado */
+.estado-abierto-asignar-admin {
+  color: #d32f2f; /* Rojo para resaltar */
+  font-weight: bold;
+}
+
+.estado-cerrado-asignar-admin {
+  color: #2e7d32; /* Verde para lo concluido */
+}
+
+/* Anchos de Columnas para orden */
+.col-id-asignar-admin { width: 60px; }
+.col-nombre-asignar-admin { width: 150px; }
+.col-titulo-asignar-admin { width: 150px; }
+.col-desc-asignar-admin { width: 350px; }
+.col-tecnico-asignar-admin { width: 160px; }
+
+/* Quitar borde derecho al último elemento */
+.tabla-tickets-asignar-admin th:last-child,
+.tabla-tickets-asignar-admin td:last-child {
+  border-right: none;
+}
+
+/* Hover en filas */
+.fila-ticket-asignar-admin:hover td {
+  background-color: #cecece;
+}

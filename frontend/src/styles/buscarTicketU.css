@@ -1,0 +1,103 @@
+.container-buscarTicketU {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.contenido-buscarTicketU {
+  padding: 40px 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra el buscador horizontalmente */
+}
+
+/* Sección de búsqueda estilo image_32407f.png */
+.seccion-busqueda-buscarTicketU {
+  margin-top: 80px; /* Espacio para que baje un poco del header */
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+.info-busqueda-buscarTicketU {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  color: black;
+}
+
+.lupa-grande-buscarTicketU {
+  font-size: 30px;
+}
+
+.seccion-busqueda-buscarTicketU h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #000;
+}
+
+.input-redondeado-buscarTicketU {
+  width: 100%;
+  padding: 12px 25px;
+  border-radius: 30px; /* Bordes muy redondos como en la imagen */
+  border: 2px solid #000;
+  font-size: 18px;
+  outline: none;
+  background-color: #fff;
+  color: black;
+}
+
+/* Tabla Principal - Posicionada más abajo */
+.tabla-wrapper-buscarTicketU {
+  margin-top: 60px; /* La tabla baja respecto al buscador */
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+}
+
+.tabla-tickets-buscarTicketU {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-tickets-buscarTicketU th {
+  background-color: #5b9bd5; 
+  color: white;
+  text-align: center;
+  padding: 12px 15px;
+  border-right: 1px solid #ffffff44;
+  font-weight: 500;
+}
+
+.col-fecha-buscarTicketU {
+  width: 130px; 
+}
+
+.col-tecnico-buscarTicketU {
+  width: 200px;
+}
+
+.tabla-tickets-buscarTicketU td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  background-color: #eeeeee; 
+  color: #333;
+  text-align: center;
+}
+
+.fila-ticket-buscarTicketU {
+  cursor: pointer;
+}
+
+.fila-ticket-buscarTicketU:hover td {
+  background-color: #e2e2e2;
+}
+
+.tabla-tickets-buscarTicketU th:last-child,
+.tabla-tickets-buscarTicketU td:last-child {
+  border-right: none;
+}

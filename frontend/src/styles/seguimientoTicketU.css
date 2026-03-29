@@ -1,0 +1,122 @@
+.container-seguimiento-usuario {
+    background-color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;   
+}
+
+.contenido-seguimiento-usuario {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    position: relative;
+    top: 40px;
+    left: -70px;
+}
+
+.cuadro-gris-seguimiento-usuario {
+    width: 95%; /* Deja un pequeño margen a los lados */
+    max-width: 1600px; /* Aquí aumentas el límite */
+    height: 80%;
+    background-color: #ececec; /* Cambié el rojo por el gris de tu diseño */
+    padding: 40px;
+    border-radius: 4px;
+    text-align: center;
+    margin: 0 auto; /* Lo mantiene centrado */
+    position: relative;
+    left: 70px;
+}
+
+.titulo-seguimiento-usuario {
+    text-align: left;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.contenedor-pasos-seguimiento-usuario {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+/* Tarjeta base (Blanca) */
+.tarjeta-paso-seguimiento-usuario {
+    background-color: #fff;
+    padding: 30px 20px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 400px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+/* Estado INACTIVO: Más gris y transparente */
+.tarjeta-paso-seguimiento-usuario.inactivo {
+    opacity: 0.5;
+    filter: grayscale(1); /* Opcional: hace que el icono también sea gris */
+}
+
+/* Estado ACTIVO: Resaltado con borde azul */
+.tarjeta-paso-seguimiento-usuario.activo {
+    opacity: 1;
+    border: 3px solid #1a73e8;
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.icono-paso-seguimiento-usuario {
+    width: 100px;
+    height: auto;
+    position: relative;
+    top: 30px;
+   
+}
+
+.tarjeta-paso-seguimiento-usuario h3 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #000;
+    position: relative;
+    top: 50px;
+}
+
+.tarjeta-paso-seguimiento-usuario p {
+    width: 80%;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.4;
+    position: relative;
+    top: 70px;
+}
+
+/* Botón Enterado */
+.btn-enterado-seguimiento-usuario {
+    background-color: #1a73e8;
+    color: white;
+    padding: 12px 60px;
+    border: none;
+    border-radius: 25px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    position: relative;
+    top: -15px;
+}
+
+.btn-enterado-seguimiento-usuario:hover {
+    background-color: #1557b0;
+}
+
+/* Responsivo */
+@media (max-width: 900px) {
+    .contenedor-pasos-seguimiento-usuario {
+        grid-template-columns: 1fr 1fr;
+    }
+}

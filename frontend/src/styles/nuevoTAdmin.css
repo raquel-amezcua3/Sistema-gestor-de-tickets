@@ -1,0 +1,171 @@
+.container-nuevo-T-admin {
+  background-color: #ffffff;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.contenido-nuevo-T-admin {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+  top: 90px;
+}
+
+.titulo-pagina-nuevo-T-admin {
+  font-size: 23px;
+  font-weight: bold;
+  margin-bottom: 25px;
+  color: #000;
+  text-align: left;
+  position: relative;
+  left: -140px;
+  top: 10px;
+}
+
+.card-nuevo-T-admin {
+  width: 127%;
+  background-color: #ececec; /* Color gris de la tarjeta */
+  display: flex;
+  border-radius: 4px;
+  padding: 35px;
+  gap: 30px;
+  height: 520px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  position: relative;
+  left: -140px;
+  top: 15px;
+}
+
+.seccion-formulario-nuevo-T-admin {
+  flex: 1.2;
+}
+
+.header-formulario-nuevo-T-admin {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 35px;
+}
+
+.icono-nuevo-T-admin {
+  width: 45px;
+}
+
+.header-formulario-nuevo-T-admin h3 {
+  font-size: 21px;
+  font-weight: bold;
+  color: black;
+}
+
+.inputs-nuevo-T-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  color: black;
+}
+
+.grupo-input-nuevo-T-admin {
+  display: flex;
+  align-items: center;
+}
+
+.grupo-input-nuevo-T-admin label {
+  width: 180px; /* Alineación uniforme de etiquetas */
+  font-weight: bold;
+  font-size: 16px;
+  color: black;
+  text-align: left;
+}
+
+.rojo-nuevo-T-admin {
+  color: #ff0000;
+  margin-right: 4px;
+}
+
+.grupo-input-nuevo-T-admin input {
+  flex: 1;
+  background-color: #ffffff;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 2px;
+  font-size: 16px;
+  color: black;
+}
+
+.seccion-imagen-nuevo-T-admin {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.img-decorativa-nuevo-T-admin {
+  width: 100%;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.contenedor-boton-nuevo-T-admin {
+  margin-top: 40px;
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 100px;
+}
+
+.btn-agregar-nuevo-T-admin {
+  background-color: #1a73e8; /* Azul del botón Agregar */
+  color: white;
+  border: none;
+  padding: 10px 80px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  position: relative;
+  left: 100px;
+}
+
+.btn-agregar-nuevo-T-admin:hover {
+    background-color: #155cb0;
+}
+
+/* Modal Estilo image_0560c9.png */
+.overlay-modal-nuevo-T-admin {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-exito-nuevo-T-admin {
+  background: #f1f1f1;
+  padding: 40px;
+  border-radius: 8px;
+  text-align: center;
+  width: 450px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.img-check-modal-T {
+  width: 100px;
+  margin-bottom: 15px;
+}
+
+.titulo-modal-T {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 25px;
+}
+
+.btn-aceptar-nuevo-T-admin {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 10px 50px;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+}

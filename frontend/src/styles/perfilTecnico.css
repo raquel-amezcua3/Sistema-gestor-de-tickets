@@ -1,0 +1,198 @@
+.container-perfil-tecnico {
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.contenido-perfil-tecnico {
+  padding: 20px 50px;
+}
+
+.titulo-perfil-tecnico {
+  font-size: 25px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  position: relative;
+  top: 100px;
+  color: black;
+  text-align: left;
+  left: 35px;
+}
+
+.cuadro-perfil-tecnico {
+  background-color: #ececec;
+  padding: 40px;
+  border-radius: 4px;
+  max-width: 1320px;
+  margin: 0 auto;
+  position: relative;
+  top: 100px;
+  left: 3px;
+  color: black;
+}
+
+.encabezado-perfil-tecnico {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.icono-datos-perfil-tecnico {
+  width: 55px;
+  height: auto;
+}
+
+.encabezado-perfil-tecnico h3 {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.cuerpo-perfil-tecnico {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.formulario-perfil-tecnico {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.grupo-input-perfil-tecnico {
+  display: flex;
+  text-align: left;
+  align-items: center;
+  position: relative;
+  top: -30px;
+}
+
+.grupo-input-perfil-tecnico label {
+  width: 180px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.grupo-input-perfil-tecnico input {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background-color: white;
+  border-radius: 2px;
+  color: black;
+  font-size: 15px;
+}
+
+.contenedor-imagen-perfil-tecnico {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.imagen-logo-perfil-tecnico {
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.contenedor-botones-perfil-tecnico {
+  display: flex;
+  gap: 100px;
+  margin-top: 0px;
+  position: relative;
+  left: 70px;
+}
+
+.btn-ok-perfil-tecnico {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 10px 80px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-actualizar-perfil-tecnico {
+  background-color: #a0a0a0;
+  color: white;
+  border: none;
+  padding: 10px 40px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-ok-perfil-tecnico:hover {
+  background-color: #155cb0;
+}
+
+.btn-actualizar-perfil-tecnico:hover {
+  background-color: #8a8a8a;
+}
+
+/* Modal */
+.overlay-modal-perfil-tecnico {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-exito-perfil-tecnico {
+  background-color: #f1f1f1;
+  padding: 40px;
+  border-radius: 4px;
+  text-align: center;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 2px solid #1a73e8;
+}
+
+.contenedor-check-perfil-tecnico {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.check-animado-perfil-tecnico {
+  font-size: 90px;
+  color: #1a73e8;
+  transform: scaleX(-1) rotate(-45deg);
+  display: inline-block;
+}
+
+.modal-exito-perfil-tecnico h2 {
+  font-size: 26px;
+  color: #000000;
+  margin-bottom: 30px;
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 400;
+  position: relative;
+  top: 25px;
+}
+
+.btn-aceptar-perfil-tecnico {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 10px 45px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  position: relative;
+  top: 15px;
+}

@@ -1,0 +1,194 @@
+.container-nuevoTicketU {
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.contenido-ticket {
+  padding: 20px 50px;
+}
+
+.titulo-seccion {
+  font-size: 25px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  position: relative;
+  top: 110px;
+  left: -610px;
+  color: black;
+}
+
+/* El cuadro principal gris */
+.cuadro-formulario {
+  background-color: #ececec;
+  padding: 30px;
+  border-radius: 4px;
+  max-width: 2000px;
+  margin: 0 auto;
+  position: relative;
+  top: 110px;
+  color: black;
+}
+
+.encabezado-formulario {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.encabezado-formulario h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.icono-editar{
+  width: 50px;
+  height: auto;
+}
+
+input.estado-ticket-abierto{
+  color: black !important;
+  font-weight: 500 !important;
+  border: none;
+}
+
+/* Rejilla de 2 columnas */
+.grid-formulario {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+  gap: 20px;
+  align-items: start;
+  color: black;
+}
+
+.grupo-input {
+  display: flex;
+  align-items: center;
+  color: black;
+}
+
+.grupo-input label {
+  width: 160px; /* Ancho fijo para las etiquetas para que los inputs se alineen */
+  font-weight: bold;
+  font-size: 16.5px;
+  text-align: left;
+}
+
+.requerido {
+  color: red;
+  margin-right: 3px;
+}
+
+.grupo-input input, 
+.grupo-input textarea {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background-color: white;
+  color: black;
+}
+
+/* Para que la descripción ocupe el espacio hacia abajo en su columna */
+.area-texto {
+  grid-row: span 6; /* Se expande hacia abajo */
+  align-items: flex-start;
+}
+
+.area-texto textarea {
+  resize: none;
+  width: 100%;
+  height: 150px;
+}
+
+/* Botón enviar */
+.contenedor-boton {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.btn-enviar {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 10px 60px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-enviar:hover {
+  background-color: #155cb0;
+}
+
+/* Diseño para la ventana emergente */
+/* Contenedor del fondo oscuro */
+.overlay-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Oscurece el fondo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* Asegura que esté por encima de todo */
+}
+
+/* La tarjeta blanca */
+.modal-exito {
+  background-color: #f1f1f1;
+  padding: 40px;
+  border-radius: 4px;
+  text-align: center;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 2px solid #1a73e8; /* Borde azul como en tu imagen */
+}
+
+/* El círculo del Check */
+.contenedor-check {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.check-animado {
+  font-size: 90px;
+  color: #1a73e8;
+  transform: scaleX(-1) rotate(-45deg); /* Gira la L para que parezca un check */
+  display: inline-block;
+}
+
+.modal-exito h2 {
+  font-size: 26px;
+  color: #000000;
+  margin-bottom: 30px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, sans-serif;
+  font-weight: 400;
+  position: relative;
+  top: 25px;
+}
+
+/* Botón Aceptar azul */
+.btn-aceptar {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 10px 45px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  position: relative;
+  top: 15px;
+}
+
+.btn-aceptar:hover {
+  background-color: #155cb0;
+}

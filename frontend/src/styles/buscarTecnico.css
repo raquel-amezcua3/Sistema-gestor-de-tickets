@@ -1,0 +1,120 @@
+.container-buscar-ticket-tecnico {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.contenido-buscar-ticket-tecnico {
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.seccion-busqueda-buscar-ticket-tecnico {
+  margin-top: 100px;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+.info-busqueda-buscar-ticket-tecnico {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  position: relative;
+  top: -40px;
+}
+
+.lupa-icono-buscar-ticket-tecnico {
+  font-size: 28px;
+  color: #333;
+}
+
+.imagen-lupa-estilo{
+    width: 20px;
+    position: relative;
+    top: -2px;
+}
+
+.seccion-busqueda-buscar-ticket-tecnico h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #000;
+}
+
+.input-redondeado-buscar-ticket-tecnico {
+  width: 100%;
+  padding: 12px 25px;
+  border-radius: 25px;
+  border: 1.5px solid #000;
+  font-size: 18px;
+  outline: none;
+  background-color: #fff;
+  color: black;
+  position: relative;
+  top: -47px;
+}
+
+.tabla-wrapper-buscar-ticket-tecnico {
+  margin-top: 50px;
+  width: 95%;
+  max-width: 1400px;
+  border: 1px solid #999;
+  border-radius: 2px;
+  overflow-x: auto;
+  position: relative;
+  top: -70px;
+}
+
+.tabla-tickets-buscar-ticket-tecnico {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-tickets-buscar-ticket-tecnico th {
+  background-color: #2b78e4;
+  color: white;
+  text-align: center;
+  padding: 15px 8px;
+  border-right: 1px solid #ccc;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.tabla-tickets-buscar-ticket-tecnico td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #999;
+  border-right: 1px solid #999;
+  background-color: #d9d9d9;
+  color: #000;
+  text-align: center;
+  font-size: 14px;
+}
+
+.col-id-buscar-ticket-tecnico { width: 60px; }
+.col-nombre-buscar-ticket-tecnico { width: 180px; }
+.col-desc-buscar-ticket-tecnico { width: 350px; }
+
+.fila-ticket-buscar-ticket-tecnico {
+  cursor: pointer;
+}
+
+.fila-ticket-buscar-ticket-tecnico:hover td {
+  background-color: #cfcfcf;
+}
+
+.texto-verde-buscar { color: #2e7d32; font-weight: bold; }
+.texto-rojo-buscar { color: #d32f2f; font-weight: bold; }
+
+.sin-resultados-buscar-ticket-tecnico {
+  padding: 30px !important;
+  font-style: italic;
+  color: #666;
+}
+
+.tabla-tickets-buscar-ticket-tecnico th:last-child,
+.tabla-tickets-buscar-ticket-tecnico td:last-child {
+  border-right: none;
+}

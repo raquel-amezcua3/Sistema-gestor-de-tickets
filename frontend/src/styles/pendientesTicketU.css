@@ -1,0 +1,113 @@
+.container-pendientesTU {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.contenido-tabla {
+  padding: 30px 50px;
+}
+
+.encabezado-tabla-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.titulo-pendientesTU {
+  color: black;
+  position: relative;
+  top: 110px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* Buscador */
+.buscador-contenedor {
+  display: flex;
+  align-items: center;
+  background-color: #D9D9D9; 
+  padding: 2px 15px;
+  border-radius: 4px;
+  width: 450px;
+  position: relative;
+  top: 110px;
+  left: -500px; /* Mantengo tu ajuste de posición */
+  color: black;
+}
+
+.buscador-contenedor input {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 5px;
+  font-size: 16px;
+  color: black;
+}
+
+.icono-lupa {
+  color: #555;
+  cursor: pointer;
+}
+
+/* Tabla Principal */
+.tabla-wrapper {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  top: 110px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.tabla-tickets {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+/* Estilo Encabezado Azul */
+.tabla-tickets th {
+  background-color: #5b9bd5; 
+  color: white;
+  text-align: center;
+  padding: 1px 15px;
+  border-right: 1px solid #ffffff44;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+/* Ajustes de ancho solicitados */
+.col-fecha {
+  width: 150px; /* Más pequeña */
+}
+
+.col-tecnico {
+  width: 250px; /* Más larga */
+}
+
+/* Estilo de Celdas Gris */
+.tabla-tickets td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  background-color: #eeeeee; 
+  color: #333;
+  font-size: 15px;
+}
+
+/* Interactividad de Filas */
+.fila-ticket {
+  cursor: pointer;
+  user-select: none; /* Evita selección de texto en doble clic */
+}
+
+.fila-ticket:hover td {
+  background-color: #e2e2e2; /* Efecto hover */
+}
+
+.tabla-tickets th:last-child,
+.tabla-tickets td:last-child {
+  border-right: none;
+}

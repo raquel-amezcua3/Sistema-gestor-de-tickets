@@ -1,0 +1,110 @@
+.container-todosTickettU {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.contenido-tabla-todosTickettU {
+  padding: 30px 50px;
+}
+
+.encabezado-flex-todosTickettU {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.titulo-todosTickettU {
+  color: black;
+  position: relative;
+  top: 110px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* Buscador */
+.buscador-contenedor-todosTickettU {
+  display: flex;
+  align-items: center;
+  background-color: #D9D9D9; 
+  padding: 2px 15px;
+  border-radius: 4px;
+  width: 450px;
+  position: relative;
+  top: 110px;
+  left: -400px; /* Ajustado ligeramente por la nueva columna */
+  color: black;
+}
+
+.buscador-contenedor-todosTickettU input {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 5px;
+  font-size: 16px;
+  color: black;
+}
+
+.icono-lupa-todosTickettU {
+  color: #555;
+  cursor: pointer;
+}
+
+/* Tabla Principal */
+.tabla-wrapper-todosTickettU {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  top: 110px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.tabla-tickets-todosTickettU {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.tabla-tickets-todosTickettU th {
+  background-color: #5b9bd5; 
+  color: white;
+  text-align: center;
+  padding: 10px 15px;
+  border-right: 1px solid #ffffff44;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.col-fecha-todosTickettU {
+  width: 130px; 
+}
+
+.col-tecnico-todosTickettU {
+  width: 200px;
+}
+
+.tabla-tickets-todosTickettU td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  background-color: #eeeeee; 
+  color: #333;
+  font-size: 15px;
+  text-align: center;
+}
+
+.fila-ticket-todosTickettU {
+  cursor: pointer;
+  user-select: none;
+}
+
+.fila-ticket-todosTickettU:hover td {
+  background-color: #e2e2e2;
+}
+
+.tabla-tickets-todosTickettU th:last-child,
+.tabla-tickets-todosTickettU td:last-child {
+  border-right: none;
+}

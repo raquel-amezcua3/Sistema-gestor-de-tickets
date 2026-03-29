@@ -1,0 +1,121 @@
+.container-resuelto-tecnico {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.contenido-tabla-resuelto-tecnico {
+  padding: 30px 50px;
+}
+
+.encabezado-flex-resuelto-tecnico {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.titulo-resuelto-tecnico {
+  color: black;
+  font-size: 22px;
+  font-weight: bold;
+  font-family: 'Roboto';
+  position: relative;
+  top: 80px;
+  left: -10px;
+}
+
+/* Buscador Estilo Gris */
+.buscador-contenedor-resuelto-tecnico {
+  display: flex;
+  align-items: center;
+  background-color: #D9D9D9; 
+  padding: 2px 15px;
+  border-radius: 4px;
+  width: 480px;
+  border: 1px solid #ccc;
+  position: relative;
+  top: 75px;
+  left: -550px;
+}
+
+.buscador-contenedor-resuelto-tecnico input {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  color: black;
+}
+
+.icono-lupa-resuelto-tecnico {
+  color: #555;
+  font-size: 18px;
+}
+
+/* Tabla Estilo Bodesa */
+.tabla-wrapper-resuelto-tecnico {
+  border: 1px solid #999;
+  border-radius: 2px;
+  overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+  position: relative;
+  top: 80px;
+  left: -10px;
+}
+
+.tabla-tickets-resuelto-tecnico {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-tickets-resuelto-tecnico th {
+  background-color: #2b78e4; 
+  color: white;
+  text-align: center;
+  padding: 15px;
+  border-right: 1px solid rgba(255,255,255,0.3);
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.tabla-tickets-resuelto-tecnico td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #999;
+  border-right: 1px solid #999;
+  background-color: #d9d9d9; 
+  color: #000;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Columnas específicas */
+.col-fecha-resuelto-tecnico { width: 180px; }
+.col-tecnico-resuelto-tecnico { width: 180px; }
+
+/* Estado Cerrado en Verde */
+.estado-cerrado-resuelto-tecnico {
+  color: #2e7d32; 
+  font-weight: bold;
+}
+
+.fila-ticket-resuelto-tecnico {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.fila-ticket-resuelto-tecnico:hover td {
+  background-color: #cecece;
+}
+
+.sin-resultados-resuelto-tecnico {
+  text-align: center;
+  padding: 30px !important;
+  font-style: italic;
+  background-color: #eee !important;
+}
+
+.tabla-tickets-resuelto-tecnico th:last-child,
+.tabla-tickets-resuelto-tecnico td:last-child {
+  border-right: none;
+}

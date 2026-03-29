@@ -1,0 +1,107 @@
+.container-directorio-tecnico {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.contenido-directorio-tecnico {
+  padding: 40px 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Sección de búsqueda */
+.seccion-busqueda-directorio-tecnico {
+  margin-top: 100px; /* Bajamos un poco para que no choque con el header */
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+  top: -40px;
+  position: relative;
+}
+
+.info-busqueda-directorio-tecnico {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  color: black;
+}
+
+.lupa-img-directorio-tecnico {
+  width: 22px;
+  height: auto;
+}
+
+.seccion-busqueda-directorio-tecnico h2 {
+  font-size: 22px;
+  font-family: 'Roboto';
+  font-weight: 600;
+  color: #000;
+}
+
+.input-redondeado-directorio-tecnico {
+  width: 100%;
+  padding: 12px 25px;
+  border-radius: 25px;
+  border: 2px solid #000;
+  font-size: 18px;
+  outline: none;
+  background-color: #fff;
+  color: black;
+  position: relative;
+  top: -10px;
+}
+
+/* Tabla con encabezado negro */
+.tabla-wrapper-directorio-tecnico {
+  margin-top: 60px;
+  width: 100%;
+  max-width: 1300px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  top: -80px;
+}
+
+.tabla-usuarios-directorio-tecnico {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-usuarios-directorio-tecnico th {
+  background-color: #4e6a86; 
+  color: white;
+  text-align: center;
+  padding: 15px;
+  border-right: 1px solid #555;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.tabla-usuarios-directorio-tecnico td {
+  padding: 15px;
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  background-color: #eeeeee; 
+  color: #333;
+  text-align: center;
+  font-size: 15px;
+}
+
+.fila-usuario-directorio-tecnico:hover td {
+  background-color: #e2e2e2;
+}
+
+.sin-coincidencias-directorio-tecnico {
+  text-align: center;
+  padding: 30px !important;
+  font-style: italic;
+}
+
+.tabla-usuarios-directorio-tecnico th:last-child,
+.tabla-usuarios-directorio-tecnico td:last-child {
+  border-right: none;
+}

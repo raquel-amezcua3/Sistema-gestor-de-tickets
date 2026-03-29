@@ -1,0 +1,123 @@
+.container-pendientes-tecnico {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.contenido-tabla-pendientes-tecnico {
+  padding: 30px 50px;
+}
+
+.encabezado-flex-pendientes-tecnico {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.titulo-pendientes-tecnico {
+  color: black;
+  font-size: 22px;
+  font-weight: bold;
+  font-family: 'Roboto';
+  position: relative;
+  top: 80px;
+  left: -10px;
+}
+
+/* Buscador Estilo Gris */
+.buscador-contenedor-pendientes-tecnico {
+  display: flex;
+  align-items: center;
+  background-color: #D9D9D9; 
+  padding: 2px 15px;
+  border-radius: 4px;
+  width: 480px;
+  border: 1px solid #ccc;
+  position: relative;
+  top: 75px;
+  left: -550px;
+}
+
+.buscador-contenedor-pendientes-tecnico input {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  color: black;
+}
+
+.icono-lupa-pendientes-tecnico {
+  color: #555;
+  font-size: 18px;
+}
+
+/* Tabla Estilo Bodesa (Azul/Gris) */
+.tabla-wrapper-pendientes-tecnico {
+  border: 1px solid #999;
+  border-radius: 2px;
+  overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+  position: relative;
+  top: 80px;
+  left: -10px;
+}
+
+.tabla-tickets-pendientes-tecnico {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Encabezado Azul como image_130749.png */
+.tabla-tickets-pendientes-tecnico th {
+  background-color: #2b78e4; 
+  color: white;
+  text-align: center;
+  padding: 15px;
+  border-right: 1px solid rgba(255,255,255,0.3);
+  font-weight: bold;
+  font-size: 15px;
+}
+
+/* Celdas Grises */
+.tabla-tickets-pendientes-tecnico td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #999;
+  border-right: 1px solid #999;
+  background-color: #d9d9d9; 
+  color: #000;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Columnas específicas */
+.col-fecha-pendientes-tecnico { width: 170px; }
+.col-tecnico-pendientes-tecnico { width: 200px; }
+
+.estado-abierto-pendientes-tecnico {
+  color: #d32f2f; /* Rojo para resaltar que está pendiente */
+  font-weight: bold;
+}
+
+/* Hover e interactividad */
+.fila-ticket-pendientes-tecnico {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.fila-ticket-pendientes-tecnico:hover td {
+  background-color: #cecece;
+}
+
+.sin-resultados-pendientes-tecnico {
+  text-align: center;
+  padding: 30px !important;
+  font-style: italic;
+  background-color: #eee !important;
+}
+
+.tabla-tickets-pendientes-tecnico th:last-child,
+.tabla-tickets-pendientes-tecnico td:last-child {
+  border-right: none;
+}

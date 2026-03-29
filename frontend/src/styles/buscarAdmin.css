@@ -1,0 +1,122 @@
+.container-buscar-admin {
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.contenido-buscar-admin {
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Buscador centrado */
+.seccion-busqueda-buscar-admin {
+  margin-top: 100px;
+  text-align: center;
+  width: 100%;
+  max-width: 550px;
+}
+
+.info-busqueda-buscar-admin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.lupa-icono-buscar-admin {
+  font-size: 28px;
+  color: #333;
+}
+
+.seccion-busqueda-buscar-admin h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #000;
+}
+
+.input-redondeado-buscar-admin {
+  width: 100%;
+  padding: 10px 20px;
+  border-radius: 25px;
+  border: 1.5px solid #000;
+  font-size: 18px;
+  outline: none;
+  background-color: #fff;
+  color: black;
+}
+
+/* Tabla - Estilo exacto a image_130749.png */
+.tabla-wrapper-buscar-admin {
+  margin-top: 50px;
+  width: 95%;
+  max-width: 1400px;
+  border: 1px solid #999;
+  border-radius: 2px;
+  overflow-x: auto;
+  position: relative;
+  top: -20px;
+}
+
+.tabla-tickets-buscar-admin {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: sans-serif;
+}
+
+
+/* Cabecera Azul */
+.tabla-tickets-buscar-admin th {
+  background-color: #2b78e4; /* Azul de la imagen */
+  color: white;
+  text-align: center;
+  padding: 12px 8px;
+  border-right: 1px solid #ccc;
+  font-weight: bold;
+  font-family: 'Roboto';
+  font-size: 15px;
+}
+
+/* Celdas Grises */
+.tabla-tickets-buscar-admin td {
+  padding: 10px 10px;
+  border-bottom: 1px solid #999;
+  border-right: 1px solid #999;
+  background-color: #d9d9d9; /* Gris de la imagen */
+  color: #000;
+  text-align: center;
+  font-family: 'Roboto';
+  font-size: 15px;
+}
+
+/* Columnas con anchos específicos para que se vea ordenado */
+.col-id-buscar-admin { width: 60px; }
+.col-nombre-buscar-admin { width: 180px; }
+.col-titulo-buscar-admin { width: 180px; }
+.col-desc-buscar-admin { width: 300px; }
+.col-fecha-buscar-admin { width: 100px; }
+.col-estado-buscar-admin { width: 100px; }
+.col-tecnico-buscar-admin { width: 150px; }
+
+.fila-ticket-buscar-admin {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.fila-ticket-buscar-admin:hover td {
+  background-color: #cfcfcf;
+}
+
+.sin-resultados-buscar-admin {
+  padding: 30px !important;
+  font-style: italic;
+  color: #666;
+}
+
+/* Eliminar borde derecho en la última columna */
+.tabla-tickets-buscar-admin th:last-child,
+.tabla-tickets-buscar-admin td:last-child {
+  border-right: none;
+}

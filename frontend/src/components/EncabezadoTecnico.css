@@ -1,0 +1,96 @@
+/* Contenedor Principal del Navbar */
+.encabezado-principal-tecnico {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 2rem;
+    align-items: center;
+    background-color: #26426A;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box; /* Asegura que el padding no desborde el ancho */
+}
+
+/* Sección del Logo Izquierdo */
+.logo-Tecnico {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo-Tecnico img {
+    width: 160px;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo-Tecnico img:hover {
+    transform: scale(1.02);
+}
+
+/* Lista de Navegación */
+.nav-Tecnico {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-Tecnico li {
+    display: flex;
+    align-items: center;
+}
+
+.nav-Tecnico a {
+    color: white;
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 300;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.nav-Tecnico a:hover {
+    color: #d9d7f6b9;
+    transform: scale(1.05);
+}
+
+/* Botón de Cerrar Sesión (Invisible para que solo se vea la imagen) */
+.btn-invisible-cerrar-tecnico {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+    outline: none;
+}
+
+.btn-invisible-cerrar-tecnico:hover {
+    transform: scale(1.15); /* Efecto de crecimiento al pasar el mouse */
+}
+
+/* Imagen del logo Cerrar S */
+.logo-cerrarS-Tecnico {
+    width: 32px; /* Tamaño optimizado */
+    height: auto;
+    display: block;
+}
+
+/* Media Query para pantallas pequeñas (Opcional) */
+@media (max-width: 768px) {
+    .nav-Tecnico {
+        gap: 1rem;
+    }
+    
+    .logo-Tecnico img {
+        width: 120px;
+    }
+}

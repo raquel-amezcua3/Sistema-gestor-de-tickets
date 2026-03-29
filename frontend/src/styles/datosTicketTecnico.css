@@ -1,0 +1,280 @@
+.container-datosT-Tecnico {
+  background-color: #fff;
+  min-height: 100vh;
+}
+
+.contenido-datosT-Tecnico {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+  top: 80px;
+}
+
+.titulo-pagina-datosT-Tecnico {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #000;
+  position: relative;
+  left: -554px;
+}
+
+.card-datosT-Tecnico {
+  width: 123%;
+  background-color: #ebebeb;
+  color: black;
+  border-radius: 4px;
+  padding: 30px 40px; 
+  position: relative;
+  left: -124px;
+}
+
+.header-card-datosT-Tecnico {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 5px;
+}
+
+.icono-datosT-Tecnico { 
+  width: 35px; 
+}
+
+.ticket-label-datosT-Tecnico {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.aviso-rojo-datosT-Tecnico {
+  color: #d32f2f;
+  font-size: 13px;
+  margin-bottom: 20px;
+  position: relative;
+  left: -410px;
+}
+
+.rojo-datosT-Tecnico { color: #d32f2f; }
+
+.grid-formulario-datosT-Tecnico {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  color: black;
+  text-align: left;
+}
+
+.grupo-input-datosT-Tecnico {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.grupo-input-datosT-Tecnico label {
+  width: 160px;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.grupo-input-datosT-Tecnico input, 
+.select-estado-datosT-Tecnico {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+.grupo-input-datosT-Tecnico input {
+  background-color: #fff !important;
+  color: black;
+}
+
+.estado-amarillo {
+  background-color: #ffeb3b !important;
+  color: black !important;
+  font-weight: bold;
+}
+
+.estado-verde {
+  background-color: #4caf50 !important;
+  color: white !important;
+  font-weight: bold;
+}
+
+.select-estado-datosT-Tecnico option {
+  background-color: #fff;
+  color: black;
+  font-weight: normal;
+}
+
+.tecnico-bold-datosT-Tecnico {
+  font-weight: bold !important;
+  text-align: center;
+}
+
+.textarea-datosT-Tecnico {
+  flex: 1;
+  height: 135px;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #fff;
+  resize: none;
+  color: black;
+}
+
+.contenedor-botones-datosT-Tecnico {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-around;
+  padding: 0 100px;
+}
+
+.btn-azul-datosT-Tecnico {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 12px 60px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.btn-azul-datosT-Tecnico:hover { background-color: #1557b0; }
+
+
+/* --- Estilo de la ventana de "¿el ticket esta resuelto?  --- */
+
+.modal-confirmar-DT {
+  background: #ebebeb;
+  padding: 40px;
+  border-radius: 8px;
+  text-align: center;
+  width: 550px;
+}
+
+.img-pregunta-DT {
+  width: 140px;
+  margin-bottom: 20px;
+}
+
+.titulo-pregunta-DT {
+  font-size: 32px;
+  margin-bottom: 40px;
+  color: #000;
+}
+
+.flex-botones-DT {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+}
+
+.btn-cancelar-DT {
+  background-color: #8e8e8e;
+  color: white;
+  border: none;
+  padding: 12px 50px;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-cancelar-DT:hover {
+    background-color: #1557b0;
+}
+
+.btn-aceptar-pregunta-DT {
+  background-color:  #1a73e8;;
+  color: white;
+  border: none;
+  padding: 12px 50px;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-aceptar-pregunta-DT:hover {
+    background-color: #1557b0;
+}
+
+/* 
+Estilo de la ventana emergente de confirmacion de "Ticket resuelto correctamente" */
+.overlay-modal-datosT-Tecnico {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+
+.modal-exito-datosT-Tecnico {
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
+  text-align: center;
+  width: 500px;
+}
+
+.ventana-texto{
+    position: relative;
+    top: -10px;
+    font-family: 'Roboto';
+    font-size: 30px;
+}
+
+.btn-aceptar-datosT-Tecnico {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 10px 40px;
+  border-radius: 20px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.btn-aceptar-datosT-Tecnico:hover{
+     background-color: #1557b0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Mensaje de advertencia dentro del modal */
+.mensaje-error-modal {
+  color: #d32f2f;
+  background-color: #fce8e8;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 20px;
+  border: 1px solid #d32f2f;
+}
+
+/* Estilo para el botón cuando está deshabilitado */
+.btn-deshabilitado {
+  background-color: #cccccc !important; /* Gris claro */
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
+.btn-deshabilitado:hover {
+  background-color: #cccccc !important; /* Evita el efecto hover azul */
+}

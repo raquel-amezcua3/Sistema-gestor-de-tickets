@@ -1,0 +1,102 @@
+.container-principal-tecnico {
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.content-area-principal-tecnico {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  position: relative;
+  top: 80px; /* Ajustado para que no choque con el encabezado */
+}
+
+.titulo-bienvenida-principal-tecnico {
+  font-size: 27px;
+  font-family: 'Roboto';
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #333;
+  position: relative;
+  left: -550px;
+  top: -10px;
+}
+
+.subtitulo-principal-tecnico{
+  font-size: 18px;
+  font-weight: 400;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  position: relative;
+  top: -33px;
+  left: -599px;
+}
+
+/* Configuración de la cuadrícula de 3 columnas */
+.grid-menu-principal-tecnico {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  position: relative;
+  top: -12px;
+}
+
+.card-opcion-principal-tecnico {
+  background-color: #ececec;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+  border-radius: 4px; /* Un pequeño redondeado para que se vea mejor */
+}
+
+.card-opcion-principal-tecnico:hover {
+  transform: translateY(-5px);
+  background-color: #e0e0e0;
+}
+
+.card-text-principal-tecnico {
+  margin-top: 15px;
+  font-weight: 700;
+  color: #000;
+  font-size: 1.1rem;
+  position: relative;
+  top: -5px;
+}
+
+.card-subtext-principal-tecnico {
+  font-size: 14px;
+  color: #666; /* Gris para el subtítulo */
+  text-align: center;
+  padding: 0 15px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.icon-container-principal-tecnico {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-image-icon-principal-tecnico {
+  width: 120px;
+  height: 150px;
+  object-fit: contain;
+}
+
+/* Responsivo para tablets y celulares */
+@media (max-width: 768px) {
+  .grid-menu-principal-tecnico {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-menu-principal-tecnico {
+    grid-template-columns: 1fr;
+  }
+}

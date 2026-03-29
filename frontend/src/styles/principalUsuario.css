@@ -1,0 +1,87 @@
+.container-principal {
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.content-area {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  position: relative;
+  top: 10%;
+}
+
+.titulo-bienvenida {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+/* Configuración de la cuadrícula de 3 columnas */
+.grid-menu {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.card-opcion {
+  background-color: #ececec; /* Color gris de fondo de la imagen */
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.card-opcion:hover {
+  transform: translateY(-5px);
+  background-color: #e0e0e0;
+}
+
+.card-text {
+  margin-top: 15px;
+  font-weight: 700;
+  color: #000;
+  font-size: 1.1rem;
+}
+
+/* Estilo para los iconos */
+.icon-container {
+  font-size: 40px;
+  color: #1a73e8; /* Azul corporativo */
+}
+
+/* Estilo especial para "Reportar falla" con el círculo rojo */
+.icon-container.bg-red {
+  background-color: #ff5252;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+/* Responsivo para tablets y celulares */
+@media (max-width: 768px) {
+  .grid-menu {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-menu {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Agrega esto a tu CSS */
+.card-image-icon {
+  width: 120px;    /* Ajusta el tamaño a tu gusto */
+  height: 150px;
+  object-fit: contain; /* Evita que la imagen se deforme */
+}
