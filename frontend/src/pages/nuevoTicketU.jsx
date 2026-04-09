@@ -5,14 +5,66 @@ import HeaderPU from '../components/HeaderPU';
 
 function NuevoTicketU() {
    const navigate = useNavigate();
-   
-   
    const [mostrarModal, setMostrarModal] = useState(false);
 
-   // Función para manejar el envío
-   const handleSubmit = (e) => {
-     e.preventDefault(); // Evita que la página se recargue
-     setMostrarModal(true); // Muestra la ventana emergente
+   // 1. Estado para los campos del formulario
+   const [ticket, setTicket] = useState({
+     titulo: '',
+     descripcion: ''
+   });
+
+   // Manejar cambios en los inputs (esto actualiza el estado 'ticket')
+   const handleChange = (e) => {
+     setTicket({ 
+       ...ticket, 
+       [e.target.name]: e.target.value 
+     });
+   };
+
+   // 2. Función para enviar a la base de datos
+   const handleSubmit = async (e) => {
+     e.preventDefault();
+
+     // Obtenemos el ID tal cual lo guardamos en el Login ('id_usuario')
+     const idGuardado = localStorage.getItem('id_usuario');
+
+     // Validación previa: si no hay ID, no dejamos que falle el backend
+     if (!idGuardado || idGuardado === "undefined") {
+       alert("No se detectó una sesión activa. Por favor, vuelve a iniciar sesión.");
+       return;
+     }
+
+     const bodyData = {
+       id_usuario: parseInt(idGuardado), // Lo convertimos a número entero
+       titulo: ticket.titulo,
+       descripcion: ticket.descripcion
+     };
+
+     console.log("Datos que viajan al servidor:", bodyData);
+
+     try {
+       const response = await fetch('http://localhost:3000/tickets', {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(bodyData),
+       });
+
+       const data = await response.json();
+
+       if (response.ok) {
+         setMostrarModal(true); 
+         // Limpiamos el formulario para el siguiente reporte
+         setTicket({ titulo: '', descripcion: '' });
+       } else {
+         // Si el servidor responde con 400 o 500, mostramos por qué
+         alert("Error del servidor: " + (data.error || "No se pudo crear el ticket"));
+       }
+     } catch (error) {
+       console.error("Error de conexión:", error);
+       alert("No hay conexión con el servidor. Verifica que el backend esté encendido.");
+     }
    };
 
    return (
@@ -24,80 +76,66 @@ function NuevoTicketU() {
 
           <div className='cuadro-formulario'>
             <div className='encabezado-formulario'>
-               <img className='icono-editar' alt='logo' src='/img/nuevo-ticket.png' />
-               <h3>¿Que falla presentas hoy?</h3>
+                <img className='icono-editar' alt='logo' src='/img/nuevo-ticket.png' />
+                <h3>¿Qué falla presentas hoy?</h3>
             </div>
 
-            {/* Paso 3: Agregar onSubmit al formulario */}
             <form onSubmit={handleSubmit}>
               <div className='grid-formulario'>
-                {/* Columna Izquierda */}
+                
+                {/* Nombre de usuario (Solo lectura) */}
                 <div className='grupo-input'>
-                  <label><span className='requerido'>*</span>Nombre de usuario</label>
+                  <label>Nombre de usuario</label>
                   <input
                       type="text"
-                      id="nombre"
-                      name="nombre"
-                      required
-                      minLength="3"
-                      maxLength="20"
-                      /* Esto sirve para que si no se pone de 3 a 20 caracteres en este input, va a salir este mensaje */
-                      onInvalid={(e) =>
-                        e.target.setCustomValidity("El nombre de usuario debe tener mínimo 3 caracteres y máximo 20")
-                      }
-                      onInput={(e) => e.target.setCustomValidity("")}
+                      value={localStorage.getItem('usuarioNombre') || 'Usuario Invitado'}
+                      readOnly
+                      style={{ backgroundColor: '#e9ecef', cursor: 'not-allowed' }}
                     />
                 </div>
 
-                {/* Columna Derecha */}
+                {/* Teléfono (Solo informativo) */}
                 <div className='grupo-input'>
-                  <label><span className='requerido'>*</span>Telefono</label>
+                  <label>Teléfono</label>
                   <input
                       type="text"
-                      id='number'
+                      id='telefono'
                       name='telefono'
-                      required
-                      pattern='\d{10}'
-                      maxLength="10"
-                      title='Debe tener exactamente 10 numeros'
-                   />
+                  />
                 </div>
 
-                 {/* Fila 2 */}
+                {/* Título - Campo obligatorio */}
                 <div className='grupo-input'>
-                  <label><span className='requerido'>*</span>Titulo</label>
+                  <label><span className='requerido'>*</span>Título</label>
                   <input 
                       type="text" 
-                      id='titulo-NT'
-                      name='titulo-NT'
+                      name='titulo' // El 'name' debe ser idéntico a la clave en el useState
+                      value={ticket.titulo}
+                      onChange={handleChange}
                       required
                       minLength="5"
                       maxLength="50"
-                      onInvalid={(e) => e.target.setCustomValidity("El titulo debe tener mínimo 5 caracteres y máximo 50")}
-                      onInput={(e) => e.target.setCustomValidity("")}
+                      placeholder="Ej: Error en impresora"
                    />
                 </div>
                 
-                 {/* Para el cuadro de descripcion, y algunos requerimientos para que no inserten codigo desde ahi */}
+                {/* Descripción - Campo obligatorio */}
                 <div className='grupo-input area-texto'>
                   <label><span className='requerido'>*</span>Descripción</label>
                   <textarea
+                    name='descripcion' // El 'name' debe ser idéntico a la clave en el useState
                     rows="5"
+                    value={ticket.descripcion}
+                    onChange={handleChange}
                     required
                     minLength="10"
                     maxLength="513"
-                    onInput={(e) => {
-                      e.target.value = e.target.value.replace(/[()<>]/g, "");
-                      e.target.setCustomValidity("");
-                    }}
-                    onInvalid={(e) => e.target.setCustomValidity("La descripción debe tener mínimo 10 caracteres")}
+                    placeholder="Describe detalladamente el problema..."
                   ></textarea>
                 </div>              
 
-                {/* Fila 3 */}
-                {/* Aqui la fecha se pone de manera automatica (solo se pone la del dia de hoy, no ayer, ni futuro)*/}
                 <div className='grupo-input'>
-                  <label><span className='requerido'>*</span>Fecha de creación</label>
+                  <label>Fecha de creación</label>
                   <input 
                     type="date"
                     value={new Date().toLocaleDateString('en-CA')}
@@ -105,28 +143,13 @@ function NuevoTicketU() {
                   />
                 </div>
 
-                {/* Fila 4 */}
                 <div className='grupo-input'>
-                  <label><span className='requerido'>*</span>Estado del ticket</label>
+                  <label>Estado del ticket</label>
                   <input
                     className="estado-ticket-abierto"
                     type="text"
                     value="Abierto"
                     readOnly
-                  />
-                </div>
-
-                {/* Fila 5 */}
-                {/* Solo se puede poner el correo y es necesario poner el @ */}
-                <div className='grupo-input'>
-                  <label><span className='requerido'>*</span>Correo</label>
-                  <input 
-                    type="email" 
-                    id="correo"
-                    name="correo"
-                    required
-                    onInvalid={(e) => e.target.setCustomValidity("Ingrese un correo válido (debe contener @)")}
-                    onInput={(e) => e.target.setCustomValidity("")}
                   />
                 </div>
               </div>
@@ -138,7 +161,7 @@ function NuevoTicketU() {
           </div>
        </main>
 
-       {/* Ventana emergente de cuando todos los campos estan llenos y listo para enviar el ticket */}
+       {/* Ventana emergente de éxito */}
        {mostrarModal && (
          <div className='overlay-modal'>
            <div className='modal-exito'>
@@ -148,7 +171,10 @@ function NuevoTicketU() {
              <h2>Falla reportada correctamente</h2>
              <button 
                className='btn-aceptar' 
-               onClick={() => setMostrarModal(false)}
+               onClick={() => {
+                 setMostrarModal(false);
+                 navigate('/pendientesTicketU'); 
+               }}
              >
                Aceptar
              </button>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/detalleTicketU.css';
 import HeaderPU from '../components/HeaderPU';
@@ -7,26 +7,73 @@ function DetalleTicketU() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // 1. Estados para el formulario y el Modal
-  const [titulo, setTitulo] = useState('Error de Login');
-  const [descripcion, setDescripcion] = useState('No reconoce la contraseña al intentar ingresar');
+  // 1. Estados para los datos del ticket (dinámicos)
+  const [ticketData, setTicketData] = useState({
+    nombre: '',
+    correo: '',
+    telefono: '',
+    fecha: '',
+    tecnico: '',
+    estado: ''
+  });
+  const [titulo, setTitulo] = useState('');
+  const [descripcion, setDescripcion] = useState('');
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [cargando, setCargando] = useState(true);
 
-  // 2. Función para mostrar el modal de guardado
-  const handleGuardar = () => {
-    setMostrarModal(true);
+  // 2. Efecto para cargar los datos reales al entrar
+  useEffect(() => {
+    const obtenerDetalle = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/detalle-ticket/${id}`);
+        const data = await response.json();
+
+        if (response.ok) {
+          setTicketData(data);
+          setTitulo(data.titulo); // Cargamos el título de la BD
+          setDescripcion(data.descripcion); // Cargamos la descripción de la BD
+        } else {
+          console.error("Error al obtener detalle:", data.error);
+        }
+      } catch (error) {
+        console.error("Error de conexión:", error);
+      } finally {
+        setCargando(false);
+      }
+    };
+
+    obtenerDetalle();
+  }, [id]);
+
+  // 3. Función para guardar los cambios en la BD
+  const handleGuardar = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/detalle-ticket/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ titulo, descripcion })
+      });
+
+      if (response.ok) {
+        setMostrarModal(true);
+      } else {
+        alert("No se pudieron guardar los cambios");
+      }
+    } catch (error) {
+      console.error("Error al actualizar:", error);
+    }
   };
 
-  // 3. Función para ir a la pantalla de seguimiento
   const handleSeguimiento = () => {
     navigate(`/seguimientoTicketU/${id}`);
   };
 
-  // 4. Función para cerrar y redirigir
   const cerrarModalYNavegar = () => {
     setMostrarModal(false);
     navigate('/pendientesTicketU'); 
   };
+
+  if (cargando) return <div style={{textAlign: 'center', padding: '50px'}}>Cargando detalles...</div>;
 
   return (
     <div className='container-detalle-TU'>
@@ -55,19 +102,19 @@ function DetalleTicketU() {
               </div>
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Nombre de usuario</label>
-                <input type="text" value="Juan Pérez" readOnly className='input-readonly-detalle-TU' />
+                <input type="text" value={ticketData.nombre} readOnly className='input-readonly-detalle-TU' />
               </div>
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Fecha de creación</label>
-                <input type="text" value="2026-03-10" readOnly className='input-readonly-detalle-TU' />
+                <input type="text" value={ticketData.fecha} readOnly className='input-readonly-detalle-TU' />
               </div>
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Tecnico encargado</label>
-                <input type="text" value="Carlos M." readOnly className='input-readonly-detalle-TU' />
+                <input type="text" value={ticketData.tecnico || 'Pendiente'} readOnly className='input-readonly-detalle-TU' />
               </div>
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Estado del ticket</label>
-                <input type="text" value="Abierto" readOnly className='input-readonly-detalle-TU' />
+                <input type="text" value={ticketData.estado} readOnly className='input-readonly-detalle-TU' />
               </div>
             </div>
 
@@ -75,11 +122,11 @@ function DetalleTicketU() {
             <div className='columna-detalle-TU'>
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Correo</label>
-                <input type="text" value="juan.perez@bodesa.com" readOnly className='input-readonly-detalle-TU' />
+                <input type="text" value={ticketData.correo} readOnly className='input-readonly-detalle-TU' />
               </div>
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Telefono</label>
-                <input type="text" value="312 123 4567" readOnly className='input-readonly-detalle-TU' />
+                <input type="text" value={ticketData.telefono} readOnly className='input-readonly-detalle-TU' />
               </div>
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Titulo del ticket</label>
@@ -101,7 +148,6 @@ function DetalleTicketU() {
             </div>
           </div>
 
-          {/* Contenedor de Botones Actualizado */}
           <div className='container-boton-detalle-TU'>
             <button onClick={handleSeguimiento} className='boton-seguimiento-detalle-TU'>
               Seguimiento de ticket
@@ -113,7 +159,6 @@ function DetalleTicketU() {
         </div>
       </main>
 
-      {/* Ventana emergente (Modal) */}
       {mostrarModal && (
         <div className='overlay-modal-detalle-TU'>
           <div className='modal-exito-detalle-TU'>

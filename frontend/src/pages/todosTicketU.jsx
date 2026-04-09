@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Agregamos useEffect
 import '../styles/todosTicketU.css';
 import { useNavigate } from 'react-router-dom';
 import HeaderPU from '../components/HeaderPU';
@@ -6,20 +6,43 @@ import HeaderPU from '../components/HeaderPU';
 function TodosTicketU() {
   const navigate_todosTickettU = useNavigate();
   
-  // 1. Datos de ejemplo con la nueva columna "fechaCierre"
-  const [tickets_todosTickettU] = useState([
-    { id: '101', nombre: 'Juan Pérez', titulo: 'Error de Login', descripcion: 'No reconoce la contraseña', fecha: '2026-03-10', fechaCierre: '2026-03-11', estado: 'Cerrado', tecnico: 'Carlos M.' },
-    { id: '102', nombre: 'Ana García', titulo: 'Impresora', descripcion: 'Atasco de papel en bandeja 2', fecha: '2026-03-12', fechaCierre: '—', estado: 'Abierto', tecnico: 'Pendiente' },
-    { id: '103', nombre: 'Luis Lopez', titulo: 'Software', descripcion: 'Instalacion de Office', fecha: '2026-03-15', fechaCierre: '2026-03-16', estado: 'Cerrado', tecnico: 'Ricardo H.' },
-  ]);
-
-  // 2. Estado para el buscador
+  // 1. Ahora empezamos con un array vacío
+  const [tickets_todosTickettU, setTickets_todosTickettU] = useState([]);
   const [busqueda_todosTickettU, setBusqueda_todosTickettU] = useState('');
 
-  // 3. Lógica de filtrado
+  // 2. Lógica para traer los datos del Backend
+  useEffect(() => {
+    const obtenerTickets = async () => {
+      const id_usuario = localStorage.getItem('id_usuario'); // Recuperamos el ID del que inició sesión
+      
+      if (!id_usuario) {
+        console.error("No se encontró el ID del usuario");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:3000/mis-tickets/${id_usuario}`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          setTickets_todosTickettU(data); // Guardamos los tickets reales en el estado
+        } else {
+          console.error("Error al obtener tickets:", data.error);
+        }
+      } catch (error) {
+        console.error("Error de conexión:", error);
+      }
+    };
+
+    obtenerTickets();
+  }, []); // Se ejecuta solo una vez al cargar el componente
+
+  // 3. Lógica de filtrado (se mantiene igual, pero adaptada a los nombres de tu BD)
   const filtrados_todosTickettU = tickets_todosTickettU.filter((ticket) => {
-    return Object.values(ticket).some((valor) =>
-      valor.toString().toLowerCase().includes(busqueda_todosTickettU.toLowerCase())
+    return (
+      ticket.id_ticket?.toString().toLowerCase().includes(busqueda_todosTickettU.toLowerCase()) ||
+      ticket.titulo?.toLowerCase().includes(busqueda_todosTickettU.toLowerCase()) ||
+      ticket.estado?.toLowerCase().includes(busqueda_todosTickettU.toLowerCase())
     );
   });
 
@@ -29,12 +52,12 @@ function TodosTicketU() {
 
       <main className="contenido-tabla-todosTickettU">
         <div className="encabezado-flex-todosTickettU">
-          <h2 className='titulo-todosTickettU'>Tabla de todos los tickets</h2>
+          <h2 className='titulo-todosTickettU'>Mis Tickets Reportados</h2>
           
           <div className="buscador-contenedor-todosTickettU">
             <input 
               type="text" 
-              placeholder="Buscar..." 
+              placeholder="Buscar por título o estado..." 
               value={busqueda_todosTickettU}
               onChange={(e) => setBusqueda_todosTickettU(e.target.value)}
             />
@@ -48,35 +71,42 @@ function TodosTicketU() {
               <tr>
                 <th>ID</th>
                 <th>Nombre</th>
-                <th>Titulo</th>
+                <th>Título</th>
                 <th>Descripción</th>
-                <th className="col-fecha-todosTickettU">Fecha de creación</th>
-                <th className="col-fecha-todosTickettU">Fecha de cierre</th> {/* Nueva Columna */}
+                <th className="col-fecha-todosTickettU">Fecha Creación</th>
+                <th className="col-fecha-todosTickettU">Fecha Cierre</th>
                 <th>Estado</th>
-                <th className="col-tecnico-todosTickettU">Tecnico</th>
+                <th className="col-tecnico-todosTickettU">Técnico</th>
               </tr>
             </thead>
             <tbody>
               {filtrados_todosTickettU.length > 0 ? (
                 filtrados_todosTickettU.map((ticket) => (
                   <tr 
-                    key={ticket.id} 
+                    key={ticket.id_ticket} 
                     className="fila-ticket-todosTickettU"
-                    onDoubleClick={() => navigate_todosTickettU(`/detalle-ticket/${ticket.id}`)} 
+                    onDoubleClick={() => navigate_todosTickettU(`/detalle-ticket/${ticket.id_ticket}`)} 
                   >
-                    <td>{ticket.id}</td>
-                    <td>{ticket.nombre}</td>
+                    <td>{ticket.id_ticket}</td>
+                    {/* El nombre lo tomamos del localStorage ya que son sus propios tickets */}
+                    <td>{localStorage.getItem('usuarioNombre')}</td>
                     <td>{ticket.titulo}</td>
-                    <td>{ticket.descripcion}</td>
+                    <td className="celda-descripcion">{ticket.descripcion}</td>
                     <td>{ticket.fecha}</td>
-                    <td>{ticket.fechaCierre}</td> {/* Dato Nueva Columna */}
-                    <td>{ticket.estado}</td>
-                    <td>{ticket.tecnico}</td>
+                    <td>{ticket.fechacierre}</td> 
+                    <td>
+                      <span className={`estado-${ticket.estado}`}>
+                        {ticket.estado}
+                      </span>
+                    </td>
+                    <td>{ticket.tecnico || 'Pendiente'}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" style={{textAlign: 'center'}}>No se encontraron resultados</td>
+                  <td colSpan="8" style={{textAlign: 'center', padding: '20px'}}>
+                    No tienes tickets registrados aún.
+                  </td>
                 </tr>
               )}
             </tbody>
