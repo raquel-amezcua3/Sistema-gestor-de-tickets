@@ -1,28 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/perfilU.css';
 import { useNavigate } from 'react-router-dom';
 import HeaderPU from '../components/HeaderPU';
 
 function PerfilU() {
   const navigate_perfil_usuario = useNavigate();
+  
+  // Obtenemos el ID del usuario (asegúrate de que lo guardas en el login)
+  const id_usuario = localStorage.getItem('id_usuario');
 
   // Estado para controlar la visibilidad de la ventana emergente
   const [mostrarModal_perfil_usuario, setMostrarModal_perfil_usuario] = useState(false);
 
-  // Estado para los datos del perfil
+  // Estado para los datos del perfil (inician vacíos para cargarse de la BD)
   const [datos_perfil_usuario, setDatos_perfil_usuario] = useState({
-    nombre: 'Usuario Ejemplo',
-    correo: 'usuario@bodesa.com',
-    telefono: '3121234567',
-    extension: '101',
-    contrasena: '********'
+    nombre: '',
+    correo: '',
+    telefono: '',
+    extension: '',
+    contrasena: ''
   });
 
-  const handleActualizar_perfil_usuario = (e) => {
+  // 1. CARGAR DATOS DE LA BASE DE DATOS AL ENTRAR
+  useEffect(() => {
+    const obtenerPerfil = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/perfil/${id_usuario}`);
+        const data = await response.json();
+        if (response.ok) {
+          setDatos_perfil_usuario(data);
+        }
+      } catch (error) {
+        console.error("Error al cargar perfil:", error);
+      }
+    };
+    if(id_usuario) obtenerPerfil();
+  }, [id_usuario]);
+
+  // 2. FUNCIÓN PARA ACTUALIZAR EN LA BASE DE DATOS
+  const handleActualizar_perfil_usuario = async (e) => {
     e.preventDefault();
-    console.log("Datos actualizados", datos_perfil_usuario);
-    // Activa el modal de éxito
-    setMostrarModal_perfil_usuario(true);
+    try {
+      const response = await fetch(`http://localhost:3000/perfil/${id_usuario}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos_perfil_usuario)
+      });
+
+      if (response.ok) {
+        // Actualizamos el nombre en el storage por si cambió
+        localStorage.setItem('usuarioNombre', datos_perfil_usuario.nombre);
+        setMostrarModal_perfil_usuario(true);
+      } else {
+        alert("No se pudieron actualizar los datos");
+      }
+    } catch (error) {
+      console.error("Error en la petición:", error);
+    }
   };
 
   return (

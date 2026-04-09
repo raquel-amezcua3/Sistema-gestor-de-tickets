@@ -123,3 +123,9 @@ app.use('/tickets-pendientes', ticketsPendientesRoutes);
 
 //Esto es para el detalle del ticket 
 app.use('/detalle-ticket', require('./routes/detalleTicket'));
+
+//Esto es para que el usuario pueda ver su perfil
+app.use('/perfil', require('./routes/perfil'));
+
+//Esto es para que pueda ver todos los usuarios del sistema
+app.use('/directorio', require('./routes/directorio'));
