@@ -41,9 +41,35 @@ function NuevoTAdmin() {
       setNuevo_tecnico({ ...nuevo_tecnico, [name]: value });
    };
 
-   const handleSubmit = (e) => {
+   // FUNCIÓN INTEGRADA PARA CONECTAR AL BACKEND
+   const handleSubmit = async (e) => {
      e.preventDefault();
-     setMostrarModal(true); 
+
+     try {
+       const response = await fetch('http://localhost:3000/admin/registrar-tecnico/registrar', {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+           nombre: nuevo_tecnico.nombre,
+           correo: nuevo_tecnico.correo,
+           telefono: nuevo_tecnico.telefono,
+           extension: nuevo_tecnico.extension,
+           contrasena: nuevo_tecnico.contrasena
+         }),
+       });
+
+       if (response.ok) {
+         setMostrarModal(true); 
+       } else {
+         const errorData = await response.json();
+         alert(errorData.error || "Error al registrar");
+       }
+     } catch (error) {
+       console.error("Error de red:", error);
+       alert("No hay conexión con el servidor");
+     }
    };
 
    const cerrarModalYNavegar = () => {
@@ -111,7 +137,7 @@ function NuevoTAdmin() {
                           required
                           pattern='\d{10}'
                           maxLength="10"
-                         title='Debe tener exactamente 10 numeros'
+                          title='Debe tener exactamente 10 numeros'
                        />
                     </div>
 

@@ -1,26 +1,26 @@
-import React, { useEffect } from 'react'; // Agregamos useEffect
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../components/HeaderPU.css';
 
 function HeaderPU() {
   const navigate = useNavigate();
 
-  // --- EL CANDADO DE SEGURIDAD ---
   useEffect(() => {
-    const idUsuario = localStorage.getItem('usuarioId');
+    // IMPORTANTE: Los nombres deben ser IGUALES a como los guardas en Login.jsx
+    const idUsuario = localStorage.getItem('id_usuario'); 
     const rol = localStorage.getItem('usuarioRol');
 
-    // Si no hay ID o si el rol no existe, significa que no ha pasado por el login
-    if (!idUsuario || rol === null) {
-      console.log("Acceso denegado: No hay sesión activa");
-      navigate('/'); // Te manda al login
+    // Solo validamos si REALMENTE no hay nada en el storage.
+    // Si usas componentes de "Rutas Protegidas" en App.js, 
+    // podrías incluso quitar este useEffect del Header para evitar conflictos.
+    if (!idUsuario) {
+      console.warn("Acceso denegado: No se encontró id_usuario");
+      navigate('/'); 
     }
   }, [navigate]);
-  // -------------------------------
 
   const handleLogout = (e) => {
     e.preventDefault();
-
     const confirmar = window.confirm("¿Estás seguro de que quieres cerrar sesión?");
     
     if (confirmar) {
@@ -32,9 +32,18 @@ function HeaderPU() {
   return (
     <nav className='encabezado-principal-usuario'>
       <div className='logo-PU'>
-        <a href='/principalUsuario'>
+        {/* Usamos el rol para saber a dónde mandarlo si hace clic en el logo */}
+        <button 
+          onClick={() => {
+            const rol = localStorage.getItem('usuarioRol');
+            if (Number(rol) === 1) navigate('/principalAdmin');
+            else if (Number(rol) === 2) navigate('/principalTecnico');
+            else navigate('/principalUsuario');
+          }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+        >
           <img src='/img/Bodesa.png' alt='Logo encabezado' />
-        </a>
+        </button>
       </div>
 
       <ul className='nav-PU'>

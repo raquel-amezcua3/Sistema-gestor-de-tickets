@@ -8,12 +8,14 @@ router.get('/:id', async (req, res) => {
         const query = `
             SELECT 
                 t.id_ticket, 
-                u.nombre, 
+                u.nombre AS nombre_usuario, 
                 u.correo, 
                 u.telefono, 
+                u.extension, 
                 t.titulo, 
                 t.descripcion, 
                 t.estado, 
+                t.id_tecnico,
                 TO_CHAR(t.fecha_creacion, 'DD/MM/YYYY') as fecha,
                 t.fecha_cierre,
                 (NOW() > t.fecha_cierre + INTERVAL '24 hours') as superar_limite

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/datosTicketAdmin.css';
 import EncabezadoAdmin from '../components/EncabezadoAdmin';
@@ -7,26 +7,78 @@ function DatosTicketAdmin() {
   const { id } = useParams();
   const navigate_datos_admin = useNavigate();
   const [mostrarModal_datos_admin, setMostrarModal_datos_admin] = useState(false);
+  const [tecnicos, setTecnicos] = useState([]); // Estado para la lista de técnicos reales
 
   const [ticket_datos_admin, setTicket_datos_admin] = useState({
     id: id || '101',
-    nombre_usuario: 'Juan Pérez',
-    correo: 'juan.p@bodesa.com',
-    telefono: '3121234567',
-    extension: '101',
-    titulo: 'Error de Login',
-    descripcion: 'El usuario reporta que no puede acceder al sistema tras la última actualización de seguridad. Se requiere revisión de credenciales.',
-    tecnico_asignado: 'Carlos M.'
+    nombre_usuario: '',
+    correo: '',
+    telefono: '',
+    extension: '',
+    titulo: '',
+    descripcion: '',
+    tecnico_asignado: '' // Aquí guardaremos el ID del técnico seleccionado
   });
 
-  const handleActualizar_datos_admin = (e) => {
+  // 1. Cargar la lista de técnicos (Rol 2) y los datos del ticket al montar el componente
+  useEffect(() => {
+    const cargarDatosIniciales = async () => {
+      try {
+        // Obtener técnicos
+        const resTec = await fetch('http://localhost:3000/admin/usuarios/tecnicos');
+        const dataTec = await resTec.json();
+        setTecnicos(dataTec);
+
+        // Obtener datos del ticket actual
+        const resTick = await fetch(`http://localhost:3000/detalle-ticket/${id}`);
+        const dataTick = await resTick.json();
+        
+        if (resTick.ok) {
+          setTicket_datos_admin({
+            id: dataTick.id_ticket,
+            nombre_usuario: dataTick.nombre_usuario,
+            correo: dataTick.correo,
+            telefono: dataTick.telefono,
+            extension: dataTick.extension,
+            titulo: dataTick.titulo,
+            descripcion: dataTick.descripcion,
+            tecnico_asignado: dataTick.id_tecnico || ''
+          });
+        }
+      } catch (err) {
+        console.error("Error al cargar datos:", err);
+      }
+    };
+    cargarDatosIniciales();
+  }, [id]);
+
+  // 2. Función para actualizar el técnico y cambiar estado a 'en proceso'
+  const handleActualizar_datos_admin = async (e) => {
     e.preventDefault();
-    setMostrarModal_datos_admin(true);
+    
+    try {
+      const response = await fetch('http://localhost:3000/admin/asignar-tecnico', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id_ticket: ticket_datos_admin.id,
+          id_tecnico: ticket_datos_admin.tecnico_asignado
+        })
+      });
+
+      if (response.ok) {
+        setMostrarModal_datos_admin(true);
+      } else {
+        alert("Error al actualizar los datos en el servidor");
+      }
+    } catch (error) {
+      console.error("Error en la petición:", error);
+    }
   };
 
   const cerrarModal_datos_admin = () => {
     setMostrarModal_datos_admin(false);
-    navigate_datos_admin('/buscarAdmin');
+    navigate_datos_admin('/asignarAdmin'); // Te regresa a la tabla de asignación
   };
 
   return (
@@ -78,13 +130,18 @@ function DatosTicketAdmin() {
               <div className="columna-datos-admin">
                 <div className="grupo-input-datos-admin">
                   <label className='tecnico-label-admin' >Técnico Asignado</label>
-                  <select className='tecnico-select-admin'
+                  <select 
+                    className='tecnico-select-admin'
+                    required
                     value={ticket_datos_admin.tecnico_asignado} 
                     onChange={(e) => setTicket_datos_admin({...ticket_datos_admin, tecnico_asignado: e.target.value})}
                   >
-                    <option value="Pendiente">Pendiente</option>
-                    <option value="Carlos M.">Carlos M.</option>
-                    <option value="Ricardo H.">Ricardo H.</option>
+                    <option value="">-- Seleccione un técnico --</option>
+                    {tecnicos.map((tec) => (
+                      <option key={tec.id_usuario} value={tec.id_usuario}>
+                        {tec.nombre}
+                      </option>
+                    ))}
                   </select>
                 </div>
 

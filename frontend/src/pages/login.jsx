@@ -5,7 +5,6 @@ import '../styles/login.css';
 function Login() {
   const navigate = useNavigate();
   
-  // 1. Estado para capturar credenciales
   const [credenciales, setCredenciales] = useState({
     correo: '',
     contraseña: ''
@@ -19,7 +18,6 @@ function Login() {
     e.preventDefault();
 
     try {
-      // 2. Petición al Backend
       const response = await fetch('http://localhost:3000/login', {
         method: 'POST',
         headers: {
@@ -34,23 +32,25 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // 3. ¡Login exitoso! Guardamos datos importantes en el navegador
-        alert(data.mensaje);
-        
-        // Guardamos el nombre y rol para saber quién entró
-        localStorage.setItem('id_usuario', data.usuario.id);
-        localStorage.setItem('usuarioNombre', data.usuario.nombre);
-        localStorage.setItem('usuarioRol', data.usuario.rol);
+        // 1. Convertimos el rol a número inmediatamente para evitar errores de comparación
+        const rolNumerico = Number(data.usuario.rol);
 
-        // 4. Redirección inteligente según el ROL
-        // 0 = Cliente, 1 = Jefe, 2 = Técnico
-        if (data.usuario.rol === 1) {
-          navigate('/principalAdmin'); 
-        } else if (data.usuario.rol === 2) {
-          navigate('/principalTecnico');
-        } else {
-          navigate('/principalUsuario'); // Ruta para el cliente normal
-        }
+        // 2. GUARDADO CRÍTICO: Usamos los nombres exactos que el HeaderPU espera
+        localStorage.setItem('id_usuario', data.usuario.id); 
+        localStorage.setItem('usuarioNombre', data.usuario.nombre);
+        localStorage.setItem('usuarioRol', rolNumerico);
+
+        // 3. Pequeña pausa de seguridad (50ms) para asegurar que el navegador guardó los datos
+        // antes de que el Header intente leerlos y te expulse.
+        setTimeout(() => {
+          if (rolNumerico === 1) {
+            navigate('/principalAdmin'); 
+          } else if (rolNumerico === 2) {
+            navigate('/principalTecnico');
+          } else {
+            navigate('/principalUsuario'); 
+          }
+        }, 50);
 
       } else {
         alert("Error: " + data.error);
@@ -72,7 +72,6 @@ function Login() {
         <h2 className='titulo-login'>¡Bienvenido, comencemos!</h2>
 
         <form className='formulario-login' onSubmit={handleSubmit}>
-          {/* CORREO (Antes decía nombre, lo cambiamos para que funcione con tu backend) */}
           <div className='campo-formulario-login'>
             <label htmlFor='correo'>Correo electrónico</label>
             <input 
@@ -85,7 +84,6 @@ function Login() {
             />
           </div>
 
-          {/* CONTRASEÑA */}
           <div className='campo-formulario-login'>
             <label htmlFor='contraseña'>Contraseña</label>
             <input 
@@ -99,10 +97,6 @@ function Login() {
           </div>
 
           <button type='submit' className='boton-login'>Iniciar sesión</button>
-          
-          <div className='cuenta-login'>
-            <a href='/principalUsuario'>¿Aún no tienes cuenta?</a>
-          </div>
         </form>
       </div>
     </div>

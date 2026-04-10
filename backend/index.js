@@ -4,6 +4,14 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const pool = require('./db'); // Usamos la conexión centralizada
 const nuevoticketRoutes = require('./routes/nuevoticket'); // Importamos la nueva ruta
+const asignarAdminRoutes = require('./routes/asignarAdmin');
+const usuariosAdminRoutes = require('./routes/usuariosAdmin');
+const registroTecnicoAdmin = require('./routes/registroTecnicoAdmin');
+const busquedaGlobalRoutes = require('./routes/busquedaGlobalAdmin');
+
+
+
+
 
 const app = express();
 
@@ -82,7 +90,7 @@ app.post('/login', async (req, res) => {
       res.json({
         mensaje: "¡Bienvenido!",
         usuario: {
-          id: usuario.id_usuario, // Corregido a SINGULAR
+          id: usuario.id_usuario, 
           nombre: usuario.nombre,
           rol: usuario.rol
         }
@@ -97,35 +105,46 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// --- OTRAS RUTAS MODULARIZADAS ---
+
+// Seccion de "mis tickets" del usuario 0 
+const misTicketsRoutes = require('./routes/misTickets');
+app.use('/mis-tickets', misTicketsRoutes);
+
+
+// Seccion de "buscar ticket" (todos los del sistema usuario 0)
+const buscarTicketRoutes = require('./routes/buscarTicket');
+app.use('/buscar-ticket', buscarTicketRoutes);
+
+// Aparecen todos los tickets del sistema usuario 0
+const todosLosTicketsRoutes = require('./routes/todosLosTickets');
+app.use('/todos-los-tickets', todosLosTicketsRoutes);
+
+// Tickets pendientes del usuario 0 (abierto o en espera)
+const ticketsPendientesRoutes = require('./routes/ticketsPendientes');
+app.use('/tickets-pendientes', ticketsPendientesRoutes);
+
+// Detalle del ticket 
+app.use('/detalle-ticket', require('./routes/detalleTicket'));
+
+// Perfil del usuario
+app.use('/perfil', require('./routes/perfil'));
+
+// Directorio de usuarios
+app.use('/directorio', require('./routes/directorio'));
+
+// Para asignar tickets 
+app.use('/admin', asignarAdminRoutes);
+app.use('/admin/usuarios', usuariosAdminRoutes); 
+
+//Para registrar un nuevo tecnico (Administrador rol 1)
+app.use('/admin/registrar-tecnico', registroTecnicoAdmin);
+
+//Para hacer una busqueda de un ticket dentro del sistema (Administrador rol 1)
+app.use('/admin/busqueda', busquedaGlobalRoutes);
+
 // Iniciar servidor
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
 });
-
-
-//Esto es para la seccion de "mis tickets" del usuario 0 
-const misTicketsRoutes = require('./routes/misTickets');
-app.use('/mis-tickets', misTicketsRoutes);
-
-
-//Esto es para la seccion de "buscar ticket" aqui parecen todos los tickets del sistema (usuario 0)
-const buscarTicketRoutes = require('./routes/buscarTicket');
-app.use('/buscar-ticket', buscarTicketRoutes);
-
-//Esto es para que aparezcan todos los tickets del sistema usuario 0
-const todosLosTicketsRoutes = require('./routes/todosLosTickets');
-app.use('/todos-los-tickets', todosLosTicketsRoutes);
-
-//Esto es de los tickts pendientes del usuario 0 en estado abierto o en espera.
-const ticketsPendientesRoutes = require('./routes/ticketsPendientes');
-app.use('/tickets-pendientes', ticketsPendientesRoutes);
-
-//Esto es para el detalle del ticket 
-app.use('/detalle-ticket', require('./routes/detalleTicket'));
-
-//Esto es para que el usuario pueda ver su perfil
-app.use('/perfil', require('./routes/perfil'));
-
-//Esto es para que pueda ver todos los usuarios del sistema
-app.use('/directorio', require('./routes/directorio'));

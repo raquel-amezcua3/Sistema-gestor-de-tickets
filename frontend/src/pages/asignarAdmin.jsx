@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // Agregamos useEffect
 import { useNavigate } from 'react-router-dom';
 import '../styles/asignarAdmin.css';
 import EncabezadoAdmin from '../components/EncabezadoAdmin';
@@ -6,27 +6,42 @@ import EncabezadoAdmin from '../components/EncabezadoAdmin';
 function AsignarAdmin() {
   const navigate_asignar_admin = useNavigate();
 
-  // Datos de ejemplo basados en las vistas de administrador
-  const [tickets_asignar_admin] = useState([
-    { id: '101', nombre: 'Juan Pérez', titulo: 'Error de Login', descripcion: 'No reconoce la contraseña', fecha: '2026-03-10', fechaCierre: '2026-03-11', estado: 'Cerrado', tecnico: 'Carlos M.' },
-    { id: '102', nombre: 'Ana García', titulo: 'Impresora', descripcion: 'Atasco de papel en bandeja 2', fecha: '2026-03-12', fechaCierre: '—', estado: 'Abierto', tecnico: 'Pendiente' },
-    { id: '103', nombre: 'Luis Lopez', titulo: 'Software', descripcion: 'Instalacion de Office', fecha: '2026-03-15', fechaCierre: '2026-03-16', estado: 'Cerrado', tecnico: 'Ricardo H.' },
-    { id: '104', nombre: 'Maria Sol', titulo: 'Red', descripcion: 'Sin internet en oficina 4', fecha: '2026-03-18', fechaCierre: '—', estado: 'Abierto', tecnico: 'Pendiente' },
-  ]);
-
+  // Ahora el estado inicial es un array vacío que se llenará desde la DB
+  const [tickets_asignar_admin, setTickets_asignar_admin] = useState([]);
   const [busqueda_asignar_admin, setBusqueda_asignar_admin] = useState('');
   const [soloAbiertos_asignar_admin, setSoloAbiertos_asignar_admin] = useState(false);
 
-  // Lógica de filtrado y ordenamiento (Abiertos arriba)
+  // --- FUNCIÓN PARA TRAER LOS TICKETS REALES ---
+  const obtenerTickets = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/admin/tickets-por-asignar');
+      if (response.ok) {
+        const data = await response.json();
+        setTickets_asignar_admin(data);
+      }
+    } catch (error) {
+      console.error("Error conectando al servidor:", error);
+    }
+  };
+
+  // Se ejecuta una sola vez al cargar la pantalla
+  useEffect(() => {
+    obtenerTickets();
+  }, []);
+
+  // Lógica de filtrado (Actualizada para manejar minúsculas de la DB)
   const filtrados_asignar_admin = tickets_asignar_admin
     .filter((ticket) => {
-      const coincide = ticket.id.toLowerCase().includes(busqueda_asignar_admin.toLowerCase()) ||
-                       ticket.nombre.toLowerCase().includes(busqueda_asignar_admin.toLowerCase());
-      return soloAbiertos_asignar_admin ? (coincide && ticket.estado === 'Abierto') : coincide;
+      const coincide = 
+        ticket.id.toString().includes(busqueda_asignar_admin) ||
+        ticket.nombre.toLowerCase().includes(busqueda_asignar_admin.toLowerCase());
+      
+      // Filtramos por 'abierto' en minúsculas como lo tienes en la DB
+      return soloAbiertos_asignar_admin ? (coincide && ticket.estado === 'abierto') : coincide;
     })
     .sort((a, b) => {
-      if (a.estado === 'Abierto' && b.estado !== 'Abierto') return -1;
-      if (a.estado !== 'Abierto' && b.estado === 'Abierto') return 1;
+      if (a.estado === 'abierto' && b.estado !== 'abierto') return -1;
+      if (a.estado !== 'abierto' && b.estado === 'abierto') return 1;
       return 0;
     });
 
@@ -91,11 +106,12 @@ function AsignarAdmin() {
                     {ticket.estado}
                   </td>
                   <td>
-                    {ticket.tecnico === 'Pendiente' ? (
+                    {/* Si el técnico es 'Pendiente' o nulo, mostramos el botón */}
+                    {ticket.tecnico === 'Pendiente' || !ticket.tecnico ? (
                       <button 
                         className="btn-accion-asignar-admin"
                         onClick={(e) => {
-                          e.stopPropagation(); // Evita que el click simple interfiera con el double click
+                          e.stopPropagation();
                           navigate_asignar_admin(`/datosTicketAdmin/${ticket.id}`);
                         }}
                       >
@@ -107,6 +123,13 @@ function AsignarAdmin() {
                   </td>
                 </tr>
               ))}
+              {filtrados_asignar_admin.length === 0 && (
+                <tr>
+                  <td colSpan="8" style={{ textAlign: 'center', padding: '20px' }}>
+                    No hay tickets disponibles por ahora.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

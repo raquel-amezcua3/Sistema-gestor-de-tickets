@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'; // Importamos useEffect
+import React, { useEffect } from 'react';
 import '../components/EncabezadoTecnico.css';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -7,20 +7,23 @@ function EncabezadoTecnico() {
 
   // --- CANDADO DE SEGURIDAD PARA TÉCNICOS ---
   useEffect(() => {
-    const idUsuario = localStorage.getItem('usuarioId');
+    // IMPORTANTE: Sincronizado con los nombres de localStorage del Login.jsx
+    const idUsuario = localStorage.getItem('id_usuario'); 
     const rol = localStorage.getItem('usuarioRol');
 
     // 1. Verificamos si existe sesión
     if (!idUsuario || rol === null) {
+      console.log("Acceso denegado: No se encontró sesión activa");
       navigate_header_tecnico('/');
       return;
     }
 
     // 2. Verificamos si es técnico (Rol 2)
-    // Nota: El rol viene del localStorage como String, por eso usamos != 2 o lo convertimos
+    // Convertimos a Number para asegurar una comparación limpia
     if (Number(rol) !== 2) {
-      alert("Acceso denegado: No tienes permisos de técnico.");
-      navigate_header_tecnico('/'); // Lo sacamos si no es técnico
+      console.error("Permisos insuficientes: Se requiere rol de técnico.");
+      // Solo alertar si el usuario intenta entrar a la mala
+      navigate_header_tecnico('/'); 
     }
   }, [navigate_header_tecnico]);
   // ------------------------------------------
@@ -32,10 +35,7 @@ function EncabezadoTecnico() {
     
     if (confirmar) {
       console.log("Limpiando datos y cerrando sesión...");
-      // Limpiamos el localStorage para que el candado lo detecte
       localStorage.clear();
-      
-      // Redirigir al Login
       navigate_header_tecnico('/'); 
     }
   };

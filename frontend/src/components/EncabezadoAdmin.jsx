@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Usamos Link para mejor rendimiento
+import { useNavigate, Link } from 'react-router-dom';
 import '../components/EncabezadoAdmin.css';
 
 function EncabezadoAdmin() {
@@ -7,19 +7,21 @@ function EncabezadoAdmin() {
 
   // --- CANDADO DE SEGURIDAD PARA ADMINISTRADORES ---
   useEffect(() => {
-    const idUsuario = localStorage.getItem('usuarioId');
+    // Sincronizamos con el nombre correcto: id_usuario
+    const idUsuario = localStorage.getItem('id_usuario'); 
     const rol = localStorage.getItem('usuarioRol');
 
     // 1. Verificamos si existe sesión
     if (!idUsuario || rol === null) {
+      console.warn("Admin: No se encontró sesión activa.");
       navigate('/');
       return;
     }
 
     // 2. Verificamos si es Administrador (Rol 1)
+    // Convertimos a Number para evitar errores de tipo string "1"
     if (Number(rol) !== 1) {
       alert("Acceso denegado: Esta zona es exclusiva para administradores.");
-      // Si es un usuario normal (0) o técnico (2), lo mandamos al inicio
       navigate('/'); 
     }
   }, [navigate]);

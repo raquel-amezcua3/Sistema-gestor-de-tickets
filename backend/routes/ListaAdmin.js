@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Agregamos useEffect
+import React, { useState, useEffect } from 'react'; // Añadimos useEffect
 import '../styles/listaAdmin.css';
 import { useNavigate } from 'react-router-dom';
 import EncabezadoAdmin from '../components/EncabezadoAdmin';
@@ -6,42 +6,45 @@ import EncabezadoAdmin from '../components/EncabezadoAdmin';
 function ListaAdmin() {
   const navigate_lista_admin = useNavigate();
 
-  // 1. Estado para los técnicos (ahora inicia como array vacío)
+  // 1. Estado para los técnicos (ahora inicia vacío)
   const [tecnicos_lista_admin, setTecnicos_lista_admin] = useState([]);
-  
+
   // 2. Estado para el buscador
   const [busqueda_lista_admin, setBusqueda_lista_admin] = useState('');
 
-  // --- FUNCIÓN PARA TRAER LOS DATOS REALES ---
+  // --- FUNCIÓN PARA TRAER TÉCNICOS REALES ---
   useEffect(() => {
     const obtenerTecnicos = async () => {
       try {
+        // Usamos la ruta que creamos en usuariosAdmin.js
+        // Si tu ruta de técnicos no devuelve teléfono y extensión, 
+        // asegúrate de que el SELECT en el backend incluya esos campos.
         const response = await fetch('http://localhost:3000/admin/usuarios/tecnicos');
         const data = await response.json();
         
         if (response.ok) {
-          // Mapeamos para asegurar que los nombres de las propiedades coincidan con tu tabla
-          const dataFormateada = data.map(tec => ({
+          // Mapeamos los datos para que coincidan con tus nombres de columna (id_usuario -> id)
+          const dataMapeada = data.map(tec => ({
             id: tec.id_usuario,
             nombre: tec.nombre,
-            correo: tec.correo,
-            telefono: tec.telefono,
-            extension: tec.extension
+            correo: tec.correo || 'N/A',
+            telefono: tec.telefono || 'N/A',
+            extension: tec.extension || 'N/A'
           }));
-          setTecnicos_lista_admin(dataFormateada);
+          setTecnicos_lista_admin(dataMapeada);
         }
       } catch (error) {
-        console.error("❌ Error al cargar técnicos:", error);
+        console.error("Error al obtener técnicos:", error);
       }
     };
 
     obtenerTecnicos();
   }, []);
 
-  // 3. Lógica de filtrado (se mantiene igual, funciona perfecto con los datos reales)
+  // 3. Lógica de filtrado (Se mantiene igual)
   const filtrados_lista_admin = tecnicos_lista_admin.filter((tecnico) => {
     return Object.values(tecnico).some((valor) =>
-      valor && valor.toString().toLowerCase().includes(busqueda_lista_admin.toLowerCase())
+      valor.toString().toLowerCase().includes(busqueda_lista_admin.toLowerCase())
     );
   });
 
@@ -56,9 +59,9 @@ function ListaAdmin() {
           <div className="buscador-lista-admin">
             <input 
               type="text" 
-              placeholder="Buscar por nombre, correo o ID..."
               value={busqueda_lista_admin}
               onChange={(e) => setBusqueda_lista_admin(e.target.value)}
+              placeholder="Buscar técnico..."
             />
             <img 
               src="/img/lupa.png" 
@@ -86,8 +89,6 @@ function ListaAdmin() {
                     key={tecnico.id} 
                     className="fila-lista-admin"
                     onDoubleClick={() => navigate_lista_admin(`/detallesAdmin/${tecnico.id}`)} 
-                    style={{ cursor: 'pointer' }}
-                    title="Doble clic para ver detalles"
                   >
                     <td>{tecnico.id}</td>
                     <td>{tecnico.nombre}</td>
@@ -98,7 +99,7 @@ function ListaAdmin() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
+                  <td colSpan="5" style={{textAlign: 'center', padding: '20px'}}>
                     No se encontraron técnicos
                   </td>
                 </tr>

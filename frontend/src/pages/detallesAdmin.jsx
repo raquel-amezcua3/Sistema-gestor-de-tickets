@@ -8,37 +8,68 @@ function DetallesAdmin() {
   const { id } = useParams();
 
   const [editando, setEditando] = useState(false);
-  
-  // Estados para controlar los diferentes modales
   const [modalExito, setModalExito] = useState(false);
   const [modalConfirmarBaja, setModalConfirmarBaja] = useState(false);
   const [modalEliminado, setModalEliminado] = useState(false);
 
-  const tecnicos_datos = [
-    { id: '01', nombre: 'Juan Pérez', correo: 'juan.p@bodesa.com', telefono: '3121234567', extension: '101' },
-    { id: '02', nombre: 'Ana García', correo: 'ana.g@bodesa.com', telefono: '3129876543', extension: '102' },
-  ];
-
   const [tecnico_lista_admin, setTecnico_lista_admin] = useState({
-    nombre: '', correo: '', telefono: '', extension: '', contrasena: ''
+    nombre: '', correo: '', telefono: '', extension: '', contrasena: '********'
   });
 
+  // 1. Cargar datos del técnico desde el backend
   useEffect(() => {
-    const encontrado = tecnicos_datos.find(t => t.id === id);
-    if (encontrado) {
-      setTecnico_lista_admin({ ...encontrado, contrasena: '********' });
-    }
+    const cargarTecnico = async () => {
+      try {
+        const res = await fetch(`http://localhost:3000/admin/usuarios/tecnicos/${id}`);
+        const data = await res.json();
+        if (res.ok) {
+          setTecnico_lista_admin({
+            nombre: data.nombre,
+            correo: data.correo,
+            telefono: data.telefono,
+            extension: data.extension,
+            contrasena: '********' // Valor visual
+          });
+        }
+      } catch (err) {
+        console.error("Error cargando técnico:", err);
+      }
+    };
+    cargarTecnico();
   }, [id]);
 
-  // Handlers para los botones
-  const handleGuardarActualizacion = () => {
-    setModalExito(true);
-    setEditando(false);
+  // 2. Guardar actualización
+  const handleGuardarActualizacion = async () => {
+    try {
+      const res = await fetch(`http://localhost:3000/admin/usuarios/tecnicos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(tecnico_lista_admin)
+      });
+      if (res.ok) {
+        setModalExito(true);
+        setEditando(false);
+      }
+    } catch (err) {
+      alert("Error al actualizar");
+    }
   };
 
-  const confirmarBaja = () => {
-    setModalConfirmarBaja(false);
-    setModalEliminado(true);
+  // 3. Confirmar y ejecutar eliminación
+  const confirmarBaja = async () => {
+    try {
+      const res = await fetch(`http://localhost:3000/admin/usuarios/tecnicos/${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        setModalConfirmarBaja(false);
+        setModalEliminado(true);
+      } else {
+        alert("No se puede eliminar el técnico (puede tener tickets asignados)");
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -58,23 +89,53 @@ function DetallesAdmin() {
             <div className="inputs-detalles-admin">
               <div className="grupo-input-detalles-admin">
                 <label><span className="rojo-detalles-admin">*</span>Nombre de usuario</label>
-                <input type="text" value={tecnico_lista_admin.nombre} readOnly={!editando} className={editando ? "input-editable" : ""} />
+                <input 
+                  type="text" 
+                  value={tecnico_lista_admin.nombre} 
+                  onChange={(e) => setTecnico_lista_admin({...tecnico_lista_admin, nombre: e.target.value})}
+                  readOnly={!editando} 
+                  className={editando ? "input-editable" : ""} 
+                />
               </div>
               <div className="grupo-input-detalles-admin">
                 <label><span className="rojo-detalles-admin">*</span>Correo electronico</label>
-                <input type="text" value={tecnico_lista_admin.correo} readOnly={!editando} className={editando ? "input-editable" : ""} />
+                <input 
+                  type="text" 
+                  value={tecnico_lista_admin.correo} 
+                  onChange={(e) => setTecnico_lista_admin({...tecnico_lista_admin, correo: e.target.value})}
+                  readOnly={!editando} 
+                  className={editando ? "input-editable" : ""} 
+                />
               </div>
               <div className="grupo-input-detalles-admin">
                 <label><span className="rojo-detalles-admin">*</span>Telefono</label>
-                <input type="text" value={tecnico_lista_admin.telefono} readOnly={!editando} className={editando ? "input-editable" : ""} />
+                <input 
+                  type="text" 
+                  value={tecnico_lista_admin.telefono} 
+                  onChange={(e) => setTecnico_lista_admin({...tecnico_lista_admin, telefono: e.target.value})}
+                  readOnly={!editando} 
+                  className={editando ? "input-editable" : ""} 
+                />
               </div>
               <div className="grupo-input-detalles-admin">
                 <label>Extension</label>
-                <input type="text" value={tecnico_lista_admin.extension} readOnly={!editando} className={editando ? "input-editable" : ""} />
+                <input 
+                  type="text" 
+                  value={tecnico_lista_admin.extension} 
+                  onChange={(e) => setTecnico_lista_admin({...tecnico_lista_admin, extension: e.target.value})}
+                  readOnly={!editando} 
+                  className={editando ? "input-editable" : ""} 
+                />
               </div>
               <div className="grupo-input-detalles-admin">
                 <label><span className="rojo-detalles-admin">*</span>Contraseña</label>
-                <input type="password" value={tecnico_lista_admin.contrasena} readOnly={!editando} className={editando ? "input-editable" : ""} />
+                <input 
+                  type="password" 
+                  value={tecnico_lista_admin.contrasena} 
+                  onChange={(e) => setTecnico_lista_admin({...tecnico_lista_admin, contrasena: e.target.value})}
+                  readOnly={!editando} 
+                  className={editando ? "input-editable" : ""} 
+                />
               </div>
             </div>
 
@@ -99,7 +160,7 @@ function DetallesAdmin() {
         </div>
       </main>
 
-      {/* MODAL 1: DATOS ACTUALIZADOS (ÉXITO) */}
+      {/* MODALES IGUALES AL TUYO */}
       {modalExito && (
         <div className='overlay-modal-detalle-TU'>
           <div className='modal-exito-detalle-TU'>
@@ -112,7 +173,6 @@ function DetallesAdmin() {
         </div>
       )}
 
-      {/* MODAL 2: CONFIRMAR BAJA */}
       {modalConfirmarBaja && (
         <div className='overlay-modal-detalle-TU'>
           <div className='modal-exito-detalle-TU'>
@@ -128,7 +188,6 @@ function DetallesAdmin() {
         </div>
       )}
 
-      {/* MODAL 3: ELIMINADO CORRECTAMENTE */}
       {modalEliminado && (
         <div className='overlay-modal-detalle-TU'>
           <div className='modal-exito-detalle-TU'>
