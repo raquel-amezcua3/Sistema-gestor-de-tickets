@@ -13,87 +13,88 @@ function DatosTicketTecnico() {
     id: '', nombre: '', correo: '', telefono: '', titulo: '', descripcion: '', fecha: '', estado: '', tecnico: '', fechaCierre: ''
   });
 
-  // --- VALIDACIÓN ---
-  // Verifica que el estado sea 'Cerrado' Y que la fecha de cierre no esté vacía
   const requisitosCompletos = ticket_datosT_Tecnico.estado === 'Cerrado' && ticket_datosT_Tecnico.fechaCierre !== '';
 
+  // CARGAR DATOS REALES DESDE EL BACKEND
   useEffect(() => {
-    // Simulación de carga de datos
-    const encontrado = { 
-      id: '101', nombre: 'Juan Pérez', correo: 'juan.p@bodesa.com', telefono: '3121234567', 
-      titulo: 'Error de Login', descripcion: 'No reconoce la contraseña...', 
-      fecha: '2026-03-10', estado: 'En proceso', tecnico: 'Raquel Amezcua', fechaCierre: '' 
+    const cargarDetalle = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/tecnico/tickets/detalle/${id}`);
+        const data = await response.json();
+        if (response.ok) {
+          setTicket_datosT_Tecnico({ ...data, fechaCierre: '' });
+        }
+      } catch (err) {
+        console.error("Error al cargar detalle:", err);
+      }
     };
-    setTicket_datosT_Tecnico(encontrado);
+    cargarDetalle();
   }, [id]);
 
-  const confirmarResolucion = () => {
-    setModalConfirmar_DT(false);
-    setModalExito_datosT_Tecnico(true);
+  // FUNCIÓN PARA GUARDAR EN LA DB
+  const confirmarResolucion = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/tecnico/tickets/resolver/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          estado: ticket_datosT_Tecnico.estado,
+          fechaCierre: ticket_datosT_Tecnico.fechaCierre
+        })
+      });
+
+      if (response.ok) {
+        setModalConfirmar_DT(false);
+        setModalExito_datosT_Tecnico(true);
+      }
+    } catch (error) {
+      alert("Error al conectar con el servidor");
+    }
   };
 
   return (
     <div className="container-datosT-Tecnico">
       <EncabezadoTecnico />
-
       <main className="contenido-datosT-Tecnico">
-        <h2 className="titulo-pagina-datosT-Tecnico">Detalles del ticket</h2>
-
+        <h2 className="titulo-pagina-datosT-Tecnico">Detalles del ticket #{id}</h2>
         <div className="card-datosT-Tecnico">
           <div className="seccion-info-datosT-Tecnico">
             <div className="header-card-datosT-Tecnico">
               <img src="/img/ticket.png" alt="icono" className="icono-datosT-Tecnico" />
-              <span className="ticket-label-datosT-Tecnico">Ticket</span>
+              <span className="ticket-label-datosT-Tecnico">Datos del Ticket</span>
             </div>
             
-            <p className="aviso-rojo-datosT-Tecnico">*Solo se puede cambiar el estado del ticket y poner la fecha de cierre</p>
+            <p className="aviso-rojo-datosT-Tecnico">*Solo se puede cambiar el estado y la fecha de cierre</p>
 
             <div className="grid-formulario-datosT-Tecnico">
               <div className="columna-datosT-Tecnico">
-                <div className="grupo-input-datosT-Tecnico">
-                  <label>ID</label>
-                  <input type="text" value={ticket_datosT_Tecnico.id} readOnly />
-                </div>
-                <div className="grupo-input-datosT-Tecnico">
-                  <label>Nombre de usuario</label>
+                <div className="grupo-input-datosT-Tecnico"><label>Nombre de usuario</label>
                   <input type="text" value={ticket_datosT_Tecnico.nombre} readOnly />
                 </div>
-                <div className="grupo-input-datosT-Tecnico">
-                  <label>Fecha de creación</label>
+                <div className="grupo-input-datosT-Tecnico"><label>Fecha de creación</label>
                   <input type="text" value={ticket_datosT_Tecnico.fecha} readOnly />
                 </div>
-                <div className="grupo-input-datosT-Tecnico">
-                  <label>Tecnico encargado</label>
+                <div className="grupo-input-datosT-Tecnico"><label>Tecnico encargado</label>
                   <input type="text" value={ticket_datosT_Tecnico.tecnico} readOnly className="tecnico-bold-datosT-Tecnico" />
                 </div>
                 <div className="grupo-input-datosT-Tecnico">
                   <label><span className="rojo-datosT-Tecnico">*</span>Estado del ticket</label>
                   <select 
-                    className={`select-estado-datosT-Tecnico ${ticket_datosT_Tecnico.estado === 'En proceso' ? 'estado-amarillo' : 'estado-verde'}`}
+                    className={`select-estado-datosT-Tecnico ${ticket_datosT_Tecnico.estado === 'Cerrado' ? 'estado-verde' : 'estado-amarillo'}`}
                     value={ticket_datosT_Tecnico.estado}
                     onChange={(e) => setTicket_datosT_Tecnico({...ticket_datosT_Tecnico, estado: e.target.value})}
                   >
-                    <option value="En proceso">En proceso</option>
-                    <option value="Cerrado">Cerrado</option>
+                    <option value="en proceso">En proceso</option>
+                    <option value="Cerrado">Resuelto</option>
                   </select>
-                </div>
-                <div className="grupo-input-datosT-Tecnico">
-                  <label>Correo</label>
-                  <input type="text" value={ticket_datosT_Tecnico.correo} readOnly />
                 </div>
               </div>
 
               <div className="columna-datosT-Tecnico">
-                <div className="grupo-input-datosT-Tecnico">
-                  <label>Telefono</label>
-                  <input type="text" value={ticket_datosT_Tecnico.telefono} readOnly />
-                </div>
-                <div className="grupo-input-datosT-Tecnico">
-                  <label>Titulo del ticket</label>
+                <div className="grupo-input-datosT-Tecnico"><label>Título</label>
                   <input type="text" value={ticket_datosT_Tecnico.titulo} readOnly />
                 </div>
-                <div className="grupo-input-datosT-Tecnico">
-                  <label>Descripción</label>
+                <div className="grupo-input-datosT-Tecnico"><label>Descripción</label>
                   <textarea className="textarea-datosT-Tecnico" value={ticket_datosT_Tecnico.descripcion} readOnly />
                 </div>
                 <div className="grupo-input-datosT-Tecnico">
@@ -108,46 +109,33 @@ function DatosTicketTecnico() {
             </div>
 
             <div className="contenedor-botones-datosT-Tecnico">
-              <button className="btn-azul-datosT-Tecnico" onClick={() => navigate_datosT_Tecnico('/pendientesTecnico')}>Ok</button>
+              <button className="btn-azul-datosT-Tecnico" onClick={() => navigate_datosT_Tecnico('/pendientesTecnico')}>Volver</button>
               <button className="btn-azul-datosT-Tecnico" onClick={() => setModalConfirmar_DT(true)}>Ticket resuelto</button>
             </div>
           </div>
         </div>
       </main>
 
-      {/* VENTANA EMERGENTE DE PREGUNTA CON VALIDACIÓN */}
+      {/* Modal Confirmar */}
       {modalConfirmar_DT && (
         <div className="overlay-modal-datosT-Tecnico">
           <div className="modal-confirmar-DT">
-            <img src="/img/ticket.png" alt="ticket icon" className="img-pregunta-DT" />
-            <h2 className="titulo-pregunta-DT">¿El ticket esta resuelto?</h2>
-            
-            {/* Mensaje de error si no se cumplen los requisitos */}
+            <h2 className="titulo-pregunta-DT">¿El ticket está resuelto?</h2>
             {!requisitosCompletos && (
-              <p className="mensaje-error-modal">
-                Es obligatorio poner el estado como <strong>cerrado</strong> y la <strong>fecha de cierre</strong> para dar por resuelto el ticket.
-              </p>
+              <p className="mensaje-error-modal">Debes seleccionar el estado <b>Resuelto</b> y elegir una <b>Fecha de cierre</b>.</p>
             )}
-
             <div className="flex-botones-DT">
               <button className="btn-cancelar-DT" onClick={() => setModalConfirmar_DT(false)}>Cancelar</button>
-              <button 
-                className={`btn-aceptar-pregunta-DT ${!requisitosCompletos ? 'btn-deshabilitado' : ''}`} 
-                onClick={confirmarResolucion}
-                disabled={!requisitosCompletos} // Bloquea el botón
-              >
-                Aceptar
-              </button>
+              <button className="btn-aceptar-pregunta-DT" onClick={confirmarResolucion} disabled={!requisitosCompletos}>Aceptar</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal de éxito */}
+      {/* Modal Éxito */}
       {modalExito_datosT_Tecnico && (
         <div className="overlay-modal-datosT-Tecnico">
           <div className="modal-exito-datosT-Tecnico">
-            <img src="/img/logo-ticket.png" alt="ticket icon" className="img-pregunta-DT" />
             <h2 className="ventana-texto">¡Ticket resuelto correctamente!</h2>
             <button className="btn-aceptar-datosT-Tecnico" onClick={() => navigate_datosT_Tecnico('/pendientesTecnico')}>Aceptar</button>
           </div>

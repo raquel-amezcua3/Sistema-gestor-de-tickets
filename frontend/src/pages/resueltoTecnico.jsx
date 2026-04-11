@@ -1,24 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/resueltoTecnico.css';
 import EncabezadoTecnico from '../components/EncabezadoTecnico';
 
 function ResueltoTecnico() {
   const navigate_resuelto_tecnico = useNavigate();
-  
-  // 1. Datos de ejemplo para tickets ya finalizados
-  const [tickets_resuelto_tecnico] = useState([
-    { id: '101', nombre: 'Juan Pérez', titulo: 'Error de Login', descripcion: 'No reconoce la contraseña', fecha: '2026-03-10', fechaCierre: '2026-03-11', estado: 'Cerrado', tecnico: 'Fernando Contreras' },
-    { id: '103', nombre: 'Carlos Ruiz', titulo: 'Software', descripcion: 'Instalación de Office', fecha: '2026-03-15', fechaCierre: '2026-03-16', estado: 'Cerrado', tecnico: 'Fernando Contreras' },
-  ]);
-
-  // 2. Estado para el buscador
+  const [tickets_resuelto_tecnico, setTickets_resuelto_tecnico] = useState([]);
   const [busqueda_resuelto_tecnico, setBusqueda_resuelto_tecnico] = useState('');
 
-  // 3. Lógica de filtrado
+  // 1. Cargar datos reales del backend
+useEffect(() => {
+    const cargarTicketsResueltos = async () => {
+      const idTecnico = localStorage.getItem('id_usuario'); 
+      console.log("1. ID del técnico recuperado:", idTecnico); // DEBE APARECER EL NÚMERO
+
+      if (!idTecnico) {
+        console.error("ERROR: No hay id_usuario en el almacenamiento");
+        return;
+      }
+
+      try {
+        const url = `http://localhost:3000/tecnico/tickets/resueltos/${idTecnico}`;
+        console.log("2. Llamando a la URL:", url);
+
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        console.log("3. Respuesta completa del servidor:", data); // DEBE APARECER TU LISTA DE TICKETS
+
+        if (response.ok) {
+          setTickets_resuelto_tecnico(data);
+        }
+      } catch (error) {
+        console.error("4. Error en el FETCH:", error);
+      }
+    };
+
+    cargarTicketsResueltos();
+  }, []);
+
+  // 2. Lógica de filtrado para el buscador
   const filtrados_resuelto_tecnico = tickets_resuelto_tecnico.filter((ticket) => {
-    return Object.values(ticket).some((valor) =>
-      valor.toString().toLowerCase().includes(busqueda_resuelto_tecnico.toLowerCase())
+    return (
+      ticket.id.toString().includes(busqueda_resuelto_tecnico.toLowerCase()) ||
+      ticket.nombre.toLowerCase().includes(busqueda_resuelto_tecnico.toLowerCase()) ||
+      ticket.titulo.toLowerCase().includes(busqueda_resuelto_tecnico.toLowerCase())
     );
   });
 
@@ -68,7 +94,7 @@ function ResueltoTecnico() {
                     <td>{ticket.titulo}</td>
                     <td>{ticket.descripcion}</td>
                     <td>{ticket.fecha}</td>
-                    <td>{ticket.fechaCierre}</td>
+                    <td>{ticket.fechacierre}</td>
                     <td className="estado-cerrado-resuelto-tecnico">{ticket.estado}</td>
                     <td>{ticket.tecnico}</td>
                   </tr>

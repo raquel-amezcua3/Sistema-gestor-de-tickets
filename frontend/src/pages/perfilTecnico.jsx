@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/perfilTecnico.css';
 import { useNavigate } from 'react-router-dom';
 import EncabezadoTecnico from '../components/EncabezadoTecnico';
@@ -9,20 +9,67 @@ function PerfilTecnico() {
   // Estado para controlar la visibilidad de la ventana emergente
   const [mostrarModal_perfil_tecnico, setMostrarModal_perfil_tecnico] = useState(false);
 
-  // Estado para los datos del perfil del técnico
+  // 1. Estado para los datos del perfil (empezamos vacíos para llenar con la DB)
   const [datos_perfil_tecnico, setDatos_perfil_tecnico] = useState({
-    nombre: 'Raquel Amezcua',
-    correo: 'raquel.amezcua@bodesa.com',
-    telefono: '3129876543',
-    extension: '205',
-    contrasena: '********'
+    nombre: '',
+    correo: '',
+    telefono: '',
+    extension: '',
+    contrasena: ''
   });
 
-  const handleActualizar_perfil_tecnico = (e) => {
+  // 2. Cargar datos reales al montar el componente
+  useEffect(() => {
+    const cargarDatosPerfil = async () => {
+      // Obtenemos el ID del técnico desde el localStorage
+      const idUsuario = localStorage.getItem('id_usuario');
+      
+      if (!idUsuario) return;
+
+      try {
+        const response = await fetch(`http://localhost:3000/perfil/${idUsuario}`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          setDatos_perfil_tecnico(data);
+        } else {
+          console.error("Error al obtener perfil:", data.error);
+        }
+      } catch (error) {
+        console.error("Error de conexión:", error);
+      }
+    };
+
+    cargarDatosPerfil();
+  }, []);
+
+  // 3. Función para enviar los datos actualizados a la DB
+  const handleActualizar_perfil_tecnico = async (e) => {
     e.preventDefault();
-    console.log("Datos del técnico actualizados", datos_perfil_tecnico);
-    // Activa el modal de éxito
-    setMostrarModal_perfil_tecnico(true);
+    const idUsuario = localStorage.getItem('id_usuario');
+
+    try {
+      const response = await fetch(`http://localhost:3000/perfil/${idUsuario}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(datos_perfil_tecnico),
+      });
+
+      if (response.ok) {
+        // Si se actualiza bien, mostramos el modal de éxito
+        setMostrarModal_perfil_tecnico(true);
+        // Opcional: Actualizar el nombre en el localStorage por si cambió
+        localStorage.setItem('usuarioNombre', datos_perfil_tecnico.nombre);
+      } else {
+        const errorData = await response.json();
+        alert("Error al actualizar: " + errorData.error);
+      }
+    } catch (error) {
+      console.error("Error al actualizar perfil:", error);
+      alert("No se pudo conectar con el servidor.");
+    }
   };
 
   return (
@@ -97,7 +144,7 @@ function PerfilTecnico() {
           <div className='contenedor-botones-perfil-tecnico'>
             <button 
                 className='btn-ok-perfil-tecnico' 
-                onClick={() => navigate_perfil_tecnico('/pendientesTecnico')}
+                onClick={() => navigate_perfil_tecnico('/principalTecnico')}
             >
                 Ok
             </button>

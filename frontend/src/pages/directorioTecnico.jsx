@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/directorioTecnico.css';
 import { useNavigate } from 'react-router-dom';
 import EncabezadoTecnico from '../components/EncabezadoTecnico';
@@ -6,21 +6,34 @@ import EncabezadoTecnico from '../components/EncabezadoTecnico';
 function DirectorioTecnico() {
   const navigate_directorio_tecnico = useNavigate();
   
-  // 1. Datos de ejemplo para el directorio del técnico
-  const [usuarios_directorio_tecnico] = useState([
-    { id: '001', nombre: 'Juan Pérez', correo: 'juan.perez@bodesa.com', telefono: '3121234567', extension: '101' },
-    { id: '002', nombre: 'Ana García', correo: 'ana.garcia@bodesa.com', telefono: '3129876543', extension: '102' },
-    { id: '003', nombre: 'Luis Lopez', correo: 'luis.lopez@bodesa.com', telefono: '3124567890', extension: '103' },
-    { id: '004', nombre: 'Carlos Martínez', correo: 'carlos.m@bodesa.com', telefono: '3121112233', extension: '104' },
-  ]);
-
-  // 2. Estado para el buscador
+  // 1. Estado para los datos (Empezamos con un arreglo vacío para llenar con la DB)
+  const [usuarios_directorio_tecnico, setUsuarios_directorio_tecnico] = useState([]);
   const [busqueda_directorio_tecnico, setBusqueda_directorio_tecnico] = useState('');
+
+  // 2. EFECTO PARA CARGAR LOS DATOS REALES
+  useEffect(() => {
+    const cargarDatos = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/directorio');
+        const data = await response.json();
+        
+        if (response.ok) {
+          setUsuarios_directorio_tecnico(data);
+        } else {
+          console.error("Error al obtener datos:", data.error);
+        }
+      } catch (error) {
+        console.error("Error de conexión con el servidor:", error);
+      }
+    };
+
+    cargarDatos();
+  }, []);
 
   // 3. Lógica de filtrado MULTICAMPO
   const filtrados_directorio_tecnico = usuarios_directorio_tecnico.filter((usuario) => {
     return Object.values(usuario).some((valor) =>
-      valor.toString().toLowerCase().includes(busqueda_directorio_tecnico.toLowerCase())
+      valor ? valor.toString().toLowerCase().includes(busqueda_directorio_tecnico.toLowerCase()) : false
     );
   });
 
@@ -46,7 +59,7 @@ function DirectorioTecnico() {
           />
         </div>
 
-        {/* Tabla Principal con Encabezado Negro */}
+        {/* Tabla Principal */}
         <div className="tabla-wrapper-directorio-tecnico">
           <table className="tabla-usuarios-directorio-tecnico">
             <thead>
@@ -65,8 +78,8 @@ function DirectorioTecnico() {
                     <td>{usuario.id}</td>
                     <td>{usuario.nombre}</td>
                     <td>{usuario.correo}</td>
-                    <td>{usuario.telefono}</td>
-                    <td>{usuario.extension}</td>
+                    <td>{usuario.telefono || '—'}</td>
+                    <td>{usuario.extension || '—'}</td>
                   </tr>
                 ))
               ) : (

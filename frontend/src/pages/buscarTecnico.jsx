@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/buscarTecnico.css';
 import { useNavigate } from 'react-router-dom';
 import EncabezadoTecnico from '../components/EncabezadoTecnico';
@@ -6,26 +6,42 @@ import EncabezadoTecnico from '../components/EncabezadoTecnico';
 function BuscarTecnico() {
   const navigate_buscar_ticket_tecnico = useNavigate();
   
-  // 1. Datos de ejemplo globales para la búsqueda
-  const [tickets_buscar_ticket_tecnico] = useState([
-    { id: '101', nombre: 'Juan Pérez', titulo: 'Error de Login', descripcion: 'No reconoce la contraseña', fecha: '2026-03-10', fechaCierre: '2026-03-11', estado: 'Cerrado', tecnico: 'Fernando Contreras' },
-    { id: '102', nombre: 'Ana García', titulo: 'Impresora', descripcion: 'Atasco de papel en bandeja 2', fecha: '2026-03-12', fechaCierre: '—', estado: 'En proceso', tecnico: 'Raquel Amezcua' },
-    { id: '103', nombre: 'Luis Lopez', titulo: 'Software', descripcion: 'Instalacion de Office', fecha: '2026-03-15', fechaCierre: '2026-03-16', estado: 'Cerrado', tecnico: 'Fernando Contreras' },
-    { id: '104', nombre: 'Maria Sol', titulo: 'Red', descripcion: 'Sin internet en oficina 4', fecha: '2026-03-18', fechaCierre: '—', estado: 'Abierto', tecnico: 'Pendiente' },
-  ]);
-
-  // 2. Estado para el buscador
+  // 1. Estados para los datos reales
+  const [tickets_buscar_ticket_tecnico, setTickets_buscar_ticket_tecnico] = useState([]);
   const [busqueda_buscar_ticket_tecnico, setBusqueda_buscar_ticket_tecnico] = useState('');
 
-  // 3. Lógica de filtrado por ID o Nombre
+  // 2. Cargar todos los tickets al montar el componente
+  useEffect(() => {
+    const obtenerTicketsGlobales = async () => {
+      try {
+        // Usamos la ruta que ya definiste en el backend
+        const response = await fetch('http://localhost:3000/admin/busqueda/todos-los-tickets');
+        const data = await response.json();
+        if (response.ok) {
+          setTickets_buscar_ticket_tecnico(data);
+        }
+      } catch (error) {
+        console.error("Error al obtener búsqueda global:", error);
+      }
+    };
+    obtenerTicketsGlobales();
+  }, []);
+
+  // 3. Lógica de filtrado (Nombre o ID)
+  // Nota: Ajustamos los nombres de campos según tu query SQL (nombre_usuario, nombre_tecnico, etc.)
   const filtrados_buscar_ticket_tecnico = tickets_buscar_ticket_tecnico.filter((ticket) => {
-    return ticket.id.toLowerCase().includes(busqueda_buscar_ticket_tecnico.toLowerCase()) ||
-           ticket.nombre.toLowerCase().includes(busqueda_buscar_ticket_tecnico.toLowerCase());
+    const termino = busqueda_buscar_ticket_tecnico.toLowerCase();
+    return (
+      ticket.id.toString().includes(termino) ||
+      ticket.nombre_usuario.toLowerCase().includes(termino) ||
+      ticket.titulo.toLowerCase().includes(termino)
+    );
   });
 
-  // Función para decidir a qué pantalla navegar según el estado del ticket
+  // 4. Función para decidir navegación
   const manejarNavegacion = (ticket) => {
-    if (ticket.estado === 'Cerrado') {
+    // Verificamos si el estado es 'resuelto' (en minúsculas como quedamos)
+    if (ticket.estado.toLowerCase() === 'resuelto' || ticket.estado.toLowerCase() === 'cerrado') {
       navigate_buscar_ticket_tecnico(`/datosResueltoTecnico/${ticket.id}`);
     } else {
       navigate_buscar_ticket_tecnico(`/datosTicketTecnico/${ticket.id}`);
@@ -37,7 +53,6 @@ function BuscarTecnico() {
       <EncabezadoTecnico />
 
       <main className="contenido-buscar-ticket-tecnico">
-        {/* Sección del Buscador */}
         <div className="seccion-busqueda-buscar-ticket-tecnico">
           <div className="info-busqueda-buscar-ticket-tecnico">
             <span className="lupa-icono-buscar-ticket-tecnico">
@@ -54,7 +69,6 @@ function BuscarTecnico() {
           />
         </div>
 
-        {/* Tabla de Tickets */}
         <div className="tabla-wrapper-buscar-ticket-tecnico">
           <table className="tabla-tickets-buscar-ticket-tecnico">
             <thead>
@@ -79,15 +93,19 @@ function BuscarTecnico() {
                     title="Doble clic para ver detalles"
                   >
                     <td>{ticket.id}</td>
-                    <td>{ticket.nombre}</td>
+                    <td>{ticket.nombre_usuario}</td>
                     <td>{ticket.titulo}</td>
                     <td>{ticket.descripcion}</td>
                     <td>{ticket.fecha}</td>
-                    <td>{ticket.fechaCierre}</td>
-                    <td className={ticket.estado === 'Cerrado' ? 'texto-verde-buscar' : 'texto-rojo-buscar'}>
+                    <td>{ticket.fecha_cierre}</td>
+                    <td className={
+                        ticket.estado.toLowerCase() === 'resuelto' || ticket.estado.toLowerCase() === 'cerrado' 
+                        ? 'texto-verde-buscar' 
+                        : 'texto-rojo-buscar'
+                    }>
                       {ticket.estado}
                     </td>
-                    <td>{ticket.tecnico}</td>
+                    <td>{ticket.nombre_tecnico}</td>
                   </tr>
                 ))
               ) : (

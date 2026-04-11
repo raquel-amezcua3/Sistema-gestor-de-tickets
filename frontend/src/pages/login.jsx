@@ -35,10 +35,13 @@ function Login() {
         // 1. Convertimos el rol a número inmediatamente para evitar errores de comparación
         const rolNumerico = Number(data.usuario.rol);
 
-        // 2. GUARDADO CRÍTICO: Usamos los nombres exactos que el HeaderPU espera
+        // 2. GUARDADO CRÍTICO: Mantenemos tus nombres y agregamos el objeto 'usuario' para compatibilidad
         localStorage.setItem('id_usuario', data.usuario.id); 
         localStorage.setItem('usuarioNombre', data.usuario.nombre);
         localStorage.setItem('usuarioRol', rolNumerico);
+        
+        // Agregamos esta línea para que pantallas que buscan JSON.parse(localStorage.getItem('usuario')) no fallen
+        localStorage.setItem('usuario', JSON.stringify({ id: data.usuario.id, nombre: data.usuario.nombre, rol: rolNumerico }));
 
         // 3. Pequeña pausa de seguridad (50ms) para asegurar que el navegador guardó los datos
         // antes de que el Header intente leerlos y te expulse.

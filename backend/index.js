@@ -8,6 +8,7 @@ const asignarAdminRoutes = require('./routes/asignarAdmin');
 const usuariosAdminRoutes = require('./routes/usuariosAdmin');
 const registroTecnicoAdmin = require('./routes/registroTecnicoAdmin');
 const busquedaGlobalRoutes = require('./routes/busquedaGlobalAdmin');
+const ticketsTecnico = require('./routes/ticketsTecnico');
 
 
 
@@ -142,6 +143,9 @@ app.use('/admin/registrar-tecnico', registroTecnicoAdmin);
 
 //Para hacer una busqueda de un ticket dentro del sistema (Administrador rol 1)
 app.use('/admin/busqueda', busquedaGlobalRoutes);
+
+//Para la tabla de pendientes tecnico en estado de "en proceso"
+app.use('/tecnico/tickets', ticketsTecnico);
 
 // Iniciar servidor
 const PORT = 3000;

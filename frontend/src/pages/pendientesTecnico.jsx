@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/pendientesTecnico.css';
 import EncabezadoTecnico from '../components/EncabezadoTecnico';
@@ -6,17 +6,47 @@ import EncabezadoTecnico from '../components/EncabezadoTecnico';
 function PendientesTecnico() {
   const navigate_pendientes_tecnico = useNavigate();
   
-  // 1. Datos de ejemplo para el técnico (simulando tickets asignados a ti)
-  const [tickets_pendientes_tecnico] = useState([
-    { id: '101', nombre: 'Juan Pérez', titulo: 'Error de Login', descripcion: 'No reconoce la contraseña', fecha: '2026-03-10', estado: 'Abierto', tecnico: 'Fernando Contreras' },
-    { id: '102', nombre: 'Ana García', titulo: 'Impresora', descripcion: 'Atasco de papel en bandeja 2', fecha: '2026-03-12', estado: 'Abierto', tecnico: 'Fernando Contreras' },
-    { id: '104', nombre: 'Maria Sol', titulo: 'Red', descripcion: 'Sin internet en oficina 4', fecha: '2026-03-18', estado: 'Abierto', tecnico: 'Fernando Contreras' },
-  ]);
-
-  // 2. Estado para el buscador
+  const [tickets_pendientes_tecnico, setTickets_pendientes_tecnico] = useState([]);
   const [busqueda_pendientes_tecnico, setBusqueda_pendientes_tecnico] = useState('');
+  const [cargando, setCargando] = useState(true);
 
-  // 3. Lógica de filtrado por cualquier campo
+  useEffect(() => {
+    const obtenerTicketsPendientes = async () => {
+      try {
+        // CORRECCIÓN AQUÍ: Leemos 'id_usuario' directamente como lo guarda tu Login
+        const idTecnico = localStorage.getItem('id_usuario');
+        
+        if (!idTecnico) {
+          console.error("No se encontró el ID del técnico en el localStorage");
+          return;
+        }
+
+        // Usamos la variable idTecnico en la URL
+        const response = await fetch(`http://localhost:3000/tecnico/tickets/pendientes/${idTecnico}`);
+        const data = await response.json();
+
+        if (response.ok) {
+          const dataFormateada = data.map(t => ({
+            id: t.id.toString(),
+            nombre: t.nombre_usuario,
+            titulo: t.titulo,
+            descripcion: t.descripcion,
+            fecha: t.fecha,
+            estado: t.estado,
+            tecnico: t.nombre_tecnico
+          }));
+          setTickets_pendientes_tecnico(dataFormateada);
+        }
+      } catch (error) {
+        console.error("Error al conectar con el servidor:", error);
+      } finally {
+        setCargando(false);
+      }
+    };
+
+    obtenerTicketsPendientes();
+  }, []);
+
   const filtrados_pendientes_tecnico = tickets_pendientes_tecnico.filter((ticket) => {
     return Object.values(ticket).some((valor) =>
       valor.toString().toLowerCase().includes(busqueda_pendientes_tecnico.toLowerCase())
@@ -56,12 +86,13 @@ function PendientesTecnico() {
               </tr>
             </thead>
             <tbody>
-              {filtrados_pendientes_tecnico.length > 0 ? (
+              {cargando ? (
+                <tr><td colSpan="7" className="sin-resultados-pendientes-tecnico">Cargando tickets...</td></tr>
+              ) : filtrados_pendientes_tecnico.length > 0 ? (
                 filtrados_pendientes_tecnico.map((ticket) => (
                   <tr 
                     key={ticket.id} 
                     className="fila-ticket-pendientes-tecnico"
-                    // Al hacer doble clic, navega a la pantalla de gestión del técnico usando el ID
                     onDoubleClick={() => navigate_pendientes_tecnico(`/datosTicketTecnico/${ticket.id}`)} 
                     title="Doble clic para gestionar este ticket"
                   >
@@ -77,7 +108,7 @@ function PendientesTecnico() {
               ) : (
                 <tr>
                   <td colSpan="7" className="sin-resultados-pendientes-tecnico">
-                    No se encontraron tickets con esos criterios.
+                    No tienes tickets en proceso actualmente.
                   </td>
                 </tr>
               )}
