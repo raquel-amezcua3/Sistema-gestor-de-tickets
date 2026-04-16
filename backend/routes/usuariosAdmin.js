@@ -1,9 +1,10 @@
+// Funcion para ver los tecnicos , desde el rol de Admin.
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const bcrypt = require('bcrypt'); // Por si decides actualizar la contraseña
 
-// 1. Obtener todos los técnicos (Ya lo tienes, asegúrate que traiga todo)
+// 1. Obtener todos los técnicos 
 router.get('/tecnicos', async (req, res) => {
   try {
     const query = 'SELECT id_usuario, nombre, correo, telefono, extension FROM usuarios WHERE rol = 2 ORDER BY nombre ASC';

@@ -1,3 +1,4 @@
+// Funcion para mostrar la lista de tecnicos, esta funcion es de Administrador
 import React, { useState, useEffect } from 'react'; // Añadimos useEffect
 import '../styles/listaAdmin.css';
 import { useNavigate } from 'react-router-dom';
@@ -12,18 +13,15 @@ function ListaAdmin() {
   // 2. Estado para el buscador
   const [busqueda_lista_admin, setBusqueda_lista_admin] = useState('');
 
-  // --- FUNCIÓN PARA TRAER TÉCNICOS REALES ---
+  // --- Funcion para mostrar a los tecnicos ---
   useEffect(() => {
     const obtenerTecnicos = async () => {
       try {
-        // Usamos la ruta que creamos en usuariosAdmin.js
-        // Si tu ruta de técnicos no devuelve teléfono y extensión, 
-        // asegúrate de que el SELECT en el backend incluya esos campos.
         const response = await fetch('http://localhost:3000/admin/usuarios/tecnicos');
         const data = await response.json();
         
         if (response.ok) {
-          // Mapeamos los datos para que coincidan con tus nombres de columna (id_usuario -> id)
+          // Mapeamos los datos 
           const dataMapeada = data.map(tec => ({
             id: tec.id_usuario,
             nombre: tec.nombre,
@@ -41,7 +39,7 @@ function ListaAdmin() {
     obtenerTecnicos();
   }, []);
 
-  // 3. Lógica de filtrado (Se mantiene igual)
+  // 3. Lógica de filtrado 
   const filtrados_lista_admin = tecnicos_lista_admin.filter((tecnico) => {
     return Object.values(tecnico).some((valor) =>
       valor.toString().toLowerCase().includes(busqueda_lista_admin.toLowerCase())
@@ -88,6 +86,7 @@ function ListaAdmin() {
                   <tr 
                     key={tecnico.id} 
                     className="fila-lista-admin"
+                    /* Al hacer doble clic se navega al detalle específico del técnico usando su ID */
                     onDoubleClick={() => navigate_lista_admin(`/detallesAdmin/${tecnico.id}`)} 
                   >
                     <td>{tecnico.id}</td>
@@ -98,6 +97,7 @@ function ListaAdmin() {
                   </tr>
                 ))
               ) : (
+                /* Mensaje en caso de que la búsqueda no arroje resultados o no haya datos */
                 <tr>
                   <td colSpan="5" style={{textAlign: 'center', padding: '20px'}}>
                     No se encontraron técnicos

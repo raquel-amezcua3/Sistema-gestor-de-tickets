@@ -1,3 +1,4 @@
+/* Esta funcion es para buscar un ticket en todo el sistema, esta funcion la pueden usar los 3 roles.  */
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
@@ -5,6 +6,7 @@ const pool = require('../db');
 // Ruta para obtener TODOS los tickets del sistema
 router.get('/todos-los-tickets', async (req, res) => {
     try {
+        /* Consulta SQL   */
         const query = `
             SELECT 
                 t.id_ticket AS id, 
@@ -24,8 +26,11 @@ router.get('/todos-los-tickets', async (req, res) => {
             ORDER BY t.id_ticket DESC
         `;
         
+        // Muestra los resultados que coninciden con la busqueda del ticket
         const resultado = await pool.query(query);
         res.json(resultado.rows);
+
+     // Manejo de errores del servidor o de conexión a la base de datos
     } catch (error) {
         console.error("❌ Error en busqueda global:", error.message);
         res.status(500).json({ error: "Error al obtener los tickets" });

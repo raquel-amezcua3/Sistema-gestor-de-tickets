@@ -1,6 +1,7 @@
+// Funcion para mostrar los tickets del usuario
 const express = require('express');
 const router = express.Router();
-const pool = require('../db'); // Importas el que YA existe
+const pool = require('../db'); 
 
 // Obtener tickets de un usuario específico
 router.get('/:id_usuario', async (req, res) => {

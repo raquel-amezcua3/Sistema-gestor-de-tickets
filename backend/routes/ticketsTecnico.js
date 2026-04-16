@@ -1,3 +1,4 @@
+// Funcion para los tickets del tecnico
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
@@ -47,7 +48,6 @@ router.put('/resolver/:id', async (req, res) => {
     const { fechaCierre } = req.body; 
 
     try {
-        // Forzamos el estado a "resuelto" tal cual está en tu base de datos
         const estadoDb = "resuelto"; 
 
         const query = `
@@ -72,7 +72,7 @@ router.put('/resolver/:id', async (req, res) => {
     }
 });
 
-// 4. Obtener tickets con estado "resuelto" (NUEVA RUTA)
+// 4. Obtener tickets con estado "resuelto"
 router.get('/resueltos/:id_tecnico', async (req, res) => {
     const { id_tecnico } = req.params;
     try {

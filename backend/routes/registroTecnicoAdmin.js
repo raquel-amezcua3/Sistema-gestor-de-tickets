@@ -1,9 +1,10 @@
+// Funcion para que el amdinistrador registre a un nuevo tecnico
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 const bcrypt = require('bcrypt');
 
-// Ruta para registrar un nuevo técnico
+// Registrar un nuevo técnico
 router.post('/registrar', async (req, res) => {
     const { nombre, correo, telefono, extension, contrasena } = req.body;
 
