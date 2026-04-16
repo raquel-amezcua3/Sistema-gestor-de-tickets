@@ -71,8 +71,6 @@ function SeguimientoTicketU() {
 
                     <div className='contenedor-pasos-seguimiento-usuario'>
                         {pasos_seguimiento_usuario.map((paso) => {
-                            // Comparamos el estado de la BD con el ID del paso
-                            // Usamos toLowerCase para evitar errores de mayúsculas
                             const esActivo = estadoActual?.toLowerCase() === paso.id.toLowerCase();
 
                             return (

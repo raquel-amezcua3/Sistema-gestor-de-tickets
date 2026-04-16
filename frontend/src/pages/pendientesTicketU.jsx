@@ -97,7 +97,6 @@ function PendientesTicketU() {
                     onDoubleClick={() => navigate(`/detalle-ticket/${ticket.id_ticket}`)} 
                   >
                     <td>{ticket.id_ticket}</td>
-                    {/* Usamos el nombre del usuario guardado en el login */}
                     <td>{localStorage.getItem('usuarioNombre')}</td>
                     <td>{ticket.titulo}</td>
                     <td>{ticket.descripcion}</td>

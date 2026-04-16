@@ -4,20 +4,21 @@ import { useNavigate } from 'react-router-dom';
 import EncabezadoAdmin from '../components/EncabezadoAdmin';
 
 function PrincipalAdmin() {
+  // Hook para gestionar la navegación programática entre las diferentes vistas del administrador
   const navigate_principal_admin = useNavigate();
 
+  // Definición de la estructura de datos para el menú principal
+  // Permite añadir o quitar funcionalidades al panel de control de forma centralizada
   const opciones_principal_admin = [
     { texto: 'Asignar tickets a tecnicos', icono: '/img/asignar.png', ruta: '/asignarAdmin' },
     { texto: 'Lista de tecnicos', icono: '/img/directorio.png', ruta: '/listaAdmin' },
     { texto: 'Añadir nuevo tecnico', icono: '/img/añadir.png', ruta: '/nuevoTAdmin' },
     { texto: 'Buscar ticket', icono: '/img/buscar.png', ruta: '/buscarAdmin' },
-
-   /*  Este que esta abajo puede ser el del dashboard */
-    /* { texto: 'Todos los tickets del sistema', icono: '/img/mis-tickets.png', ruta: '/todosTickets' }, */
   ];
 
   return (
     <div className="container-principal-admin">
+      {/* Componente reutilizable que contiene la barra superior y datos de sesión */}
       <EncabezadoAdmin />
 
       <main className="contenido-principal-admin">

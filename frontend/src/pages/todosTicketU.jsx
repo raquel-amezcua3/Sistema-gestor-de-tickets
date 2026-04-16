@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Agregamos useEffect
+import React, { useState, useEffect } from 'react'; 
 import '../styles/todosTicketU.css';
 import { useNavigate } from 'react-router-dom';
 import HeaderPU from '../components/HeaderPU';

@@ -6,13 +6,13 @@ import HeaderPU from '../components/HeaderPU';
 function PerfilU() {
   const navigate_perfil_usuario = useNavigate();
   
-  // Obtenemos el ID del usuario (asegúrate de que lo guardas en el login)
+  // Obtenemos el ID del usuario 
   const id_usuario = localStorage.getItem('id_usuario');
 
   // Estado para controlar la visibilidad de la ventana emergente
   const [mostrarModal_perfil_usuario, setMostrarModal_perfil_usuario] = useState(false);
 
-  // Estado para los datos del perfil (inician vacíos para cargarse de la BD)
+  // Estado para los datos del perfil 
   const [datos_perfil_usuario, setDatos_perfil_usuario] = useState({
     nombre: '',
     correo: '',
@@ -21,7 +21,7 @@ function PerfilU() {
     contrasena: ''
   });
 
-  // 1. CARGAR DATOS DE LA BASE DE DATOS AL ENTRAR
+  // 1. Cargar datos de la base de datos, al entrar
   useEffect(() => {
     const obtenerPerfil = async () => {
       try {
@@ -37,7 +37,7 @@ function PerfilU() {
     if(id_usuario) obtenerPerfil();
   }, [id_usuario]);
 
-  // 2. FUNCIÓN PARA ACTUALIZAR EN LA BASE DE DATOS
+  // 2. Funcion para actualizar en la base datso
   const handleActualizar_perfil_usuario = async (e) => {
     e.preventDefault();
     try {

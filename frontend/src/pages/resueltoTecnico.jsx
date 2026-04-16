@@ -12,7 +12,7 @@ function ResueltoTecnico() {
 useEffect(() => {
     const cargarTicketsResueltos = async () => {
       const idTecnico = localStorage.getItem('id_usuario'); 
-      console.log("1. ID del técnico recuperado:", idTecnico); // DEBE APARECER EL NÚMERO
+      console.log("1. ID del técnico recuperado:", idTecnico); 
 
       if (!idTecnico) {
         console.error("ERROR: No hay id_usuario en el almacenamiento");

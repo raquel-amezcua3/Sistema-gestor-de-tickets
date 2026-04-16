@@ -9,7 +9,7 @@ function PerfilTecnico() {
   // Estado para controlar la visibilidad de la ventana emergente
   const [mostrarModal_perfil_tecnico, setMostrarModal_perfil_tecnico] = useState(false);
 
-  // 1. Estado para los datos del perfil (empezamos vacíos para llenar con la DB)
+  // 1. Estado para los datos del perfil 
   const [datos_perfil_tecnico, setDatos_perfil_tecnico] = useState({
     nombre: '',
     correo: '',
@@ -43,7 +43,7 @@ function PerfilTecnico() {
     cargarDatosPerfil();
   }, []);
 
-  // 3. Función para enviar los datos actualizados a la DB
+  // 3. Función para enviar los datos actualizados a la base de datos
   const handleActualizar_perfil_tecnico = async (e) => {
     e.preventDefault();
     const idUsuario = localStorage.getItem('id_usuario');
@@ -60,7 +60,6 @@ function PerfilTecnico() {
       if (response.ok) {
         // Si se actualiza bien, mostramos el modal de éxito
         setMostrarModal_perfil_tecnico(true);
-        // Opcional: Actualizar el nombre en el localStorage por si cambió
         localStorage.setItem('usuarioNombre', datos_perfil_tecnico.nombre);
       } else {
         const errorData = await response.json();

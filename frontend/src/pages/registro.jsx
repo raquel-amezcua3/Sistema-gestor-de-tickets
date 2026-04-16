@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Para redirigir después de registrar
+import { useNavigate } from 'react-router-dom'; /
 import '../styles/registro.css';
 
 function Registro() {
