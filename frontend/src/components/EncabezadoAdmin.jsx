@@ -1,3 +1,4 @@
+// Componente del encabezado del Admin
 import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import '../components/EncabezadoAdmin.css';
@@ -5,7 +6,7 @@ import '../components/EncabezadoAdmin.css';
 function EncabezadoAdmin() {
   const navigate = useNavigate();
 
-  // --- CANDADO DE SEGURIDAD PARA ADMINISTRADORES ---
+  // Esto es un candando de seguridad para administradores
   useEffect(() => {
     // Sincronizamos con el nombre correcto: id_usuario
     const idUsuario = localStorage.getItem('id_usuario'); 
@@ -19,13 +20,12 @@ function EncabezadoAdmin() {
     }
 
     // 2. Verificamos si es Administrador (Rol 1)
-    // Convertimos a Number para evitar errores de tipo string "1"
+
     if (Number(rol) !== 1) {
       alert("Acceso denegado: Esta zona es exclusiva para administradores.");
       navigate('/'); 
     }
   }, [navigate]);
-  // -------------------------------------------------
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -33,9 +33,8 @@ function EncabezadoAdmin() {
     const confirmar = window.confirm("¿Estás seguro de que deseas cerrar la sesión de administrador?");
     
     if (confirmar) {
-      // Limpiamos los datos del administrador
+      // Limpiamos los datos del administrador y redirigimos al login
       localStorage.clear();
-      // Redirigimos al Login
       navigate('/');
     }
   };

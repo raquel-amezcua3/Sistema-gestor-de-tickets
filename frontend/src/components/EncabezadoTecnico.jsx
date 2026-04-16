@@ -1,3 +1,4 @@
+// Este es el componente del encabezado del tecnico
 import React, { useEffect } from 'react';
 import '../components/EncabezadoTecnico.css';
 import { useNavigate, Link } from 'react-router-dom';
@@ -5,9 +6,8 @@ import { useNavigate, Link } from 'react-router-dom';
 function EncabezadoTecnico() {
   const navigate_header_tecnico = useNavigate();
 
-  // --- CANDADO DE SEGURIDAD PARA TÉCNICOS ---
+  // Esto es un candando de seguridad para administradores
   useEffect(() => {
-    // IMPORTANTE: Sincronizado con los nombres de localStorage del Login.jsx
     const idUsuario = localStorage.getItem('id_usuario'); 
     const rol = localStorage.getItem('usuarioRol');
 
@@ -26,7 +26,7 @@ function EncabezadoTecnico() {
       navigate_header_tecnico('/'); 
     }
   }, [navigate_header_tecnico]);
-  // ------------------------------------------
+
 
   const cerrarSesion_header_tecnico = (e) => {
     e.preventDefault();

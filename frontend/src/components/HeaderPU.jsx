@@ -1,3 +1,4 @@
+// Componente del encabezado del usuario con rol 0
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../components/HeaderPU.css';
@@ -6,13 +7,10 @@ function HeaderPU() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // IMPORTANTE: Los nombres deben ser IGUALES a como los guardas en Login.jsx
+    // Los nombres deben ser IGUALES a como los guardas en Login.jsx
     const idUsuario = localStorage.getItem('id_usuario'); 
     const rol = localStorage.getItem('usuarioRol');
 
-    // Solo validamos si REALMENTE no hay nada en el storage.
-    // Si usas componentes de "Rutas Protegidas" en App.js, 
-    // podrías incluso quitar este useEffect del Header para evitar conflictos.
     if (!idUsuario) {
       console.warn("Acceso denegado: No se encontró id_usuario");
       navigate('/'); 
@@ -32,7 +30,7 @@ function HeaderPU() {
   return (
     <nav className='encabezado-principal-usuario'>
       <div className='logo-PU'>
-        {/* Usamos el rol para saber a dónde mandarlo si hace clic en el logo */}
+        {/* Use el rol para saber a dónde mandarlo si hace clic en el logo */}
         <button 
           onClick={() => {
             const rol = localStorage.getItem('usuarioRol');
