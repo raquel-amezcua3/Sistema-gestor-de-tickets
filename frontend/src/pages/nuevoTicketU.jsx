@@ -25,7 +25,7 @@ function NuevoTicketU() {
    const handleSubmit = async (e) => {
      e.preventDefault();
 
-     // Obtenemos el ID tal cual lo guardamos en el Login ('id_usuario')
+     // Obtenemos el ID tal cual lo guardamos en el Login 
      const idGuardado = localStorage.getItem('id_usuario');
 
      // Validación previa: si no hay ID, no dejamos que falle el backend
@@ -35,7 +35,7 @@ function NuevoTicketU() {
      }
 
      const bodyData = {
-       id_usuario: parseInt(idGuardado), // Lo convertimos a número entero
+       id_usuario: parseInt(idGuardado), 
        titulo: ticket.titulo,
        descripcion: ticket.descripcion
      };
@@ -55,10 +55,10 @@ function NuevoTicketU() {
 
        if (response.ok) {
          setMostrarModal(true); 
-         // Limpiamos el formulario para el siguiente reporte
+         // Limpiamos el formulario para el siguiente ticket
          setTicket({ titulo: '', descripcion: '' });
        } else {
-         // Si el servidor responde con 400 o 500, mostramos por qué
+         // Si el servidor responde con 400 o 500, mostramos el error
          alert("Error del servidor: " + (data.error || "No se pudo crear el ticket"));
        }
      } catch (error) {
@@ -83,7 +83,7 @@ function NuevoTicketU() {
             <form onSubmit={handleSubmit}>
               <div className='grid-formulario'>
                 
-                {/* Nombre de usuario (Solo lectura) */}
+                {/* Nombre de usuario  */}
                 <div className='grupo-input'>
                   <label>Nombre de usuario</label>
                   <input
@@ -94,7 +94,7 @@ function NuevoTicketU() {
                     />
                 </div>
 
-                {/* Teléfono (Solo informativo) */}
+                {/* Teléfono  */}
                 <div className='grupo-input'>
                   <label>Teléfono</label>
                   <input
@@ -123,7 +123,7 @@ function NuevoTicketU() {
                 <div className='grupo-input area-texto'>
                   <label><span className='requerido'>*</span>Descripción</label>
                   <textarea
-                    name='descripcion' // El 'name' debe ser idéntico a la clave en el useState
+                    name='descripcion' 
                     rows="5"
                     value={ticket.descripcion}
                     onChange={handleChange}

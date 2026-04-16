@@ -6,11 +6,11 @@ import EncabezadoTecnico from '../components/EncabezadoTecnico';
 function DirectorioTecnico() {
   const navigate_directorio_tecnico = useNavigate();
   
-  // 1. Estado para los datos (Empezamos con un arreglo vacío para llenar con la DB)
+  // 1. Estado para los datos 
   const [usuarios_directorio_tecnico, setUsuarios_directorio_tecnico] = useState([]);
   const [busqueda_directorio_tecnico, setBusqueda_directorio_tecnico] = useState('');
 
-  // 2. EFECTO PARA CARGAR LOS DATOS REALES
+  // 2. Efecto para cargar los datos
   useEffect(() => {
     const cargarDatos = async () => {
       try {
@@ -30,7 +30,7 @@ function DirectorioTecnico() {
     cargarDatos();
   }, []);
 
-  // 3. Lógica de filtrado MULTICAMPO
+  // 3. Lógica de filtrado 
   const filtrados_directorio_tecnico = usuarios_directorio_tecnico.filter((usuario) => {
     return Object.values(usuario).some((valor) =>
       valor ? valor.toString().toLowerCase().includes(busqueda_directorio_tecnico.toLowerCase()) : false

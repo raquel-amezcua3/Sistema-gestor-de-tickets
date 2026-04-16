@@ -5,23 +5,30 @@ import EncabezadoTecnico from '../components/EncabezadoTecnico';
 
 function DatosTicketTecnico() {
   const navigate_datosT_Tecnico = useNavigate();
+  // Obtención del ID del ticket directamente desde los parámetros de la URL configurada en el Router
   const { id } = useParams();
+
+  // Estados para controlar la visibilidad de los modales de confirmación y éxito
   const [modalExito_datosT_Tecnico, setModalExito_datosT_Tecnico] = useState(false);
   const [modalConfirmar_DT, setModalConfirmar_DT] = useState(false);
 
+  // Estado que almacena la información detallada del ticket
   const [ticket_datosT_Tecnico, setTicket_datosT_Tecnico] = useState({
     id: '', nombre: '', correo: '', telefono: '', titulo: '', descripcion: '', fecha: '', estado: '', tecnico: '', fechaCierre: ''
   });
 
+  // Lógica de validación: Se requiere que el estado sea 'Cerrado' y exista una fecha seleccionada para habilitar el guardado
   const requisitosCompletos = ticket_datosT_Tecnico.estado === 'Cerrado' && ticket_datosT_Tecnico.fechaCierre !== '';
 
-  // CARGAR DATOS REALES DESDE EL BACKEND
+  // Cargar datos desde el backend
+  // Se ejecuta cada vez que el ID en la URL cambia para traer la información actualizada del ticket
   useEffect(() => {
     const cargarDetalle = async () => {
       try {
         const response = await fetch(`http://localhost:3000/tecnico/tickets/detalle/${id}`);
         const data = await response.json();
         if (response.ok) {
+          // Se inicializa el estado con los datos del backend, manteniendo la fecha de cierre vacía para que el técnico la asigne
           setTicket_datosT_Tecnico({ ...data, fechaCierre: '' });
         }
       } catch (err) {
@@ -31,7 +38,8 @@ function DatosTicketTecnico() {
     cargarDetalle();
   }, [id]);
 
-  // FUNCIÓN PARA GUARDAR EN LA DB
+  // Funcion para guardar en la base de datos
+  // Envía una petición PUT al servidor para actualizar el estado del ticket y registrar su conclusión
   const confirmarResolucion = async () => {
     try {
       const response = await fetch(`http://localhost:3000/tecnico/tickets/resolver/${id}`, {
@@ -44,8 +52,8 @@ function DatosTicketTecnico() {
       });
 
       if (response.ok) {
-        setModalConfirmar_DT(false);
-        setModalExito_datosT_Tecnico(true);
+        setModalConfirmar_DT(false); // Cierra modal de pregunta
+        setModalExito_datosT_Tecnico(true); // Muestra modal de confirmación final
       }
     } catch (error) {
       alert("Error al conectar con el servidor");
@@ -68,6 +76,7 @@ function DatosTicketTecnico() {
 
             <div className="grid-formulario-datosT-Tecnico">
               <div className="columna-datosT-Tecnico">
+                {/* Campos de solo lectura (readOnly) para evitar la edición de datos de origen */}
                 <div className="grupo-input-datosT-Tecnico"><label>Nombre de usuario</label>
                   <input type="text" value={ticket_datosT_Tecnico.nombre} readOnly />
                 </div>
@@ -77,6 +86,7 @@ function DatosTicketTecnico() {
                 <div className="grupo-input-datosT-Tecnico"><label>Tecnico encargado</label>
                   <input type="text" value={ticket_datosT_Tecnico.tecnico} readOnly className="tecnico-bold-datosT-Tecnico" />
                 </div>
+                {/* Control de edición de estado: Cambia dinámicamente la clase CSS según la selección */}
                 <div className="grupo-input-datosT-Tecnico">
                   <label><span className="rojo-datosT-Tecnico">*</span>Estado del ticket</label>
                   <select 
@@ -97,6 +107,7 @@ function DatosTicketTecnico() {
                 <div className="grupo-input-datosT-Tecnico"><label>Descripción</label>
                   <textarea className="textarea-datosT-Tecnico" value={ticket_datosT_Tecnico.descripcion} readOnly />
                 </div>
+                {/* Campo editable de fecha: Crucial para la resolución del ticket */}
                 <div className="grupo-input-datosT-Tecnico">
                   <label>Fecha de cierre</label>
                   <input 
@@ -116,23 +127,25 @@ function DatosTicketTecnico() {
         </div>
       </main>
 
-      {/* Modal Confirmar */}
+      {/* Modal Confirmar: Realiza una validación visual antes de permitir el guardado definitivo */}
       {modalConfirmar_DT && (
         <div className="overlay-modal-datosT-Tecnico">
           <div className="modal-confirmar-DT">
             <h2 className="titulo-pregunta-DT">¿El ticket está resuelto?</h2>
+            {/* Mensaje de error condicional si el técnico no ha cumplido los requisitos de cierre */}
             {!requisitosCompletos && (
               <p className="mensaje-error-modal">Debes seleccionar el estado <b>Resuelto</b> y elegir una <b>Fecha de cierre</b>.</p>
             )}
             <div className="flex-botones-DT">
               <button className="btn-cancelar-DT" onClick={() => setModalConfirmar_DT(false)}>Cancelar</button>
+              {/* El botón de Aceptar se bloquea automáticamente mediante la propiedad disabled si no se validan los requisitos */}
               <button className="btn-aceptar-pregunta-DT" onClick={confirmarResolucion} disabled={!requisitosCompletos}>Aceptar</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal Éxito */}
+      {/* Modal Éxito: Feedback visual al usuario tras la actualización exitosa en la DB */}
       {modalExito_datosT_Tecnico && (
         <div className="overlay-modal-datosT-Tecnico">
           <div className="modal-exito-datosT-Tecnico">

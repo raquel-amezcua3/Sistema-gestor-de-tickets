@@ -6,7 +6,7 @@ import HeaderPU from '../components/HeaderPU';
 function BuscarTicketU() {
   const navigate_buscarTicketU = useNavigate();
   
-  // 1. Estados
+  // 1. Estados al buscar un ticket en el usuario de rol 0
   const [tickets, setTickets] = useState([]); 
   const [busqueda, setBusqueda] = useState('');
   const [cargando, setCargando] = useState(true);
@@ -15,7 +15,7 @@ function BuscarTicketU() {
   useEffect(() => {
     const obtenerTodosLosTickets = async () => {
       try {
-        // Usamos la nueva ruta global que configuramos en el back
+        // Use la nueva ruta global que configure en el back
         const response = await fetch(`http://localhost:3000/todos-los-tickets`);
         const data = await response.json();
         
@@ -88,7 +88,7 @@ function BuscarTicketU() {
                     onDoubleClick={() => navigate_buscarTicketU(`/detalle-ticket/${ticket.id_ticket}`)} 
                   >
                     <td><strong>{ticket.id_ticket}</strong></td>
-                    {/* Muestra el nombre real del dueño del ticket */}
+                    {/* Muestra el nombre del dueño del ticket */}
                     <td>{ticket.nombre_usuario}</td>
                     <td>{ticket.titulo}</td>
                     <td className="celda-descripcion">{ticket.descripcion}</td>

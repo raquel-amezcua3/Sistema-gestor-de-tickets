@@ -7,13 +7,13 @@ function DatosResueltoTecnico() {
   const navigate_datos_resuelto_tecnico = useNavigate();
   const { id } = useParams();
 
+  // Campos de los tickets
   const [ticket_datos_resuelto_tecnico, setTicket_datos_resuelto_tecnico] = useState({
     id: '', nombre: '', correo: '', telefono: '', titulo: '', descripcion: '', fecha: '', estado: '', tecnico: '', fechaCierre: ''
   });
 
   useEffect(() => {
-    // Aquí buscarías el ticket en tu base de datos real usando el ID
-    // Simulación de carga de datos de un ticket ya CERRADO
+    // Esto sirve para buscar un ticket en la base de datos
     const encontrado = { 
       id: id || '101', 
       nombre: 'Juan Pérez', 

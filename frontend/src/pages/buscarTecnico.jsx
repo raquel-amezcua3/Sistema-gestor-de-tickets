@@ -10,11 +10,11 @@ function BuscarTecnico() {
   const [tickets_buscar_ticket_tecnico, setTickets_buscar_ticket_tecnico] = useState([]);
   const [busqueda_buscar_ticket_tecnico, setBusqueda_buscar_ticket_tecnico] = useState('');
 
-  // 2. Cargar todos los tickets al montar el componente
+  // 2. Cargar todos los tickets 
   useEffect(() => {
     const obtenerTicketsGlobales = async () => {
       try {
-        // Usamos la ruta que ya definiste en el backend
+        // Ruta de los tickets
         const response = await fetch('http://localhost:3000/admin/busqueda/todos-los-tickets');
         const data = await response.json();
         if (response.ok) {
@@ -28,7 +28,6 @@ function BuscarTecnico() {
   }, []);
 
   // 3. Lógica de filtrado (Nombre o ID)
-  // Nota: Ajustamos los nombres de campos según tu query SQL (nombre_usuario, nombre_tecnico, etc.)
   const filtrados_buscar_ticket_tecnico = tickets_buscar_ticket_tecnico.filter((ticket) => {
     const termino = busqueda_buscar_ticket_tecnico.toLowerCase();
     return (
@@ -40,7 +39,7 @@ function BuscarTecnico() {
 
   // 4. Función para decidir navegación
   const manejarNavegacion = (ticket) => {
-    // Verificamos si el estado es 'resuelto' (en minúsculas como quedamos)
+    // Verificamos si el estado es 'resuelto' 
     if (ticket.estado.toLowerCase() === 'resuelto' || ticket.estado.toLowerCase() === 'cerrado') {
       navigate_buscar_ticket_tecnico(`/datosResueltoTecnico/${ticket.id}`);
     } else {
@@ -110,6 +109,7 @@ function BuscarTecnico() {
                 ))
               ) : (
                 <tr>
+                 {/*  Si no se encuentra el ticket se va a mostrar este mensaje */}
                   <td colSpan="8" className="sin-resultados-buscar-ticket-tecnico">
                     No se encontraron tickets con esos criterios.
                   </td>

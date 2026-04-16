@@ -14,7 +14,7 @@ function NuevoTAdmin() {
       telefono: '',
       extension: '',
       contrasena: '',
-      confirmarContrasena: '' // Campo añadido para la validación
+      confirmarContrasena: '' 
    });
 
    const handleChange = (e) => {
@@ -41,7 +41,7 @@ function NuevoTAdmin() {
       setNuevo_tecnico({ ...nuevo_tecnico, [name]: value });
    };
 
-   // FUNCIÓN INTEGRADA PARA CONECTAR AL BACKEND
+   // Funcion para conectar al backend
    const handleSubmit = async (e) => {
      e.preventDefault();
 

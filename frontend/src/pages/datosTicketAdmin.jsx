@@ -7,7 +7,7 @@ function DatosTicketAdmin() {
   const { id } = useParams();
   const navigate_datos_admin = useNavigate();
   const [mostrarModal_datos_admin, setMostrarModal_datos_admin] = useState(false);
-  const [tecnicos, setTecnicos] = useState([]); // Estado para la lista de técnicos reales
+  const [tecnicos, setTecnicos] = useState([]); // Estado para la lista de técnicos
 
   const [ticket_datos_admin, setTicket_datos_admin] = useState({
     id: id || '101',
@@ -17,7 +17,7 @@ function DatosTicketAdmin() {
     extension: '',
     titulo: '',
     descripcion: '',
-    tecnico_asignado: '' // Aquí guardaremos el ID del técnico seleccionado
+    tecnico_asignado: '' // Aquí guardare el ID del técnico seleccionado
   });
 
   // 1. Cargar la lista de técnicos (Rol 2) y los datos del ticket al montar el componente
@@ -126,7 +126,7 @@ function DatosTicketAdmin() {
                 </div>
               </div>
 
-              {/* COLUMNA 2: TÉCNICO Y DESCRIPCIÓN */}
+              {/* COLUMNA 2: Tecnico y descripcion */}
               <div className="columna-datos-admin">
                 <div className="grupo-input-datos-admin">
                   <label className='tecnico-label-admin' >Técnico Asignado</label>

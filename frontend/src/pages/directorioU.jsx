@@ -6,12 +6,12 @@ import HeaderPU from '../components/HeaderPU';
 function DirectorioU() {
   const navigate_directorioU = useNavigate();
   
-  // 1. Estado para los usuarios que vienen de la BD
+  // 1. Estado para los usuarios que vienen de la base de datos
   const [usuarios_directorioU, setUsuarios_directorioU] = useState([]);
   const [busqueda_directorioU, setBusqueda_directorioU] = useState('');
   const [cargando, setCargando] = useState(true);
 
-  // 2. Cargar los usuarios al montar el componente
+  // 2. Cargar los usuarios 
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
@@ -30,7 +30,7 @@ function DirectorioU() {
     fetchUsuarios();
   }, []);
 
-  // 3. Lógica de filtrado MULTICAMPO (se mantiene igual, funciona excelente)
+  // 3. Lógica de filtrado 
   const filtrados_directorioU = usuarios_directorioU.filter((usuario) => {
     return Object.values(usuario).some((valor) =>
       valor ? valor.toString().toLowerCase().includes(busqueda_directorioU.toLowerCase()) : false

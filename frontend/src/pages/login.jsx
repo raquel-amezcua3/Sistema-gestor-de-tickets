@@ -1,3 +1,4 @@
+// Login que utilizan los 3 roles de usuarios
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/login.css';
@@ -35,16 +36,14 @@ function Login() {
         // 1. Convertimos el rol a número inmediatamente para evitar errores de comparación
         const rolNumerico = Number(data.usuario.rol);
 
-        // 2. GUARDADO CRÍTICO: Mantenemos tus nombres y agregamos el objeto 'usuario' para compatibilidad
+        // 2. Mantenemos tus nombres y agregamos el objeto 'usuario' para compatibilidad
         localStorage.setItem('id_usuario', data.usuario.id); 
         localStorage.setItem('usuarioNombre', data.usuario.nombre);
         localStorage.setItem('usuarioRol', rolNumerico);
-        
-        // Agregamos esta línea para que pantallas que buscan JSON.parse(localStorage.getItem('usuario')) no fallen
+
         localStorage.setItem('usuario', JSON.stringify({ id: data.usuario.id, nombre: data.usuario.nombre, rol: rolNumerico }));
 
-        // 3. Pequeña pausa de seguridad (50ms) para asegurar que el navegador guardó los datos
-        // antes de que el Header intente leerlos y te expulse.
+        // 3. Pequeña pausa de seguridad (50ms) para asegurar que el navegador guardó los datos antes de que el Header intente leerlos y me expulse.
         setTimeout(() => {
           if (rolNumerico === 1) {
             navigate('/principalAdmin'); 

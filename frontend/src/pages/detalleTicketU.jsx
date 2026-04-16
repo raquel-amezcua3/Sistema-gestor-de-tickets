@@ -30,8 +30,8 @@ function DetalleTicketU() {
 
         if (response.ok) {
           setTicketData(data);
-          setTitulo(data.titulo); // Cargamos el título de la BD
-          setDescripcion(data.descripcion); // Cargamos la descripción de la BD
+          setTitulo(data.titulo); // Cargamos el título de la base de datos
+          setDescripcion(data.descripcion); // Cargamos la descripción de la base de datos
         } else {
           console.error("Error al obtener detalle:", data.error);
         }
@@ -45,7 +45,7 @@ function DetalleTicketU() {
     obtenerDetalle();
   }, [id]);
 
-  // 3. Función para guardar los cambios en la BD
+  // 3. Función para guardar los cambios en la base de datos 
   const handleGuardar = async () => {
     try {
       const response = await fetch(`http://localhost:3000/detalle-ticket/${id}`, {

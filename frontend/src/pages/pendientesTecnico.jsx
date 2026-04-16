@@ -13,7 +13,6 @@ function PendientesTecnico() {
   useEffect(() => {
     const obtenerTicketsPendientes = async () => {
       try {
-        // CORRECCIÓN AQUÍ: Leemos 'id_usuario' directamente como lo guarda tu Login
         const idTecnico = localStorage.getItem('id_usuario');
         
         if (!idTecnico) {

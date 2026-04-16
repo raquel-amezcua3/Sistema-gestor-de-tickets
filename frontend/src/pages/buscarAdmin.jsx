@@ -11,7 +11,7 @@ function BuscarAdmin() {
   const [busqueda_buscar_admin, setBusqueda_buscar_admin] = useState('');
   const [cargando, setCargando] = useState(true);
 
-  // 2. Efecto para cargar los datos al montar el componente
+  // 2. Efecto para cargar los datos 
   useEffect(() => {
     const cargarTickets = async () => {
       try {
@@ -19,7 +19,6 @@ function BuscarAdmin() {
         const data = await response.json();
         
         if (response.ok) {
-          // Adaptamos los nombres de las columnas si es necesario
           const dataAdaptada = data.map(t => ({
             id: t.id.toString(),
             nombre: t.nombre_usuario,

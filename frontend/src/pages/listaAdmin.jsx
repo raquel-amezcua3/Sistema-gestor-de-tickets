@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Agregamos useEffect
+import React, { useState, useEffect } from 'react'; 
 import '../styles/listaAdmin.css';
 import { useNavigate } from 'react-router-dom';
 import EncabezadoAdmin from '../components/EncabezadoAdmin';
@@ -6,13 +6,13 @@ import EncabezadoAdmin from '../components/EncabezadoAdmin';
 function ListaAdmin() {
   const navigate_lista_admin = useNavigate();
 
-  // 1. Estado para los técnicos (ahora inicia como array vacío)
+  // 1. Estado para los técnicos 
   const [tecnicos_lista_admin, setTecnicos_lista_admin] = useState([]);
   
   // 2. Estado para el buscador
   const [busqueda_lista_admin, setBusqueda_lista_admin] = useState('');
 
-  // --- FUNCIÓN PARA TRAER LOS DATOS REALES ---
+  // Funcion para traer los datos
   useEffect(() => {
     const obtenerTecnicos = async () => {
       try {
@@ -20,7 +20,7 @@ function ListaAdmin() {
         const data = await response.json();
         
         if (response.ok) {
-          // Mapeamos para asegurar que los nombres de las propiedades coincidan con tu tabla
+          // Aseguramos los nombres para que coinicidan con la tabla
           const dataFormateada = data.map(tec => ({
             id: tec.id_usuario,
             nombre: tec.nombre,
@@ -38,7 +38,7 @@ function ListaAdmin() {
     obtenerTecnicos();
   }, []);
 
-  // 3. Lógica de filtrado (se mantiene igual, funciona perfecto con los datos reales)
+  // 3. Lógica de filtrado 
   const filtrados_lista_admin = tecnicos_lista_admin.filter((tecnico) => {
     return Object.values(tecnico).some((valor) =>
       valor && valor.toString().toLowerCase().includes(busqueda_lista_admin.toLowerCase())

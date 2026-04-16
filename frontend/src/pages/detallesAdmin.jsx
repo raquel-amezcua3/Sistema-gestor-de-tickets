@@ -5,18 +5,22 @@ import EncabezadoAdmin from '../components/EncabezadoAdmin';
 
 function DetallesAdmin() {
   const navigate_lista_admin = useNavigate();
+  // Obtención del ID del técnico desde los parámetros de la URL
   const { id } = useParams();
 
+  // Estados para controlar la interfaz: modo edición y visibilidad de modales
   const [editando, setEditando] = useState(false);
   const [modalExito, setModalExito] = useState(false);
   const [modalConfirmarBaja, setModalConfirmarBaja] = useState(false);
   const [modalEliminado, setModalEliminado] = useState(false);
 
+  // Estado que agrupa la información del técnico
   const [tecnico_lista_admin, setTecnico_lista_admin] = useState({
     nombre: '', correo: '', telefono: '', extension: '', contrasena: '********'
   });
 
   // 1. Cargar datos del técnico desde el backend
+  // Se ejecuta al montar el componente para obtener la información del técnico por su ID
   useEffect(() => {
     const cargarTecnico = async () => {
       try {
@@ -28,7 +32,7 @@ function DetallesAdmin() {
             correo: data.correo,
             telefono: data.telefono,
             extension: data.extension,
-            contrasena: '********' // Valor visual
+            contrasena: '********' // Se oculta la contraseña real por seguridad 
           });
         }
       } catch (err) {
@@ -39,6 +43,7 @@ function DetallesAdmin() {
   }, [id]);
 
   // 2. Guardar actualización
+  // Envía los datos modificados al servidor mediante el método PUT
   const handleGuardarActualizacion = async () => {
     try {
       const res = await fetch(`http://localhost:3000/admin/usuarios/tecnicos/${id}`, {
@@ -47,15 +52,16 @@ function DetallesAdmin() {
         body: JSON.stringify(tecnico_lista_admin)
       });
       if (res.ok) {
-        setModalExito(true);
-        setEditando(false);
+        setModalExito(true); // Muestra confirmación de éxito
+        setEditando(false);  // Bloquea los inputs nuevamente
       }
     } catch (err) {
       alert("Error al actualizar");
     }
   };
 
-  // 3. Confirmar y ejecutar eliminación
+  // 3. Confirmar y ejecutar eliminación (Baja)
+  // Utiliza el método DELETE. Incluye validación por si el técnico tiene dependencias (tickets)
   const confirmarBaja = async () => {
     try {
       const res = await fetch(`http://localhost:3000/admin/usuarios/tecnicos/${id}`, {
@@ -63,7 +69,7 @@ function DetallesAdmin() {
       });
       if (res.ok) {
         setModalConfirmarBaja(false);
-        setModalEliminado(true);
+        setModalEliminado(true); // Muestra modal de eliminación final
       } else {
         alert("No se puede eliminar el técnico (puede tener tickets asignados)");
       }
@@ -87,6 +93,7 @@ function DetallesAdmin() {
             </div>
 
             <div className="inputs-detalles-admin">
+              {/* Los inputs cambian entre modo lectura y modo edición según el estado 'editando' */}
               <div className="grupo-input-detalles-admin">
                 <label><span className="rojo-detalles-admin">*</span>Nombre de usuario</label>
                 <input 
@@ -160,7 +167,7 @@ function DetallesAdmin() {
         </div>
       </main>
 
-      {/* MODALES IGUALES AL TUYO */}
+      {/* Ventana emergente de actualización exitosa */}
       {modalExito && (
         <div className='overlay-modal-detalle-TU'>
           <div className='modal-exito-detalle-TU'>
@@ -173,6 +180,7 @@ function DetallesAdmin() {
         </div>
       )}
 
+      {/* Confirmación antes de eliminar permanentemente */}
       {modalConfirmarBaja && (
         <div className='overlay-modal-detalle-TU'>
           <div className='modal-exito-detalle-TU'>
@@ -188,6 +196,7 @@ function DetallesAdmin() {
         </div>
       )}
 
+      {/* Ventana emergente de técnico eliminado y redirección */}
       {modalEliminado && (
         <div className='overlay-modal-detalle-TU'>
           <div className='modal-exito-detalle-TU'>

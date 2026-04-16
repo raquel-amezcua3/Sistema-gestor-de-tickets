@@ -11,7 +11,7 @@ function AsignarAdmin() {
   const [busqueda_asignar_admin, setBusqueda_asignar_admin] = useState('');
   const [soloAbiertos_asignar_admin, setSoloAbiertos_asignar_admin] = useState(false);
 
-  // --- FUNCIÓN PARA TRAER LOS TICKETS REALES ---
+  // Funcion para treaer los tickets
   const obtenerTickets = async () => {
     try {
       const response = await fetch('http://localhost:3000/admin/tickets-por-asignar');
@@ -29,14 +29,14 @@ function AsignarAdmin() {
     obtenerTickets();
   }, []);
 
-  // Lógica de filtrado (Actualizada para manejar minúsculas de la DB)
+  // Lógica de filtrado
   const filtrados_asignar_admin = tickets_asignar_admin
     .filter((ticket) => {
       const coincide = 
         ticket.id.toString().includes(busqueda_asignar_admin) ||
         ticket.nombre.toLowerCase().includes(busqueda_asignar_admin.toLowerCase());
       
-      // Filtramos por 'abierto' en minúsculas como lo tienes en la DB
+      // Filtramos por 'abierto' 
       return soloAbiertos_asignar_admin ? (coincide && ticket.estado === 'abierto') : coincide;
     })
     .sort((a, b) => {
@@ -106,7 +106,7 @@ function AsignarAdmin() {
                     {ticket.estado}
                   </td>
                   <td>
-                    {/* Si el técnico es 'Pendiente' o nulo, mostramos el botón */}
+                    {/* Si el técnico es 'Pendiente' o nulo, mostrare un botón */}
                     {ticket.tecnico === 'Pendiente' || !ticket.tecnico ? (
                       <button 
                         className="btn-accion-asignar-admin"
