@@ -170,7 +170,7 @@ function DatosTicketAdmin() {
             <div className='contenedor-check-datos-admin'>
               <span className='check-animado-detalle-TU'>L</span> 
             </div>
-            <h2 className='ventana-texto' >¡Datos actualizados!</h2>
+            <h2 className='ventana-texto-actualizar' >¡Datos actualizados!</h2>
             <button className="btn-aceptar-datos-admin" onClick={cerrarModal_datos_admin}>
               Aceptar
             </button>

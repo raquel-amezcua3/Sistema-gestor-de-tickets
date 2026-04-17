@@ -120,6 +120,9 @@
   top: 5%;
 }
 
+.ventana-texto-actualizar{
+  color: red;
+}
 
 .btn-actualizar-datos-admin {
   background-color: #1a73e8;
@@ -150,16 +153,15 @@
 .modal-exito-datos-admin {
   background: white;
   padding: 40px;
-  border-radius: 8px;
   text-align: center;
   width: 400px;
 }
 
 .ventana-texto{
    color: black;
-   position: relative;
-   top: 20px;
-}
+   margin-top: 50px;
+} 
+
 
 .img-check-datos-admin { width: 80px; margin-bottom: 20px; }
 
@@ -169,7 +171,7 @@
   border: none;
   padding: 10px 40px;
   border-radius: 20px;
-  margin-top: 20px;
+  margin-top: 10px;
   cursor: pointer;
   position: relative;
   top: 20px;
@@ -178,6 +180,8 @@
 .btn-aceptar-datos-admin:hover{
     background-color: #1557b0;
 }
+
+
 
 
 

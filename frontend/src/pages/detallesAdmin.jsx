@@ -174,7 +174,7 @@ function DetallesAdmin() {
             <div className='contenedor-check-detalle-TU'>
               <img src="/img/informacion-personal.png" alt="check" className="img-modal-icon-actualizar" /> 
             </div>
-            <h2 className='titulo-DTU'>¡Datos actualizados!</h2>
+            <h2 className='titulo-DTU-actu'>¡Datos actualizados!</h2>
             <button className='btn-aceptar-detalle-TU' onClick={() => setModalExito(false)}>Aceptar</button>
           </div>
         </div>
@@ -187,7 +187,7 @@ function DetallesAdmin() {
             <div className='contenedor-check-detalle-TU'>
               <img src="/img/tecnico.png" alt="check" className="img-modal-icon-actualizar" /> 
             </div>
-            <h2 className='titulo-DTU'>¿Quieres dar de baja a este tecnico?</h2>
+            <h2 className='titulo-DTU-baja'>¿Quieres dar de baja a este tecnico?</h2>
             <div className="container-botones-modal">
               <button className='btn-aceptar-detalle-TU' onClick={confirmarBaja}>Aceptar</button>
               <button className='btn-cancelar-modal' onClick={() => setModalConfirmarBaja(false)}>Cancelar</button>
@@ -204,7 +204,7 @@ function DetallesAdmin() {
                <span className='check-animado'>L</span> 
              </div>
             <h2 className='titulo-tecnico-Admin'>¡Tecnico eliminado correctamente!</h2>
-            <button className='btn-aceptar-tecnico-detalle-TU' onClick={() => navigate_lista_admin('/listaAdmin')}>Aceptar</button>
+            <button className='btn-aceptar-tecnico-detalle-TU-baja' onClick={() => navigate_lista_admin('/listaAdmin')}>Aceptar</button>
           </div>
         </div>
       )}

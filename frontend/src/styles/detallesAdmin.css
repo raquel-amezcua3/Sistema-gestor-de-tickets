@@ -299,15 +299,21 @@
   display: inline-block;
 }
 
+.titulo-DTU-baja{
+  margin-top: -50px;
+}
 
-.titulo-tecnico-Admin{
-  font-size: 28px;
+
+.container-botones-modal{
+  margin-top: -20px;
+}
+
+.titulo-DTU-actualizar {
+  font-size: 24px;
   margin-bottom: 30px;
   color: #333;
   position: relative;
-  top: 100px;
-  left: -88px;
-  width: 150%;
+  top: -5px;
 }
 
 .btn-aceptar-tecnico-detalle-TU {
@@ -322,3 +328,20 @@
   position: relative;
   top: 100px;
 }
+
+
+
+.btn-aceptar-tecnico-detalle-TU-baja {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 10px 50px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  position: relative;
+  top: 30px;
+}
+
+
