@@ -25,7 +25,7 @@ function DatosTicketTecnico() {
   useEffect(() => {
     const cargarDetalle = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/tecnico/tickets/detalle/${id}`);
+        const response = await fetch(`/api/tecnico/tickets/detalle/${id}`);
         const data = await response.json();
         if (response.ok) {
           // Se inicializa el estado con los datos del backend, manteniendo la fecha de cierre vacía para que el técnico la asigne
@@ -42,7 +42,7 @@ function DatosTicketTecnico() {
   // Envía una petición PUT al servidor para actualizar el estado del ticket y registrar su conclusión
   const confirmarResolucion = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/tecnico/tickets/resolver/${id}`, {
+      const response = await fetch(`/api/tecnico/tickets/resolver/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

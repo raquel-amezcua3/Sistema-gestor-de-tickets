@@ -27,7 +27,7 @@ function PerfilTecnico() {
       if (!idUsuario) return;
 
       try {
-        const response = await fetch(`http://localhost:3000/perfil/${idUsuario}`);
+        const response = await fetch(`/api/perfil/${idUsuario}`);
         const data = await response.json();
         
         if (response.ok) {
@@ -49,7 +49,7 @@ function PerfilTecnico() {
     const idUsuario = localStorage.getItem('id_usuario');
 
     try {
-      const response = await fetch(`http://localhost:3000/perfil/${idUsuario}`, {
+      const response = await fetch(`/api/perfil/${idUsuario}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -25,7 +25,7 @@ function DetalleTicketU() {
   useEffect(() => {
     const obtenerDetalle = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/detalle-ticket/${id}`);
+        const response = await fetch(`/api/detalle-ticket/${id}`);
         const data = await response.json();
 
         if (response.ok) {
@@ -48,7 +48,7 @@ function DetalleTicketU() {
   // 3. Función para guardar los cambios en la base de datos 
   const handleGuardar = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/detalle-ticket/${id}`, {
+      const response = await fetch(`/api/detalle-ticket/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ titulo, descripcion })

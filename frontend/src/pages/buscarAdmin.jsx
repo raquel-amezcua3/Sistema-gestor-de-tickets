@@ -15,7 +15,7 @@ function BuscarAdmin() {
   useEffect(() => {
     const cargarTickets = async () => {
       try {
-        const response = await fetch('http://localhost:3000/admin/busqueda/todos-los-tickets');
+        const response = await fetch('/api/admin/busqueda/todos-los-tickets');
         const data = await response.json();
         
         if (response.ok) {

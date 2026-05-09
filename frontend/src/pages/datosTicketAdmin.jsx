@@ -25,12 +25,12 @@ function DatosTicketAdmin() {
     const cargarDatosIniciales = async () => {
       try {
         // Obtener técnicos
-        const resTec = await fetch('http://localhost:3000/admin/usuarios/tecnicos');
+        const resTec = await fetch('/api/admin/usuarios/tecnicos');
         const dataTec = await resTec.json();
         setTecnicos(dataTec);
 
         // Obtener datos del ticket actual
-        const resTick = await fetch(`http://localhost:3000/detalle-ticket/${id}`);
+        const resTick = await fetch(`/api/detalle-ticket/${id}`);
         const dataTick = await resTick.json();
         
         if (resTick.ok) {
@@ -57,7 +57,7 @@ function DatosTicketAdmin() {
     e.preventDefault();
     
     try {
-      const response = await fetch('http://localhost:3000/admin/asignar-tecnico', {
+      const response = await fetch('/api/admin/asignar-tecnico', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -43,7 +43,7 @@ function NuevoTicketU() {
      console.log("Datos que viajan al servidor:", bodyData);
 
      try {
-       const response = await fetch('http://localhost:3000/tickets', {
+       const response = await fetch('/api/tickets', {
          method: 'POST',
          headers: {
            'Content-Type': 'application/json',

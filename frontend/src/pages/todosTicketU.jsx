@@ -21,7 +21,7 @@ function TodosTicketU() {
       }
 
       try {
-        const response = await fetch(`http://localhost:3000/mis-tickets/${id_usuario}`);
+        const response = await fetch(`/api/mis-tickets/${id_usuario}`);
         const data = await response.json();
         
         if (response.ok) {

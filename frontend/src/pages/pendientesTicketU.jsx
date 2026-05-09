@@ -23,7 +23,7 @@ function PendientesTicketU() {
       }
 
       try {
-        const response = await fetch(`http://localhost:3000/tickets-pendientes/${id_usuario}`);
+        const response = await fetch(`/api/tickets-pendientes/${id_usuario}`);
         const data = await response.json();
         
         if (response.ok) {

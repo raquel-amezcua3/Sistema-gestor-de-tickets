@@ -32,7 +32,7 @@ function Registro() {
 
     try {
       // 3. Petición al Backend
-      const response = await fetch('http://localhost:3000/registro', {
+      const response = await fetch('/api/registro', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ function Registro() {
         <h2 className='titulo-registro'>¡Registrate y obten soporte cuando lo necesites!</h2>
         
         <form className='formulario-registro' onSubmit={handleSubmit}>
-          {/* NOMBRE */}
+          {/* NOMBRE */}a
           <div className='campo-formulario-registro'>
             <label htmlFor='nombre'>Nombre de usuario</label>
             <input 
@@ -130,7 +130,7 @@ function Registro() {
           
           <div className='cuenta'>
             <a href='/login'>¿Ya tienes cuenta?</a>
-          </div>
+          </div> 
         </form>
       </div>
     </div>

@@ -14,7 +14,7 @@ function AsignarAdmin() {
   // Funcion para treaer los tickets
   const obtenerTickets = async () => {
     try {
-      const response = await fetch('http://localhost:3000/admin/tickets-por-asignar');
+      const response = await fetch('/api/admin/tickets-por-asignar');
       if (response.ok) {
         const data = await response.json();
         setTickets_asignar_admin(data);

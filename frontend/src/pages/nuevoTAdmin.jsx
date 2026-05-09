@@ -46,7 +46,7 @@ function NuevoTAdmin() {
      e.preventDefault();
 
      try {
-       const response = await fetch('http://localhost:3000/admin/registrar-tecnico/registrar', {
+       const response = await fetch('/api/admin/registrar-tecnico/registrar', {
          method: 'POST',
          headers: {
            'Content-Type': 'application/json',

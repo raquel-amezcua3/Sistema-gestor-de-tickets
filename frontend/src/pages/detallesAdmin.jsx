@@ -24,7 +24,7 @@ function DetallesAdmin() {
   useEffect(() => {
     const cargarTecnico = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/admin/usuarios/tecnicos/${id}`);
+        const res = await fetch(`/api/admin/usuarios/tecnicos/${id}`);
         const data = await res.json();
         if (res.ok) {
           setTecnico_lista_admin({
@@ -46,7 +46,7 @@ function DetallesAdmin() {
   // Envía los datos modificados al servidor mediante el método PUT
   const handleGuardarActualizacion = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/admin/usuarios/tecnicos/${id}`, {
+      const res = await fetch(`/api/admin/usuarios/tecnicos/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(tecnico_lista_admin)
@@ -64,7 +64,7 @@ function DetallesAdmin() {
   // Utiliza el método DELETE. Incluye validación por si el técnico tiene dependencias (tickets)
   const confirmarBaja = async () => {
     try {
-      const res = await fetch(`http://localhost:3000/admin/usuarios/tecnicos/${id}`, {
+      const res = await fetch(`/api/admin/usuarios/tecnicos/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {

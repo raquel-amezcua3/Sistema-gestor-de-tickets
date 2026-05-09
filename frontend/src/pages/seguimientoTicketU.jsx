@@ -15,7 +15,7 @@ function SeguimientoTicketU() {
         const obtenerEstadoTicket = async () => {
             try {
                 // Usamos la misma ruta de detalle que ya tienes
-                const response = await fetch(`http://localhost:3000/detalle-ticket/${id}`);
+                const response = await fetch(`/api/detalle-ticket/${id}`);
                 const data = await response.json();
                 
                 if (response.ok) {

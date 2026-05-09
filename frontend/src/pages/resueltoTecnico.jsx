@@ -20,7 +20,7 @@ useEffect(() => {
       }
 
       try {
-        const url = `http://localhost:3000/tecnico/tickets/resueltos/${idTecnico}`;
+        const url = `/api/tecnico/tickets/resueltos/${idTecnico}`;
         console.log("2. Llamando a la URL:", url);
 
         const response = await fetch(url);

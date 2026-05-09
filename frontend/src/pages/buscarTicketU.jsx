@@ -16,7 +16,7 @@ function BuscarTicketU() {
     const obtenerTodosLosTickets = async () => {
       try {
         // Use la nueva ruta global que configure en el back
-        const response = await fetch(`http://localhost:3000/todos-los-tickets`);
+        const response = await fetch(`/api/todos-los-tickets`);
         const data = await response.json();
         
         if (response.ok) {

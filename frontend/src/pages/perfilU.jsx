@@ -25,7 +25,7 @@ function PerfilU() {
   useEffect(() => {
     const obtenerPerfil = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/perfil/${id_usuario}`);
+        const response = await fetch(`/api/perfil/${id_usuario}`);
         const data = await response.json();
         if (response.ok) {
           setDatos_perfil_usuario(data);
@@ -41,7 +41,7 @@ function PerfilU() {
   const handleActualizar_perfil_usuario = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:3000/perfil/${id_usuario}`, {
+      const response = await fetch(`/api/perfil/${id_usuario}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos_perfil_usuario)

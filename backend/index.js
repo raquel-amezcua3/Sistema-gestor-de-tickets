@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const path = require('path');
 const pool = require('./db'); // Usamos la conexión centralizada
 const nuevoticketRoutes = require('./routes/nuevoticket'); // Importamos la nueva ruta
 const asignarAdminRoutes = require('./routes/asignarAdmin');
@@ -30,15 +31,15 @@ pool.query('SELECT NOW()', (err, res) => {
 });
 
 // --- RUTAS MODULARIZADAS ---
-app.use('/tickets', nuevoticketRoutes); // Todo lo de tickets va a /routes/nuevoticket.js
+app.use('/api/tickets', nuevoticketRoutes); // Todo lo de tickets va a /routes/nuevoticket.js
 
 // --- RUTA DE BIENVENIDA ---
-app.get('/', (req, res) => {
+/* app.get('/', (req, res) => {
   res.send('Servidor Tarelix funcionando 🚀');
-});
+}); */
 
 // --- 4. RUTA DE REGISTRO ---
-app.post('/registro', async (req, res) => {
+app.post('/api/registro', async (req, res) => {
   const { nombre, correo, contraseña, telefono, extension, rol } = req.body;
 
   if (!nombre || !correo || !contraseña || rol === undefined) {
@@ -70,7 +71,7 @@ app.post('/registro', async (req, res) => {
 });
 
 // --- 5. RUTA DE LOGIN ---
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
   const { correo, contraseña } = req.body;
 
   if (!correo || !contraseña) {
@@ -110,45 +111,67 @@ app.post('/login', async (req, res) => {
 
 // Seccion de "mis tickets" del usuario 0 
 const misTicketsRoutes = require('./routes/misTickets');
-app.use('/mis-tickets', misTicketsRoutes);
+app.use('/api/mis-tickets', misTicketsRoutes);
 
 
 // Seccion de "buscar ticket" (todos los del sistema usuario 0)
 const buscarTicketRoutes = require('./routes/buscarTicket');
-app.use('/buscar-ticket', buscarTicketRoutes);
+app.use('/api/buscar-ticket', buscarTicketRoutes);
 
 // Aparecen todos los tickets del sistema usuario 0
 const todosLosTicketsRoutes = require('./routes/todosLosTickets');
-app.use('/todos-los-tickets', todosLosTicketsRoutes);
+app.use('/api/todos-los-tickets', todosLosTicketsRoutes);
 
 // Tickets pendientes del usuario 0 (abierto o en espera)
 const ticketsPendientesRoutes = require('./routes/ticketsPendientes');
-app.use('/tickets-pendientes', ticketsPendientesRoutes);
+app.use('/api/tickets-pendientes', ticketsPendientesRoutes);
 
 // Detalle del ticket 
-app.use('/detalle-ticket', require('./routes/detalleTicket'));
+app.use('/api/detalle-ticket', require('./routes/detalleTicket'));
 
 // Perfil del usuario
-app.use('/perfil', require('./routes/perfil'));
+app.use('/api/perfil', require('./routes/perfil'));
 
 // Directorio de usuarios
-app.use('/directorio', require('./routes/directorio'));
+app.use('/api/directorio', require('./routes/directorio'));
 
 // Para asignar tickets 
-app.use('/admin', asignarAdminRoutes);
-app.use('/admin/usuarios', usuariosAdminRoutes); 
+app.use('/api/admin', asignarAdminRoutes);
+app.use('/api/admin/usuarios', usuariosAdminRoutes); 
 
 //Para registrar un nuevo tecnico (Administrador rol 1)
-app.use('/admin/registrar-tecnico', registroTecnicoAdmin);
+app.use('/api/admin/registrar-tecnico', registroTecnicoAdmin);
 
 //Para hacer una busqueda de un ticket dentro del sistema (Administrador rol 1)
-app.use('/admin/busqueda', busquedaGlobalRoutes);
+app.use('/api/admin/busqueda', busquedaGlobalRoutes);
 
 //Para la tabla de pendientes tecnico en estado de "en proceso"
-app.use('/tecnico/tickets', ticketsTecnico);
+app.use('/api/tecnico/tickets', ticketsTecnico);
 
 // Iniciar servidor
-const PORT = 3000;
+/* const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+}); */
+
+
+// --- ⬇️ ESTA ES LA PARTE QUE TE FALTA PARA QUE FUNCIONE EL FRONT ⬇️ ---
+
+// 1. Servir archivos estáticos del frontend
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+// 2. Manejo de rutas de React (Si no es /api, es una página del front)
+app.get(/^(?!\/api).+/, (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
+});
+
+// 3. Error 404 para la API
+app.use('/api', (req, res) => {
+  res.status(404).json({ error: 'Endpoint de API no encontrado' });
+});
+
+// Iniciar servidor (Usamos process.env.PORT para Render)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Servidor y Front-End listos en el puerto ${PORT}`);
 });

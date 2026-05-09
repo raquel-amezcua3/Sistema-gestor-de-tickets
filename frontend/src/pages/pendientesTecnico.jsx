@@ -21,7 +21,7 @@ function PendientesTecnico() {
         }
 
         // Usamos la variable idTecnico en la URL
-        const response = await fetch(`http://localhost:3000/tecnico/tickets/pendientes/${idTecnico}`);
+        const response = await fetch(`/api/tecnico/tickets/pendientes/${idTecnico}`);
         const data = await response.json();
 
         if (response.ok) {

@@ -15,7 +15,7 @@ function BuscarTecnico() {
     const obtenerTicketsGlobales = async () => {
       try {
         // Ruta de los tickets
-        const response = await fetch('http://localhost:3000/admin/busqueda/todos-los-tickets');
+        const response = await fetch('/api/admin/busqueda/todos-los-tickets');
         const data = await response.json();
         if (response.ok) {
           setTickets_buscar_ticket_tecnico(data);

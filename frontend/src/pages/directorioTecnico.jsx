@@ -14,7 +14,7 @@ function DirectorioTecnico() {
   useEffect(() => {
     const cargarDatos = async () => {
       try {
-        const response = await fetch('http://localhost:3000/directorio');
+        const response = await fetch('/api/directorio');
         const data = await response.json();
         
         if (response.ok) {

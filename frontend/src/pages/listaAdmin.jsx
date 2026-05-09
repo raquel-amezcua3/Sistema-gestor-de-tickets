@@ -16,7 +16,7 @@ function ListaAdmin() {
   useEffect(() => {
     const obtenerTecnicos = async () => {
       try {
-        const response = await fetch('http://localhost:3000/admin/usuarios/tecnicos');
+        const response = await fetch('/api/admin/usuarios/tecnicos');
         const data = await response.json();
         
         if (response.ok) {
