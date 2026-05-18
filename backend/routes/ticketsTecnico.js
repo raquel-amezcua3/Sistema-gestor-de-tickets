@@ -16,7 +16,7 @@ router.get('/pendientes/:id_tecnico', async (req, res) => {
     }
 
     try {
-        // 🔥 CORREGIDO EL WHERE: Ahora busca por tec.id_base para evitar perder datos al reiniciar
+        // CORREGIDO: Filtramos por tec.id_tecnico para que traiga los de ese usuario logueado
         const query = `
             SELECT 
                 t.id_ticket AS id, 
@@ -31,7 +31,7 @@ router.get('/pendientes/:id_tecnico', async (req, res) => {
             INNER JOIN base bu ON u.id_base = bu.id_base
             INNER JOIN tecnico tec ON t.id_tecnico = tec.id_tecnico
             INNER JOIN base bt ON tec.id_base = bt.id_base
-            WHERE tec.id_base = $1 AND LOWER(t.estado) = 'en proceso'
+            WHERE tec.id_tecnico = $1 AND LOWER(t.estado) = 'en proceso'
             ORDER BY t.fecha_creacion DESC
         `;
         const resultado = await pool.query(query, [parseInt(id_tecnico, 10)]);
@@ -79,6 +79,7 @@ router.get('/resueltos/:id_tecnico', async (req, res) => {
     }
 
     try {
+        // CORREGIDO: Cambiado tec.id_base = $1 por tec.id_tecnico = $1
         const query = `
             SELECT 
                 t.id_ticket AS id, 
@@ -86,7 +87,6 @@ router.get('/resueltos/:id_tecnico', async (req, res) => {
                 t.titulo_falla AS titulo, 
                 t.descripcion_falla AS descripcion, 
                 TO_CHAR(t.fecha_creacion, 'YYYY-MM-DD') AS fecha, 
-                -- 🔥 COALESCE: Si t.fecha_cierre es null, extrae la fecha del último historial de trazabilidad registrado
                 TO_CHAR(
                     COALESCE(
                         t.fecha_cierre, 
@@ -101,7 +101,7 @@ router.get('/resueltos/:id_tecnico', async (req, res) => {
             INNER JOIN base bu ON u.id_base = bu.id_base
             INNER JOIN tecnico tec ON t.id_tecnico = tec.id_tecnico
             INNER JOIN base bt ON tec.id_base = bt.id_base
-            WHERE tec.id_base = $1 AND LOWER(t.estado) = 'resuelto'
+            WHERE tec.id_tecnico = $1 AND LOWER(t.estado) = 'resuelto'
             ORDER BY t.fecha_cierre DESC NULLS LAST
         `;
         const resultado = await pool.query(query, [parseInt(id_tecnico, 10)]);
