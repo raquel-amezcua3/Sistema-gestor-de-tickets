@@ -77,7 +77,7 @@ function BuscarTecnico() {
                 <th className="col-titulo-buscar-ticket-tecnico">Titulo</th>
                 <th className="col-desc-buscar-ticket-tecnico">Descripción</th>
                 <th className="col-fecha-buscar-ticket-tecnico">Fecha de creación</th>
-                <th className="col-fecha-buscar-ticket-tecnico">Fecha de cierre</th>
+                {/* <th className="col-fecha-buscar-ticket-tecnico">Fecha de cierre</th> */}
                 <th className="col-estado-buscar-ticket-tecnico">Estado</th>
                 <th className="col-tecnico-buscar-ticket-tecnico">Tecnico</th>
               </tr>
@@ -96,7 +96,7 @@ function BuscarTecnico() {
                     <td>{ticket.titulo}</td>
                     <td>{ticket.descripcion}</td>
                     <td>{ticket.fecha}</td>
-                    <td>{ticket.fecha_cierre}</td>
+                    {/* <td>{ticket.fecha_cierre}</td> */}
                     <td className={
                         ticket.estado.toLowerCase() === 'resuelto' || ticket.estado.toLowerCase() === 'cerrado' 
                         ? 'texto-verde-buscar' 

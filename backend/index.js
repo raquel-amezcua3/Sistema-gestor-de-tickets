@@ -3,174 +3,240 @@ const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const path = require('path');
-const pool = require('./db'); // Usamos la conexión centralizada
-const nuevoticketRoutes = require('./routes/nuevoticket'); // Importamos la nueva ruta
+const pool = require('./db'); 
+
+// Rutas modularizadas existentes
+const nuevoticketRoutes = require('./routes/nuevoticket');
 const asignarAdminRoutes = require('./routes/asignarAdmin');
-const usuariosAdminRoutes = require('./routes/usuariosAdmin');
+const usuariosAdminRoutes = require('./routes/usuariosAdmin'); 
 const registroTecnicoAdmin = require('./routes/registroTecnicoAdmin');
-const busquedaGlobalRoutes = require('./routes/busquedaGlobalAdmin');
 const ticketsTecnico = require('./routes/ticketsTecnico');
+const equipoRouter = require('./routes/equipo');
+const registroAdmin = require('./routes/registroAdmin');
+const datosTicketAdminRouter = require('./routes/datosTicketAdmin'); 
+const todosLosTicketsRouter = require('./routes/todosLosTickets');
+const detallesAdminRouter = require('./routes/detallesAdmin');
+const bitacoraEquipoRouter = require('./routes/bitacoraETecnico');
 
-
-
-
+// Nuevas rutas exclusivas sin intervención de la tabla Usuario
+const listaAdminRouter = require('./routes/ListaAdmin');
+const cargaticketsAdminRouter = require('./routes/cargaticketsAdmin');
+const datosResueltoRouter = require('./routes/datosResueltoTecnico');
+const rutaInputEquipo = require('./routes/inputEquipo');
 
 const app = express();
 
-// Middlewares
 app.use(express.json());
 app.use(cors());
 
 // --- CONEXIÓN INICIAL ---
 pool.query('SELECT NOW()', (err, res) => {
   if (err) {
-    console.error('❌ Error conectando a Neon:', err.stack);
+    console.error('❌ Error conectando a la base de datos:', err.stack);
   } else {
-    console.log('✅ Base de datos conectada (index.js)');
+    console.log('✅ Base de datos conectada con éxito');
   }
 });
 
-// --- RUTAS MODULARIZADAS ---
-app.use('/api/tickets', nuevoticketRoutes); // Todo lo de tickets va a /routes/nuevoticket.js
+// --- RUTAS DE LA APP ---
+app.use('/api/tickets', nuevoticketRoutes);
 
-// --- RUTA DE BIENVENIDA ---
-/* app.get('/', (req, res) => {
-  res.send('Servidor Tarelix funcionando 🚀');
-}); */
-
-// --- 4. RUTA DE REGISTRO ---
 app.post('/api/registro', async (req, res) => {
-  const { nombre, correo, contraseña, telefono, extension, rol } = req.body;
-
-  if (!nombre || !correo || !contraseña || rol === undefined) {
+  const { nombre, correo, contrasena, telefono, extension } = req.body;
+  if (!nombre || !correo || !contrasena || !telefono || !extension) {
     return res.status(400).json({ error: "Faltan datos obligatorios." });
   }
-
   try {
     const saltRounds = 10;
-    const contraseñaEncriptada = await bcrypt.hash(contraseña, saltRounds);
-
-    const query = `
-      INSERT INTO usuarios (nombre, correo, contraseña, telefono, extension, rol)
-      VALUES ($1, $2, $3, $4, $5, $6) 
-      RETURNING id_usuario, nombre, correo
+    const passEncriptada = await bcrypt.hash(contrasena, saltRounds);
+    await pool.query('BEGIN');
+    const queryBase = `
+      INSERT INTO Base (nombre, correo, contrasena, telefono, extension)
+      VALUES ($1, $2, $3, $4, $5) 
+      RETURNING id_base, nombre, correo
     `;
-    const values = [nombre, correo, contraseñaEncriptada, telefono, extension, rol];
-
-    const resultado = await pool.query(query, values);
-    
-    res.status(201).json({ 
-      mensaje: "Usuario registrado con éxito", 
-      usuario: resultado.rows[0] 
-    });
-
+    const resBase = await pool.query(queryBase, [nombre, correo, passEncriptada, telefono, extension]);
+    const idBaseGenerado = resBase.rows[0].id_base;
+    await pool.query('INSERT INTO Usuario (id_base) VALUES ($1)', [idBaseGenerado]);
+    await pool.query('COMMIT'); 
+    res.status(201).json({ mensaje: "Usuario registrado con éxito en el sistema", usuario: resBase.rows[0] });
   } catch (error) {
+    await pool.query('ROLLBACK');
     console.error("❌ Error en registro:", error.message);
     res.status(500).json({ error: "Error interno", detalle: error.message });
   }
 });
 
-// --- 5. RUTA DE LOGIN ---
+// 🔥 MODIFICADO PARA OBTENER EL id_usuario CORRECTO 🔥
 app.post('/api/login', async (req, res) => {
-  const { correo, contraseña } = req.body;
+  const { correo, contrasena, contraseña } = req.body;
+  const passwordIngresada = contrasena || contraseña;
 
-  if (!correo || !contraseña) {
+  if (!correo || !passwordIngresada) {
     return res.status(400).json({ error: "Correo y contraseña son requeridos" });
   }
 
   try {
-    const result = await pool.query('SELECT * FROM usuarios WHERE correo = $1', [correo]);
-
+    // Consulta modificada para buscar en Usuario si no es Admin o Técnico
+    const queryLogin = `
+      SELECT 
+        b.id_base, b.nombre, b.correo, b.contrasena,
+        u.id_usuario, -- Traemos el id_usuario
+        CASE 
+          WHEN a.id_admin IS NOT NULL THEN 1 -- Admin
+          WHEN t.id_tecnico IS NOT NULL THEN 2 -- Técnico
+          WHEN u.id_usuario IS NOT NULL THEN 3 -- Usuario normal que sube tickets
+          ELSE 3 -- fallback
+        END AS rol
+      FROM Base b
+      LEFT JOIN Administrador a ON b.id_base = a.id_base
+      LEFT JOIN Tecnico t ON b.id_base = t.id_base
+      LEFT JOIN Usuario u ON b.id_base = u.id_base -- Hacemos el join con Usuario
+      WHERE b.correo = $1
+    `;
+    const result = await pool.query(queryLogin, [correo]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
-
-    const usuario = result.rows[0];
-    const coinciden = await bcrypt.compare(contraseña, usuario.contraseña);
+    const usuarioEncontrado = result.rows[0];
+    const coinciden = await bcrypt.compare(passwordIngresada, usuarioEncontrado.contrasena);
 
     if (coinciden) {
+      // Devolvemos el id_usuario en el login
       res.json({
         mensaje: "¡Bienvenido!",
         usuario: {
-          id: usuario.id_usuario, 
-          nombre: usuario.nombre,
-          rol: usuario.rol
+          id_base: usuarioEncontrado.id_base,
+          id_usuario: usuarioEncontrado.id_usuario, // <-- Aquí va el ID que faltaba
+          nombre: usuarioEncontrado.nombre,
+          rol: usuarioEncontrado.rol 
         }
       });
     } else {
       res.status(401).json({ error: "Contraseña incorrecta" });
     }
-
   } catch (error) {
     console.error("❌ Error en login:", error.message);
-    res.status(500).json({ error: "Error en el proceso de login" });
+    res.status(500).json({ error: "Error en el servidor durante el login" });
   }
 });
 
-// --- OTRAS RUTAS MODULARIZADAS ---
+app.post('/api/registrar-nuevo-equipo', async (req, res) => {
+  const { id_usuario, id_base, tipo_equipo, marca, numero_serie } = req.body;
+  if (!id_usuario || !id_base || !tipo_equipo || !marca) {
+    return res.status(400).json({ error: "Faltan datos obligatorios para registrar el equipo." });
+  }
+  try {
+    const query = `
+      INSERT INTO equipo (id_usuario, id_base, tipo_equipo, marca, numero_serie)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING id_equipo;
+    `;
+    const values = [id_usuario, id_base, tipo_equipo, marca, numero_serie];
+    const resultado = await pool.query(query, values);
+    res.status(201).json({ mensaje: "Equipo registrado correctamente", id_equipo: resultado.rows[0].id_equipo });
+  } catch (error) {
+    console.error("❌ Error directo al insertar equipo:", error.message);
+    res.status(500).json({ error: "Error en el servidor al guardar el equipo", detalle: error.message });
+  }
+});
 
-// Seccion de "mis tickets" del usuario 0 
-const misTicketsRoutes = require('./routes/misTickets');
-app.use('/api/mis-tickets', misTicketsRoutes);
-
-
-// Seccion de "buscar ticket" (todos los del sistema usuario 0)
-const buscarTicketRoutes = require('./routes/buscarTicket');
-app.use('/api/buscar-ticket', buscarTicketRoutes);
-
-// Aparecen todos los tickets del sistema usuario 0
-const todosLosTicketsRoutes = require('./routes/todosLosTickets');
-app.use('/api/todos-los-tickets', todosLosTicketsRoutes);
-
-// Tickets pendientes del usuario 0 (abierto o en espera)
-const ticketsPendientesRoutes = require('./routes/ticketsPendientes');
-app.use('/api/tickets-pendientes', ticketsPendientesRoutes);
-
-// Detalle del ticket 
+app.use('/api/mis-tickets', require('./routes/misTickets'));
+app.use('/api/buscar-ticket', require('./routes/buscarTicket'));
+app.use('/api/todos-los-tickets', require('./routes/buscarTicket'));
+app.use('/api/tickets-pendientes', require('./routes/ticketsPendientes'));
 app.use('/api/detalle-ticket', require('./routes/detalleTicket'));
-
-// Perfil del usuario
 app.use('/api/perfil', require('./routes/perfil'));
-
-// Directorio de usuarios
 app.use('/api/directorio', require('./routes/directorio'));
+app.use('/api/tecnico/tickets', require('./routes/datosTicketTecnico'));
 
-// Para asignar tickets 
-app.use('/api/admin', asignarAdminRoutes);
+
+
+// --- RUTAS DEL ADMINISTRADOR ---
+app.use('/api/asignar-admin', asignarAdminRoutes); 
 app.use('/api/admin/usuarios', usuariosAdminRoutes); 
-
-//Para registrar un nuevo tecnico (Administrador rol 1)
 app.use('/api/admin/registrar-tecnico', registroTecnicoAdmin);
+app.use('/api/admin/registro-Admin', registroAdmin);
+app.use('/api/admin/detalle-tecnico-perfil', require('./routes/datosTecnicoDetalle'));
+app.use('/api/admin/busqueda', require('./routes/buscarTicketAdmin'));
+app.use('/api/admin/lista-tecnicos', listaAdminRouter);
+app.use('/api/admin/carga-tickets', cargaticketsAdminRouter);
+app.use('/api/datos-ticket-admin', datosTicketAdminRouter); 
+app.use('/api/equipo', require('./routes/inputEquipo'));
+app.use('/api/admin/busqueda', todosLosTicketsRouter);
+app.use('/api/admin', detallesAdminRouter);
+app.use('/api', bitacoraEquipoRouter);
 
-//Para hacer una busqueda de un ticket dentro del sistema (Administrador rol 1)
-app.use('/api/admin/busqueda', busquedaGlobalRoutes);
-
-//Para la tabla de pendientes tecnico en estado de "en proceso"
+// --- RUTAS DEL TÉCNICO ---
 app.use('/api/tecnico/tickets', ticketsTecnico);
+app.use('/api/equipo', equipoRouter);
+app.use('/api/tecnico/perfil', require('./routes/perfilTecnico'));
+app.use('/api/datos-resuelto', datosResueltoRouter);
 
-// Iniciar servidor
-/* const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
-}); */
+// 🔥 RUTA DIRECTA INYECTADA AQUÍ (Ya no requiere un archivo externo)
+app.post('/api/tecnico/tickets/seguimiento/:id', async (req, res) => {
+  const id_ticket = req.params.id;
+  const { 
+      estado, 
+      diagnostico, 
+      fallaReal, 
+      accionTomada, 
+      piezas, 
+      tiempo,
+      id_tecnico,
+      id_base
+  } = req.body;
 
+  try {
+      await pool.query('BEGIN');
 
-// --- ⬇️ ESTA ES LA PARTE QUE TE FALTA PARA QUE FUNCIONE EL FRONT ⬇️ ---
+      const queryHistorial = `
+          INSERT INTO historial_trazabilidad 
+          (id_ticket, id_base, id_tecnico, fecha_registro, diagnostico_tecnico, falla_real, accion_tomada, piezas_reemplazadas, tiempo_laborado, estado) 
+          VALUES ($1, $2, $3, NOW(), $4, $5, $6, $7, $8, $9)
+      `;
 
-// 1. Servir archivos estáticos del frontend
+      const valoresHistorial = [
+          id_ticket,
+          id_base || 1,        
+          id_tecnico || 1,     
+          diagnostico,
+          fallaReal,
+          accionTomada,
+          piezas,
+          tiempo || 0,
+          estado
+      ];
+
+      await pool.query(queryHistorial, valoresHistorial);
+
+      const queryUpdateTicket = `
+          UPDATE ticket 
+          SET estado = $1 
+          WHERE id_ticket = $2
+      `;
+      
+      await pool.query(queryUpdateTicket, [estado, id_ticket]);
+      await pool.query('COMMIT');
+
+      return res.status(200).json({ mensaje: "Seguimiento añadido y ticket actualizado correctamente" });
+
+  } catch (error) {
+      await pool.query('ROLLBACK');
+      console.error("❌ Error en historial_trazabilidad:", error.message);
+      return res.status(500).json({ 
+          error: "Error interno al guardar la trazabilidad", 
+          detalle: error.message 
+      });
+  }
+});
+
+// --- FRONTEND STATIC DELIVERY ---
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
-
-// 2. Manejo de rutas de React (Si no es /api, es una página del front)
 app.get(/^(?!\/api).+/, (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });
 
-// 3. Error 404 para la API
-app.use('/api', (req, res) => {
-  res.status(404).json({ error: 'Endpoint de API no encontrado' });
-});
-
-// Iniciar servidor (Usamos process.env.PORT para Render)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Servidor y Front-End listos en el puerto ${PORT}`);

@@ -1,4 +1,5 @@
-/* --- TU CSS ORIGINAL --- */
+
+/* --- CONTENEDOR PRINCIPAL --- */
 .container-detalles-admin {
   background-color: #ffffff;
   min-height: 100vh;
@@ -6,11 +7,12 @@
 }
 
 .content-detalles-admin {
-  max-width: 1100px;
+  max-width: 1130px;
   margin: 0 auto;
   padding: 20px;
   position: relative;
   top: 90px;
+  left: 20px;
 }
 
 .titulo-pagina-detalles-admin {
@@ -18,33 +20,35 @@
   font-weight: bold;
   margin-bottom: 25px;
   color: #000;
+  /* Alineación ajustada para que coincida con el borde del card */
   position: relative;
   top: 11px;
-  left: -570px;
+  left: -580px; 
 }
 
+/* --- TARJETA GRIS (CARD) --- */
 .card-detalles-admin {
-  background-color: #ebebeb; /* Gris claro de la tarjeta */
+  background-color: #ebebeb; /* Gris claro de Bodesa */
   display: flex;
   border-radius: 4px;
-  padding: 35px;
+  padding: 25px 35px; /* Reducido verticalmente para acomodar más campos */
   gap: 30px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   position: relative;
   top: 10px;
   left: -140px;
-  width: 126%;
+  width: 120%; /* Ajuste de ancho para balancear la vista */
 }
 
 .seccion-formulario-detalles-admin {
-  flex: 1.2;
+  flex: 1.4; /* Un poco más de peso al formulario */
 }
 
 .header-seccion-detalles-admin {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 35px;
+  margin-bottom: 20px; /* Espacio reducido para compactar */
 }
 
 .icon-detalles-admin {
@@ -55,159 +59,113 @@
   font-size: 21px;
   font-weight: bold;
   color: black;
-  margin-left: 10px;
 }
 
+/* --- ESTRUCTURA DE INPUTS --- */
 .inputs-detalles-admin {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  text-align: left;
-}
-
-.grupo-input-detalles-admin label {
-  width: 170px;
-  font-weight: bold;
-  font-size: 16px;
-  color: #000;
-  text-align: left;
-}
-
-.rojo-detalles-admin {
-  color: #ff0000; /* Asterisco rojo */
-  font-weight: bold;
-  margin-right: 3px;
+  gap: 8px; /* Gap reducido para que quepan los 8 campos */
   text-align: left;
 }
 
 .grupo-input-detalles-admin {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Esto separa el label del input */
-  margin-bottom: 1px;
-  width: 100%; /* Asegura que ocupe todo el ancho del formulario */
+  justify-content: space-between;
+  width: 100%;
 }
 
 .grupo-input-detalles-admin label {
-  width: 170px; /* Ancho fijo para las etiquetas para que todos los inputs empiecen donde mismo */
+  width: 180px; /* Ancho fijo para que todos los inputs empiecen en el mismo punto */
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px; /* Tamaño de fuente optimizado */
   color: #000;
-  text-align: left;
+}
+
+.rojo-detalles-admin {
+  color: #ff0000;
+  font-weight: bold;
+  margin-right: 3px;
 }
 
 .grupo-input-detalles-admin input {
-  flex: none; /* Cambiamos de 1 a none para controlar el ancho manualmente */
-  width: 350px; /* Ajusta este valor para que se vea como en la imagen de referencia */
+  flex: 1;
+  max-width: 380px; /* Ancho controlado según la imagen */
   background-color: #fff;
-  border: none;
-  padding: 10px 12px;
+  border: 1px solid #ccc;
+  padding: 7px 12px; /* Padding más compacto */
   border-radius: 2px;
-  font-size: 16px;
-  color: black; 
+  font-size: 14px;
+  color: black;
 }
 
-/* Clase opcional para cuando estés en modo edición */
+/* Estado cuando se activa el modo edición */
 .input-editable {
-  outline: 1px solid #1a73e8;
-  background-color: #ffffff !important; /* Fondo blanco al editar para mejor lectura */
-  color: #333 !important;
+  outline: 2px solid #1a73e8;
+  border-color: transparent !important;
+  background-color: #ffffff !important;
 }
 
+/* --- SECCIÓN DE IMAGEN DERECHA --- */
 .seccion-imagen-detalles-admin {
   flex: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .img-right-detalles-admin {
   width: 100%;
+  max-height: 400px;
   border-radius: 4px;
   object-fit: cover;
 }
 
+/* --- BOTONES --- */
 .container-boton-detalles-admin {
   display: flex;
-  gap: 60px;
-  margin-top: 45px;
-  position: relative;
-  left: 110px;
+  gap: 30px;
+  margin-top: 25px;
+  justify-content: center;
 }
 
 .btn-ok-detalles-admin {
-  background-color: #1a73e8; /* Azul */
+  background-color: #1a73e8;
   color: white;
   border: none;
-  padding: 10px 80px;
+  padding: 10px 60px;
   border-radius: 25px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
+  transition: background 0.3s;
 }
 
-.btn-actualizar-detalles-admin {
-  background-color: #939393; /* Gris */
+.btn-actualizar-detalles-admin, .btn-baja-detalles-admin {
+  background-color: #939393;
   color: white;
   border: none;
   padding: 10px 30px;
   border-radius: 25px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-actualizar-detalles-admin:hover{
+  background-color: #1557b0;
 }
 
 .btn-ok-detalles-admin:hover { background-color: #1557b0; }
-.btn-actualizar-detalles-admin:hover { background-color: #6c6d6f; }
+.btn-baja-detalles-admin:hover { background-color: #d9534f; } /* Rojo al borrar */
 
-/* --- NUEVOS ESTILOS AGREGADOS --- */
-
-.btn-baja-detalles-admin {
-  background-color: #939393; /* Gris igual al otro */
-  color: white;
-  border: none;
-  padding: 10px 50px; /* Ajuste para que se vea equilibrado */
-  border-radius: 25px;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-act-detalles-admin {
-  background-color: #1a73e8; /* Azul */
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 25px;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-baja-detalles-admin:hover { 
-  background-color: #d9534f; /* Rojo al pasar el mouse para indicar peligro */
-}
-
-
-.btn-act-detalles-admin:hover { 
-  background-color: #1557b0; /* Rojo al pasar el mouse para indicar peligro */
-}
-
-.input-editable {
-  outline: 1px solid #1a73e8; /* Borde azul para notar que puedes escribir */
-}
-
-
-
-
-
-/* Estilos para el Modal Personalizado */
+/* --- MODALES (ESTILOS ORIGINALES) --- */
 .overlay-modal-detalle-TU {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Fondo oscuro transparente */
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -220,31 +178,16 @@
   border-radius: 8px;
   text-align: center;
   width: 450px;
-  height: 350px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
-
-
-.contenedor-check-detalle-TU {
-  margin-bottom: 20px;
+.titulo-DTU-actu{
+  color: black;
 }
-
-.img-modal-icon {
-  width: 80px; /* Tamaño del icono de la imagen de referencia */
-}
-
 .img-modal-icon-actualizar {
-  width: 150px; /* Tamaño del icono de la imagen de referencia */
+  width: 120px;
   height: auto;
-}
-
-.titulo-DTU {
-  font-size: 24px;
-  margin-bottom: 30px;
-  color: #333;
-  position: relative;
-  top: -5px;
+  margin-bottom: 20px;
 }
 
 .btn-aceptar-detalle-TU {
@@ -253,11 +196,73 @@
   border: none;
   padding: 10px 50px;
   border-radius: 25px;
-  font-size: 18px;
   font-weight: bold;
   cursor: pointer;
-  position: relative;
-  top: -10px;
+}
+
+.check-animado {
+  font-size: 100px;
+  color: #1a73e8;
+  transform: scaleX(-1) rotate(-45deg);
+  display: inline-block;
+}
+
+/* --- ESTILOS DE MODALES Y ELIMINACIÓN --- */
+
+.btn-baja-detalles-admin {
+  background-color: #939393;
+  color: white;
+  border: none;
+  padding: 10px 50px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-baja-detalles-admin:hover {
+  background-color: #d9534f; /* Rojo al pasar el mouse */
+}
+
+/* Overlay para los modales */
+.overlay-modal-detalle-TU {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Caja del modal */
+.modal-exito-detalle-TU {
+  background: white;
+  padding: 40px;
+  border-radius: 8px;
+  text-align: center;
+  width: 450px;
+  height: auto; /* Dejado en auto para que se ajuste al contenido */
+  min-height: 350px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.titulo-DTU-baja {
+  margin-top: 10px;
+  font-size: 22px;
+  color: #333;
+}
+
+.container-botones-modal {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
 }
 
 .btn-cancelar-modal {
@@ -266,82 +271,47 @@
   border: none;
   padding: 10px 40px;
   border-radius: 25px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  margin-left: 15px;
-  position: relative;
-  top: -12px;
 }
 
-.container-botones-modal {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
+.btn-cancelar-modal:hover{
+   background-color: #1557b0;
 }
 
-
-
-/* Estilo de la ventana emergente de tecnico eliminadom correctamente */
+/* Estilos para el Check Animado de Eliminación */
 .contenedor-check {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
-  position: relative;
-  top: 50px;
+  margin-bottom: 10px;
 }
 
 .check-animado {
-  font-size: 130px;
+  font-size: 100px;
   color: #1a73e8;
-  transform: scaleX(-1) rotate(-45deg); /* Gira la L para que parezca un check */
+  transform: scaleX(-1) rotate(-45deg);
   display: inline-block;
 }
 
-.titulo-DTU-baja{
-  margin-top: -50px;
-}
-
-
-.container-botones-modal{
-  margin-top: -20px;
-}
-
-.titulo-DTU-actualizar {
-  font-size: 24px;
-  margin-bottom: 30px;
+.titulo-tecnico-Admin {
+  font-size: 22px;
   color: #333;
-  position: relative;
-  top: -5px;
+  margin: 15px 0;
 }
-
-.btn-aceptar-tecnico-detalle-TU {
-  background-color: #1a73e8;
-  color: white;
-  border: none;
-  padding: 10px 50px;
-  border-radius: 25px;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  position: relative;
-  top: 100px;
-}
-
-
 
 .btn-aceptar-tecnico-detalle-TU-baja {
-  background-color: #1a73e8;
+  background-color: #3b83e1;
   color: white;
   border: none;
   padding: 10px 50px;
   border-radius: 25px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  position: relative;
-  top: 30px;
 }
 
-
+.btn-aceptar-tecnico-detalle-TU-baja:hover {
+   background-color: #1557b0;
+}

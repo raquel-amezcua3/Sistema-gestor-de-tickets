@@ -5,54 +5,56 @@ import EncabezadoAdmin from '../components/EncabezadoAdmin';
 
 function ListaAdmin() {
   const navigate_lista_admin = useNavigate();
-
-  // 1. Estado para los técnicos 
   const [tecnicos_lista_admin, setTecnicos_lista_admin] = useState([]);
-  
-  // 2. Estado para el buscador
   const [busqueda_lista_admin, setBusqueda_lista_admin] = useState('');
 
-  // Funcion para traer los datos
   useEffect(() => {
-    const obtenerTecnicos = async () => {
+    const obtenerDatosCompletos = async () => {
       try {
-        const response = await fetch('/api/admin/usuarios/tecnicos');
-        const data = await response.json();
-        
-        if (response.ok) {
-          // Aseguramos los nombres para que coinicidan con la tabla
-          const dataFormateada = data.map(tec => ({
-            id: tec.id_usuario,
-            nombre: tec.nombre,
-            correo: tec.correo,
-            telefono: tec.telefono,
-            extension: tec.extension
-          }));
+        const [resTecnicos, resCargas] = await Promise.all([
+          fetch('/api/admin/lista-tecnicos'),
+          fetch('/api/admin/carga-tickets')
+        ]);
+
+        if (resTecnicos.ok && resCargas.ok) {
+          const tecnicos = await resTecnicos.json();
+          const cargas = await resCargas.json();
+
+          // Unificamos usando id_tecnico de forma explícita
+          const dataFormateada = tecnicos.map(tec => {
+            const infoCarga = cargas.find(c => c.id_tecnico === tec.id_tecnico);
+            return {
+              id: tec.id_tecnico, // ID asignado directamente de id_tecnico para render en tabla
+              nombre: tec.nombre,
+              correo: tec.correo || 'N/A',
+              telefono: tec.telefono || 'N/A',
+              especialidad: tec.especialidad,
+              carga: infoCarga ? infoCarga.carga_actual : 0
+            };
+          });
+
           setTecnicos_lista_admin(dataFormateada);
         }
       } catch (error) {
-        console.error("❌ Error al cargar técnicos:", error);
+        console.error("❌ Error cargando los datos de los técnicos:", error);
       }
     };
 
-    obtenerTecnicos();
+    obtenerDatosCompletos();
   }, []);
 
-  // 3. Lógica de filtrado 
   const filtrados_lista_admin = tecnicos_lista_admin.filter((tecnico) => {
     return Object.values(tecnico).some((valor) =>
-      valor && valor.toString().toLowerCase().includes(busqueda_lista_admin.toLowerCase())
+      valor !== null && valor !== undefined && valor.toString().toLowerCase().includes(busqueda_lista_admin.toLowerCase())
     );
   });
 
   return (
     <div className="container-lista-admin">
       <EncabezadoAdmin />
-
       <main className="contenido-lista-admin">
         <div className="encabezado-seccion-lista-admin">
           <h2 className='titulo-lista-admin'>Lista de tecnicos</h2>
-          
           <div className="buscador-lista-admin">
             <input 
               type="text" 
@@ -60,11 +62,7 @@ function ListaAdmin() {
               value={busqueda_lista_admin}
               onChange={(e) => setBusqueda_lista_admin(e.target.value)}
             />
-            <img 
-              src="/img/lupa.png" 
-              alt="buscar" 
-              className="icono-lupa-lista-admin" 
-            />
+            <img src="/img/lupa.png" alt="buscar" className="icono-lupa-lista-admin" />
           </div>
         </div>
 
@@ -76,7 +74,8 @@ function ListaAdmin() {
                 <th>Nombre de usuario</th>
                 <th>Correo electronico</th>
                 <th>Telefono</th>
-                <th>Extensión</th>
+                <th>Especialidad</th>
+                <th>Carga actual</th>
               </tr>
             </thead>
             <tbody>
@@ -93,12 +92,17 @@ function ListaAdmin() {
                     <td>{tecnico.nombre}</td>
                     <td>{tecnico.correo}</td>
                     <td>{tecnico.telefono}</td>
-                    <td>{tecnico.extension}</td>
+                    <td>{tecnico.especialidad}</td>
+                    <td>
+                      <span className={tecnico.carga > 3 ? "carga-alta" : "carga-normal"}>
+                        {tecnico.carga} {tecnico.carga === 1 ? 'ticket' : 'tickets'}
+                      </span>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
+                  <td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>
                     No se encontraron técnicos
                   </td>
                 </tr>

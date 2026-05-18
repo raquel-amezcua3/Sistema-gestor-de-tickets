@@ -1,49 +1,96 @@
-// Funcion para crear un nuevo ticket, esta funcion la usa el usuario con rol 0
+//La pantalla de esta funcion nuevoTicketU.jsx
+// routes/nuevoticket.js
 const express = require('express');
 const router = express.Router();
-const pool = require('../db'); 
+const pool = require('../db');
 
-// --- RUTA: CREAR TICKET (POST /tickets) ---
-// Define el endpoint principal para la creación de reportes
-router.post('/', async (req, res) => {
-  const { id_usuario, titulo, descripcion } = req.body;
+router.post('/crear', async (req, res) => {
+    let { 
+        id_base, 
+        id_usuario, 
+        id_equipo, 
+        categoria_servicio, 
+        subcategoria_falla, 
+        titulo_falla, 
+        descripcion_falla, 
+        nivel_prioridad, 
+        grado_impacto 
+    } = req.body;
 
-  // Validación de seguridad: Asegura que la base de datos no reciba valores nulos
-  if (!id_usuario || !titulo || !descripcion) {
-    return res.status(400).json({ 
-      error: "Faltan campos obligatorios (id_usuario, titulo o descripcion)" 
-    });
-  }
+    // 1. Validaciones fundamentales obligatorias
+    if (!id_base || Number.isNaN(id_base)) {
+        return res.status(400).json({ error: "Falta el campo 'id_base' o es inválido." });
+    }
+    if (!id_equipo || Number.isNaN(id_equipo)) {
+        return res.status(400).json({ error: "Por favor, seleccione un equipo afectado válido." });
+    }
+    if (!titulo_falla || titulo_falla.trim() === "") {
+        return res.status(400).json({ error: "El campo 'Título de la falla' es obligatorio." });
+    }
+    if (!descripcion_falla || descripcion_falla.trim() === "") {
+        return res.status(400).json({ error: "El campo 'Descripción' es obligatorio." });
+    }
 
-  try {
-    // Consulta SQL 
-    // Se asigna por defecto el estado 'abierto' y la fecha actual del servidor
-    const query = `
-    INSERT INTO tickets (id_usuario, titulo, descripcion, estado, fecha_creacion)
-    VALUES ($1, $2, $3, 'abierto', CURRENT_TIMESTAMP) 
-    RETURNING *
-    `;
-    
-    // Arreglo de valores para sustituir los marcadores $1, $2, $3 (Previene Inyección SQL)
-    const values = [id_usuario, titulo, descripcion];
+    try {
+        // 2. SALVAVIDAS: Si id_usuario es inválido o no llegó, lo buscamos usando el id_base
+        if (!id_usuario || Number.isNaN(id_usuario)) {
+            console.log(`⚠️ id_usuario no recibido. Buscando en la base de datos para id_base: ${id_base}`);
+            
+            const buscarUsuarioQuery = `SELECT id_usuario FROM usuario WHERE id_base = $1 LIMIT 1;`;
+            const usuarioEncontrado = await pool.query(buscarUsuarioQuery, [id_base]);
 
-    // Ejecución de la consulta 
-    const resultado = await pool.query(query, values);
-    
-    // Respuesta exitosa
-    res.status(201).json({ 
-      mensaje: "Ticket creado con éxito", 
-      ticket: resultado.rows[0] 
-    });
+            if (usuarioEncontrado.rows.length > 0) {
+                id_usuario = usuarioEncontrado.rows[0].id_usuario;
+                console.log(`✅ id_usuario recuperado con éxito: ${id_usuario}`);
+            } else {
+                return res.status(400).json({ 
+                    error: "No se encontró un perfil de usuario asociado a esta cuenta en la tabla 'usuario'." 
+                });
+            }
+        }
 
-  } catch (error) {
-    // Captura de errores en el proceso de inserción o conexión
-    console.error("❌ Error al insertar ticket:", error.message);
-    res.status(500).json({ 
-      error: "Error interno del servidor", 
-      detalle: error.message 
-    });
-  }
+        // 3. Insertar el ticket con los datos validados y completos
+        const query = `
+            INSERT INTO ticket (
+                id_base, 
+                id_usuario, 
+                id_equipo, 
+                categoria_servicio, 
+                subcategoria_falla, 
+                titulo_falla, 
+                descripcion_falla, 
+                nivel_prioridad, 
+                grado_impacto, 
+                fecha_creacion, 
+                estado
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), 'Abierto')
+            RETURNING *; 
+        `;
+        
+        const values = [
+            id_base, 
+            id_usuario, 
+            id_equipo, 
+            categoria_servicio, 
+            subcategoria_falla, 
+            titulo_falla, 
+            descripcion_falla, 
+            nivel_prioridad, 
+            grado_impacto
+        ];
+        
+        const resultado = await pool.query(query, values);
+
+        res.status(201).json({
+            mensaje: "Ticket creado con éxito",
+            ticket: resultado.rows[0]
+        });
+
+    } catch (error) {
+        console.error("❌ Error al crear ticket:", error.message);
+        res.status(500).json({ error: "Error interno en el servidor", detalle: error.message });
+    }
 });
 
 module.exports = router;

@@ -1,0 +1,142 @@
+.container-equipo-registrado {
+    min-height: 100vh;
+    background-color: #fff;
+    font-family: 'Arial', sans-serif; /* Fuente limpia como en la imagen */
+}
+
+.contenido-equipo-registrado {
+    padding: 20px 60px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Contenedor Superior: Alineación perfecta */
+.seccion-superior-equipo-registrado {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end; /* Alinea el botón con la base del input */
+    width: 100%;
+    margin-top: 40px;
+    gap: 20px;
+}
+
+/* Buscador Centrado */
+.seccion-busqueda-equipo-registrado {
+  margin-top: 60px;
+  text-align: center;
+  position: relative;
+  left: 23%;
+  width: 100%;
+  max-width: 600px;
+}
+
+.info-busqueda-equipo-registrado {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.lupa-grande-equipo-registrado {
+    font-size: 32px;
+}
+
+.seccion-busqueda-equipo-registrado h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+    align-items: center;
+}
+
+.input-redondeado-equipo-registrado {
+    width: 90%;
+    padding: 12px 20px;
+    border-radius: 30px;
+    border: 2px solid #000;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+    background-color: #fff;
+    color: black;
+}
+
+/* Botón Azul Bodesa: Esquina derecha */
+.boton-registrar-equipo-registrado {
+    background-color: #1a66d4;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    transition: background-color 0.3s;
+    white-space: nowrap; /* Evita que el texto se rompa */
+    text-decoration: none;
+}
+
+.boton-registrar-equipo-registrado:hover {
+    background-color: #1555b3;
+}
+
+.icono-mas-equipo-registrado {
+    font-size: 22px;
+}
+
+/* Aviso Rojo: Justo encima de la tabla */
+.aviso-rojo-equipo-registrado {
+    color: #cc0000;
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 30px;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+/* Tabla: Diseño Robusto */
+.tabla-wrapper-equipo-registrado {
+    width: 100%;
+    border: 2px solid #2b2451; /* Borde del color del header */
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.tabla-principal-equipo-registrado {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-principal-equipo-registrado th {
+    background-color: #2b2451; 
+    color: white;
+    padding: 18px 10px;
+    text-align: center;
+    border-right: 1px solid #ffffff33;
+    font-size: 16px;
+    text-transform: none; /* Mantener texto natural */
+}
+
+.tabla-principal-equipo-registrado td {
+    padding: 10px 5px; /* Espaciado generoso como en la imagen */
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    background-color: #efefef; /* Gris claro de fondo */
+    color: #333;
+    text-align: center;
+    font-size: 15px;
+}
+
+/* Quitar bordes derechos finales para limpieza visual */
+.tabla-principal-equipo-registrado th:last-child,
+.tabla-principal-equipo-registrado td:last-child {
+    border-right: none;
+}
+
+/* Efecto Hover en filas */
+.tabla-principal-equipo-registrado tr:hover td {
+    background-color: #e5e5e5;
+}

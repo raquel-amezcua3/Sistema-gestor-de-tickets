@@ -5,33 +5,40 @@ import EncabezadoTecnico from '../components/EncabezadoTecnico';
 
 function PerfilTecnico() {
   const navigate_perfil_tecnico = useNavigate();
-
-  // Estado para controlar la visibilidad de la ventana emergente
   const [mostrarModal_perfil_tecnico, setMostrarModal_perfil_tecnico] = useState(false);
 
-  // 1. Estado para los datos del perfil 
   const [datos_perfil_tecnico, setDatos_perfil_tecnico] = useState({
     nombre: '',
     correo: '',
     telefono: '',
     extension: '',
+    especialidad: '',
+    carga_actual: '', 
     contrasena: ''
   });
 
-  // 2. Cargar datos reales al montar el componente
   useEffect(() => {
     const cargarDatosPerfil = async () => {
-      // Obtenemos el ID del técnico desde el localStorage
-      const idUsuario = localStorage.getItem('id_usuario');
+      const idBaseUsuario = localStorage.getItem('id_base'); 
       
-      if (!idUsuario) return;
+      if (!idBaseUsuario) {
+        console.error("No se encontró el id_base de sesión en el localStorage.");
+        return;
+      }
 
       try {
-        const response = await fetch(`/api/perfil/${idUsuario}`);
+        const response = await fetch(`/api/tecnico/perfil/${idBaseUsuario}`);
         const data = await response.json();
-        
         if (response.ok) {
-          setDatos_perfil_tecnico(data);
+          setDatos_perfil_tecnico({
+            nombre: data.nombre || '',
+            correo: data.correo || '',
+            telefono: data.telefono || '',
+            extension: data.extension || '',
+            especialidad: data.especialidad || '', 
+            carga_actual: data.carga_actual, 
+            contrasena: ''
+          });
         } else {
           console.error("Error al obtener perfil:", data.error);
         }
@@ -39,26 +46,21 @@ function PerfilTecnico() {
         console.error("Error de conexión:", error);
       }
     };
-
     cargarDatosPerfil();
   }, []);
 
-  // 3. Función para enviar los datos actualizados a la base de datos
   const handleActualizar_perfil_tecnico = async (e) => {
-    e.preventDefault();
-    const idUsuario = localStorage.getItem('id_usuario');
+    if (e) e.preventDefault();
+    const idBaseUsuario = localStorage.getItem('id_base');
 
     try {
-      const response = await fetch(`/api/perfil/${idUsuario}`, {
+      const response = await fetch(`/api/tecnico/perfil/${idBaseUsuario}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos_perfil_tecnico),
       });
 
       if (response.ok) {
-        // Si se actualiza bien, mostramos el modal de éxito
         setMostrarModal_perfil_tecnico(true);
         localStorage.setItem('usuarioNombre', datos_perfil_tecnico.nombre);
       } else {
@@ -76,28 +78,25 @@ function PerfilTecnico() {
       <EncabezadoTecnico />
 
       <main className='contenido-perfil-tecnico'>
-        <h2 className='titulo-perfil-tecnico'>Mis datos de técnico</h2>
+        <h2 className='titulo-perfil-tecnico'>Mis datos</h2>
 
         <div className='cuadro-perfil-tecnico'>
           <div className='encabezado-perfil-tecnico'>
             <img className='icono-datos-perfil-tecnico' alt='icono' src='/img/informacion-personal.png' />
-            <h3>Información Personal</h3>
+            <h3>Datos técnico</h3>
+            <span className="aviso-rojo-perfil">*Solo se puede cambiar el correo, teléfono, extensión y contraseña.</span>
           </div>
 
           <div className='cuerpo-perfil-tecnico'>
-            {/* Columna Izquierda: Formulario */}
             <form className='formulario-perfil-tecnico' onSubmit={handleActualizar_perfil_tecnico}>
+              
               <div className='grupo-input-perfil-tecnico'>
-                <label>Nombre completo</label>
-                <input 
-                  type="text" 
-                  value={datos_perfil_tecnico.nombre}
-                  onChange={(e) => setDatos_perfil_tecnico({...datos_perfil_tecnico, nombre: e.target.value})}
-                />
+                <label>Nombre de usuario</label>
+                <input type="text" value={datos_perfil_tecnico.nombre} readOnly className="input-solo-lectura" />
               </div>
 
               <div className='grupo-input-perfil-tecnico'>
-                <label>Correo electrónico</label>
+                <label><span className="asterisco-rojo">*</span>Correo electrónico</label>
                 <input 
                   type="email" 
                   value={datos_perfil_tecnico.correo}
@@ -106,7 +105,7 @@ function PerfilTecnico() {
               </div>
 
               <div className='grupo-input-perfil-tecnico'>
-                <label>Teléfono</label>
+                <label><span className="asterisco-rojo">*</span>Teléfono</label>
                 <input 
                   type="text" 
                   value={datos_perfil_tecnico.telefono}
@@ -115,7 +114,7 @@ function PerfilTecnico() {
               </div>
 
               <div className='grupo-input-perfil-tecnico'>
-                <label>Extensión</label>
+                <label><span className="asterisco-rojo">*</span>Extensión</label>
                 <input 
                   type="text" 
                   value={datos_perfil_tecnico.extension}
@@ -124,40 +123,38 @@ function PerfilTecnico() {
               </div>
 
               <div className='grupo-input-perfil-tecnico'>
-                <label>Contraseña</label>
+                <label>Especialidad</label>
+                <input type="text" value={datos_perfil_tecnico.especialidad} readOnly className="input-solo-lectura" />
+              </div>
+
+              <div className='grupo-input-perfil-tecnico'>
+                <label>Carga actual</label>
+                <input type="text" value={datos_perfil_tecnico.carga_actual} readOnly className="input-solo-lectura" />
+              </div>
+
+              <div className='grupo-input-perfil-tecnico'>
+                <label><span className="asterisco-rojo">*</span>Contraseña</label>
                 <input 
                   type="password" 
                   value={datos_perfil_tecnico.contrasena}
                   onChange={(e) => setDatos_perfil_tecnico({...datos_perfil_tecnico, contrasena: e.target.value})}
+                  placeholder="Escribe una nueva contraseña para cambiarla"
                 />
               </div>
             </form>
 
-            {/* Columna Derecha: Imagen Tarelix */}
             <div className='contenedor-imagen-perfil-tecnico'>
               <img className='imagen-logo-perfil-tecnico' src='/img/Tarelix.png' alt='Tarelix' />
             </div>
           </div>
 
-          {/* Botones inferiores */}
           <div className='contenedor-botones-perfil-tecnico'>
-            <button 
-                className='btn-ok-perfil-tecnico' 
-                onClick={() => navigate_perfil_tecnico('/principalTecnico')}
-            >
-                Ok
-            </button>
-            <button 
-                className='btn-actualizar-perfil-tecnico' 
-                onClick={handleActualizar_perfil_tecnico}
-            >
-                Actualizar datos
-            </button>
+            <button className='btn-ok-perfil-tecnico' type="button" onClick={() => navigate_perfil_tecnico('/principalTecnico')}>Ok</button>
+            <button className='btn-actualizar-perfil-tecnico' type="button" onClick={handleActualizar_perfil_tecnico}>Actualizar datos</button>
           </div>
         </div>
       </main>
 
-      {/* Ventana emergente de datos actualizados correctamente */}
       {mostrarModal_perfil_tecnico && (
         <div className='overlay-modal-perfil-tecnico'>
           <div className='modal-exito-perfil-tecnico'>
@@ -165,12 +162,7 @@ function PerfilTecnico() {
               <span className='check-animado-perfil-tecnico'>L</span> 
             </div>
             <h2>Datos actualizados correctamente</h2>
-            <button 
-              className='btn-aceptar-perfil-tecnico' 
-              onClick={() => setMostrarModal_perfil_tecnico(false)}
-            >
-              Aceptar
-            </button>
+            <button className='btn-aceptar-perfil-tecnico' onClick={() => setMostrarModal_perfil_tecnico(false)}>Aceptar</button>
           </div>
         </div>
       )}

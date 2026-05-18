@@ -1,3 +1,5 @@
+//El .js de esta pantalla es ticketsTecnico.js
+// ResueltoTecnico.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/resueltoTecnico.css';
@@ -9,43 +11,44 @@ function ResueltoTecnico() {
   const [busqueda_resuelto_tecnico, setBusqueda_resuelto_tecnico] = useState('');
 
   // 1. Cargar datos reales del backend
-useEffect(() => {
+  useEffect(() => {
     const cargarTicketsResueltos = async () => {
-      const idTecnico = localStorage.getItem('id_usuario'); 
-      console.log("1. ID del técnico recuperado:", idTecnico); 
+      const idTecnico = localStorage.getItem('id_base') || localStorage.getItem('id_usuario') || localStorage.getItem('id'); 
+      console.log("1. ID del técnico recuperado con éxito:", idTecnico); 
 
-      if (!idTecnico) {
-        console.error("ERROR: No hay id_usuario en el almacenamiento");
+      if (!idTecnico || idTecnico === 'undefined' || idTecnico === 'null') {
+        console.error("ERROR: No hay una sesión o ID técnico válido en el almacenamiento");
         return;
       }
 
       try {
-        const url = `/api/tecnico/tickets/resueltos/${idTecnico}`;
+        const url = `http://localhost:3000/api/tecnico/tickets/resueltos/${idTecnico}`;
         console.log("2. Llamando a la URL:", url);
 
         const response = await fetch(url);
         const data = await response.json();
         
-        console.log("3. Respuesta completa del servidor:", data); // DEBE APARECER TU LISTA DE TICKETS
+        console.log("3. Respuesta completa del servidor:", data); 
 
         if (response.ok) {
           setTickets_resuelto_tecnico(data);
         }
       } catch (error) {
-        console.error("4. Error en el FETCH:", error);
+        console.error("4. Error en el FETCH de resueltos:", error);
       }
     };
 
     cargarTicketsResueltos();
   }, []);
 
-  // 2. Lógica de filtrado para el buscador
+  // 2. Lógica de filtrado
   const filtrados_resuelto_tecnico = tickets_resuelto_tecnico.filter((ticket) => {
-    return (
-      ticket.id.toString().includes(busqueda_resuelto_tecnico.toLowerCase()) ||
-      ticket.nombre.toLowerCase().includes(busqueda_resuelto_tecnico.toLowerCase()) ||
-      ticket.titulo.toLowerCase().includes(busqueda_resuelto_tecnico.toLowerCase())
-    );
+    const idStr = ticket.id ? ticket.id.toString().toLowerCase() : '';
+    const nombreStr = ticket.nombre ? ticket.nombre.toLowerCase() : '';
+    const tituloStr = ticket.titulo ? ticket.titulo.toLowerCase() : '';
+    const query = busqueda_resuelto_tecnico.toLowerCase();
+
+    return idStr.includes(query) || nombreStr.includes(query) || tituloStr.includes(query);
   });
 
   return (
@@ -88,13 +91,15 @@ useEffect(() => {
                     key={ticket.id} 
                     className="fila-ticket-resuelto-tecnico"
                     onDoubleClick={() => navigate_resuelto_tecnico(`/datosResueltoTecnico/${ticket.id}`)} 
+                    style={{ cursor: 'pointer' }}
                   >
                     <td>{ticket.id}</td>
                     <td>{ticket.nombre}</td>
                     <td>{ticket.titulo}</td>
                     <td>{ticket.descripcion}</td>
                     <td>{ticket.fecha}</td>
-                    <td>{ticket.fechacierre}</td>
+                    {/* 🔑 CORREGIDO: Mapeo seguro para capturar la fecha sin importar el formato del alias */}
+                    <td>{ticket.fecha_cierre || ticket.fechacierre || 'Sin registrar'}</td>
                     <td className="estado-cerrado-resuelto-tecnico">{ticket.estado}</td>
                     <td>{ticket.tecnico}</td>
                   </tr>

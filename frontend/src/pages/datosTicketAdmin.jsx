@@ -4,181 +4,213 @@ import '../styles/datosTicketAdmin.css';
 import EncabezadoAdmin from '../components/EncabezadoAdmin';
 
 function DatosTicketAdmin() {
-  const { id } = useParams();
-  const navigate_datos_admin = useNavigate();
-  const [mostrarModal_datos_admin, setMostrarModal_datos_admin] = useState(false);
-  const [tecnicos, setTecnicos] = useState([]); // Estado para la lista de técnicos
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [mostrarModal, setMostrarModal] = useState(false);
+    const [tecnicos, setTecnicos] = useState([]);
 
-  const [ticket_datos_admin, setTicket_datos_admin] = useState({
-    id: id || '101',
-    nombre_usuario: '',
-    correo: '',
-    telefono: '',
-    extension: '',
-    titulo: '',
-    descripcion: '',
-    tecnico_asignado: '' // Aquí guardare el ID del técnico seleccionado
-  });
+    const [ticket, setTicket] = useState({
+        id_ticket: id || '',
+        nombre_usuario: '',
+        categoria: '',
+        subcategoria: '',
+        prioridad: '',
+        impacto: '',
+        fecha_creacion: '',
+        estado: '',
+        titulo: '',
+        descripcion: '',
+        equipo_afectado: '',
+        tecnico_asignado: ''
+    });
 
-  // 1. Cargar la lista de técnicos (Rol 2) y los datos del ticket al montar el componente
-  useEffect(() => {
-    const cargarDatosIniciales = async () => {
-      try {
-        // Obtener técnicos
-        const resTec = await fetch('/api/admin/usuarios/tecnicos');
-        const dataTec = await resTec.json();
-        setTecnicos(dataTec);
+    useEffect(() => {
+        const cargarDatosTicket = async () => {
+            try {
+                
+                // 1. Cargar Técnicos para el select dropdown
+                const resTec = await fetch('/api/admin/usuarios/tecnicos');
+                const dataTec = await resTec.json();
+                setTecnicos(dataTec);
 
-        // Obtener datos del ticket actual
-        const resTick = await fetch(`/api/detalle-ticket/${id}`);
-        const dataTick = await resTick.json();
-        
-        if (resTick.ok) {
-          setTicket_datos_admin({
-            id: dataTick.id_ticket,
-            nombre_usuario: dataTick.nombre_usuario,
-            correo: dataTick.correo,
-            telefono: dataTick.telefono,
-            extension: dataTick.extension,
-            titulo: dataTick.titulo,
-            descripcion: dataTick.descripcion,
-            tecnico_asignado: dataTick.id_tecnico || ''
-          });
+                // 2. Cargar Detalle del Ticket usando el ID de la URL
+                const resTick = await fetch(`/api/datos-ticket-admin/detalle-ticket/${id}`);
+const dataTick = await resTick.json();
+                
+                if (resTick.ok) {
+                    setTicket({
+                        id_ticket: dataTick.id_ticket || id,
+                        nombre_usuario: dataTick.nombre_usuario || 'N/A',
+                        categoria: dataTick.categoria_servicio || '',
+                        subcategoria: dataTick.subcategoria_falla || '',
+                        prioridad: dataTick.nivel_prioridad || '',
+                        impacto: dataTick.grado_impacto || '',
+                        fecha_creacion: dataTick.fecha_creacion_formateada || '', // Asigna la fecha limpia desde SQL
+                        estado: dataTick.estado || '',
+                        titulo: dataTick.titulo_falla || '',
+                        descripcion: dataTick.descripcion_falla || '',
+                        equipo_afectado: dataTick.equipo_nombre || 'N/A', // Asigna el tipo y marca del equipo resuelto
+                        tecnico_asignado: dataTick.id_tecnico || ''
+                    });
+                }
+            } catch (err) {
+                console.error("Error cargando datos:", err);
+            }
+        };
+        cargarDatosTicket();
+    }, [id]);
+
+    const handleActualizar = async (e) => {
+        e.preventDefault();
+        try {
+            // Se comunica con tu ruta PUT '/asignar-tecnico' mapeada en asignarAdmin.js
+            const response = await fetch('/api/asignar-admin/asignar-tecnico', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id_ticket: parseInt(ticket.id_ticket),
+                    id_tecnico: parseInt(ticket.tecnico_asignado)
+                })
+            });
+
+            if (response.ok) {
+                setMostrarModal(true);
+            } else {
+                const errData = await response.json();
+                alert(`Error: ${errData.error || 'No se pudo asignar el técnico'}`);
+            }
+        } catch (error) {
+            console.error("Error en la petición:", error);
         }
-      } catch (err) {
-        console.error("Error al cargar datos:", err);
-      }
     };
-    cargarDatosIniciales();
-  }, [id]);
 
-  // 2. Función para actualizar el técnico y cambiar estado a 'en proceso'
-  const handleActualizar_datos_admin = async (e) => {
-    e.preventDefault();
-    
-    try {
-      const response = await fetch('/api/admin/asignar-tecnico', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id_ticket: ticket_datos_admin.id,
-          id_tecnico: ticket_datos_admin.tecnico_asignado
-        })
-      });
+    return (
+        <div className="container-datosTicketAdmin">
+            <EncabezadoAdmin />
 
-      if (response.ok) {
-        setMostrarModal_datos_admin(true);
-      } else {
-        alert("Error al actualizar los datos en el servidor");
-      }
-    } catch (error) {
-      console.error("Error en la petición:", error);
-    }
-  };
+            <main className="contenido-admin">
+                <h2 className="titulo-seccion-admin">Detalles del ticket</h2>
 
-  const cerrarModal_datos_admin = () => {
-    setMostrarModal_datos_admin(false);
-    navigate_datos_admin('/asignarAdmin'); // Te regresa a la tabla de asignación
-  };
+                <div className="cuadro-formulario-admin">
+                    <div className="encabezado-formulario-admin">
+                        <img className="icono-ticket-admin" alt="logo" src="/img/nuevo-ticket.png" />
+                        <h3>Ticket #{ticket.id_ticket}</h3>
+                        <p className="nota-informativa-admin">
+                            * En esta sección solo se puede asignar o cambiar de técnico.
+                         </p>
+                    </div>
 
-  return (
-    <div className="container-datos-ticket-admin">
-      <EncabezadoAdmin />
+                    <form onSubmit={handleActualizar}>
+                        <div className="grid-formulario-admin">
+                            
+                            {/* COLUMNA IZQUIERDA */}
+                            <div className="columna-formulario-admin">
+                                <div className="grupo-input-admin">
+                                    <label>Nombre de usuario</label>
+                                    <input type="text" value={ticket.nombre_usuario} readOnly className="input-readonly" />
+                                </div>
 
-      <main className="contenido-datos-ticket-admin">
-        <h2 className="titulo-pagina-datos-admin">Datos del ticket</h2>
+                                <div className="grupo-input-admin">
+                                    <label>Categoría de servicios</label>
+                                    <input type="text" value={ticket.categoria} readOnly className="input-readonly" />
+                                </div>
 
-        <div className="card-datos-ticket-admin">
-          <div className="header-card-datos-admin">
-            <img src="/img/nuevo-ticket.png" alt="icono" className="icono-datos-admin" />
-            <h3>Datos del ticket #{ticket_datos_admin.id}</h3>
-          </div>
+                                <div className="grupo-input-admin">
+                                    <label>Subcategoría de falla</label>
+                                    <input type="text" value={ticket.subcategoria} readOnly className="input-readonly" />
+                                </div>
 
-          <form onSubmit={handleActualizar_datos_admin} className="form-datos-ticket-admin">
-            
-            <div className="grid-formulario-datos-admin">
-              
-              {/* COLUMNA 1: DATOS USUARIO */}
-              <div className="columna-datos-admin">
-                <div className="grupo-input-datos-admin">
-                  <label>Nombre de usuario</label>
-                  <input type="text" value={ticket_datos_admin.nombre_usuario} readOnly />
+                                <div className="grupo-input-admin">
+                                    <label>Nivel de prioridad</label>
+                                    <input type="text" value={ticket.prioridad} readOnly className="input-readonly" />
+                                </div>
+
+                                <div className="grupo-input-admin">
+                                    <label>Grado de impacto</label>
+                                    <input type="text" value={ticket.impacto} readOnly className="input-readonly" />
+                                </div>
+
+                                <div className="grupo-input-admin">
+                                    <label>Fecha de creación</label>
+                                    <input type="text" value={ticket.fecha_creacion} readOnly className="input-readonly" />
+                                </div>
+
+                                <div className="grupo-input-admin">
+                                    <label>Estado del ticket</label>
+                                    <input type="text" value={ticket.estado} readOnly className="input-readonly" />
+                                </div>
+                            </div>
+
+                            {/* COLUMNA DERECHA */}
+                            <div className="columna-formulario-admin">
+                                <div className="grupo-input-admin">
+                                    <label><span className='requerido'>*</span>Técnico Asignado</label>
+                                    <select 
+                                        className="select-admin-editable"
+                                        value={ticket.tecnico_asignado} 
+                                        onChange={(e) => setTicket({...ticket, tecnico_asignado: e.target.value})}
+                                        required
+                                    >
+                                        <option value="">-- Seleccione un técnico --</option>
+                                        {tecnicos.map((tec) => (
+                                            <option key={tec.id_tecnico || tec.id_usuario} value={tec.id_tecnico || tec.id_usuario}>
+                                                {tec.nombre}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="grupo-input-admin">
+                                    <label>Título de la falla</label>
+                                    <input type="text" value={ticket.titulo} readOnly className="input-readonly" />
+                                </div>
+
+                                <div className="grupo-input-admin area-texto-admin">
+                                    <label>Descripción ¿qué sucede?</label>
+                                    <textarea value={ticket.descripcion} readOnly className="textarea-readonly" />
+                                </div>
+
+                                <div className="grupo-input-admin">
+                                    <label>Equipo afectado</label>
+                                    <input type="text" value={ticket.equipo_afectado} readOnly className="input-readonly" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="contenedor-botones-admin">
+                            <button type="submit" className="btn-actualizar">Actualizar datos</button>
+                            <button type="button" className="btn-seguimiento" onClick={() => navigate(`/seguimientoTicketU/${ticket.id_ticket}`)}>
+                                Seguimiento del ticket
+                            </button>
+                        </div>
+                    </form>
                 </div>
+            </main>
 
-                <div className="grupo-input-datos-admin">
-                  <label>Correo electrónico</label>
-                  <input type="email" value={ticket_datos_admin.correo} readOnly />
+            {/* MODAL EXITOSO */}
+           {mostrarModal && (
+                <div className='overlay-modal'>
+                    <div className='modal-exito'>
+                        <div className='contenedor-check'>
+                            <img 
+                                className='icono-exito' 
+                                alt='exito' 
+                                src='/img/comprobado.png' 
+                                style={{ width: '80px', height: 'auto' }} 
+                            />
+                        </div>
+                        <h2>¡Ticket asignado con éxito!</h2>
+                        <p style={{ color: '#333', marginBottom: '20px' }}>
+                            El técnico comenzará a trabajar en la solicitud a la brevedad.
+                        </p>
+                        <button className='btn-aceptar' onClick={() => { setMostrarModal(false); navigate('/asignarAdmin'); }}>
+                            Aceptar
+                        </button>
+                    </div>
                 </div>
-
-                <div className="grupo-input-datos-admin">
-                  <label>Teléfono</label>
-                  <input type="text" value={ticket_datos_admin.telefono} readOnly />
-                </div>
-
-                <div className="grupo-input-datos-admin">
-                  <label>Extensión</label>
-                  <input type="text" value={ticket_datos_admin.extension} readOnly />
-                </div>
-
-                <div className="grupo-input-datos-admin">
-                  <label>Título del problema</label>
-                  <input type="text" value={ticket_datos_admin.titulo} readOnly />
-                </div>
-              </div>
-
-              {/* COLUMNA 2: Tecnico y descripcion */}
-              <div className="columna-datos-admin">
-                <div className="grupo-input-datos-admin">
-                  <label className='tecnico-label-admin' >Técnico Asignado</label>
-                  <select 
-                    className='tecnico-select-admin'
-                    required
-                    value={ticket_datos_admin.tecnico_asignado} 
-                    onChange={(e) => setTicket_datos_admin({...ticket_datos_admin, tecnico_asignado: e.target.value})}
-                  >
-                    <option value="">-- Seleccione un técnico --</option>
-                    {tecnicos.map((tec) => (
-                      <option key={tec.id_usuario} value={tec.id_usuario}>
-                        {tec.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="grupo-input-datos-admin" style={{ alignItems: 'flex-start' }}>
-                  <label className='descripcion-label-admin' style={{ marginTop: '10px' }}>Descripción</label>
-                  <textarea 
-                    className="textarea-datos-admin"
-                    value={ticket_datos_admin.descripcion}
-                    readOnly
-                  />
-                </div>
-              </div>
-
-            </div>
-
-            <div className="contenedor-botones-datos-admin">
-              <button type="submit" className="btn-actualizar-datos-admin">Actualizar datos</button>
-            </div>
-          </form>
+            )}
         </div>
-      </main>
-
-      {mostrarModal_datos_admin && (
-        <div className="overlay-modal-datos-admin">
-          <div className="modal-exito-datos-admin">
-            <div className='contenedor-check-datos-admin'>
-              <span className='check-animado-detalle-TU'>L</span> 
-            </div>
-            <h2 className='ventana-texto-actualizar' >¡Datos actualizados!</h2>
-            <button className="btn-aceptar-datos-admin" onClick={cerrarModal_datos_admin}>
-              Aceptar
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+    );
 }
 
 export default DatosTicketAdmin;

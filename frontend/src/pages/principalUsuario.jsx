@@ -9,7 +9,7 @@ const opciones = [
   { id: 3, titulo: 'Buscar ticket', src: '/img/buscar.png', ruta: '/buscarTicketU' },
   { id: 4, titulo: 'Todos mis tickets', src: '/img/mis-tickets.png', ruta: '/todosTicketU' },
   { id: 5, titulo: 'Mi perfil', src: '/img/datos.png', ruta: '/perfilU' },
-  { id: 6, titulo: 'Directorio', src: '/img/directorio.png', ruta: '/directorioU' },
+  { id: 6, titulo: 'Mis equipos', src: '/img/computadora.png', ruta: '/equiposU' },
 ];
 
 function PrincipalUsuario() {

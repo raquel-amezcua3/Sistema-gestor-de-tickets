@@ -1,79 +1,106 @@
-/* Funcion que sirve para asignar los tickets abiertos a los tecnicos, esto solo lo puede hacer el administrador */
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// 1. Obtener tickets para asignar (Estado 'abierto')
+// 1. Obtener tickets para asignar (Solo estado 'Abierto')
 router.get('/tickets-por-asignar', async (req, res) => {
   try {
     const query = `
       SELECT 
         t.id_ticket AS id, 
-        u.nombre AS nombre, 
-        t.titulo, 
-        t.descripcion, 
-        /* to_char: Formatea la fecha de creación para que sea legible en el frontend */
-        to_char(t.fecha_creacion, 'YYYY-MM-DD') AS fecha,
-        /* COALESCE: Si la fecha de cierre es nula, devuelve un guion '—' en su lugar */
-        COALESCE(to_char(t.fecha_cierre, 'YYYY-MM-DD'), '—') AS "fechaCierre",
+        b_usuario.nombre AS nombre_usuario, 
+        t.titulo_falla, 
+        t.descripcion_falla, 
+        to_char(t.fecha_creacion, 'DD/MM/YYYY') AS fecha,
+        t.nivel_prioridad,
         t.estado,
-        /* LEFT JOIN + COALESCE: Trae el nombre del técnico si existe, sino pone 'Pendiente' */
-        COALESCE(ut.nombre, 'Pendiente') AS tecnico
-      FROM tickets t
-      /* JOIN: Relaciona el ticket con el usuario que lo creó (id_usuario) */
-      JOIN usuarios u ON t.id_usuario = u.id_usuario
-      /* LEFT JOIN: Permite ver el ticket aunque no tenga un técnico asignado todavía */
-      LEFT JOIN usuarios ut ON t.id_tecnico = ut.id_usuario
-      /* ILIKE + TRIM: Busca el estado 'abierto' ignorando mayúsculas/minúsculas y espacios extra */
-      WHERE TRIM(t.estado) ILIKE 'abierto'
+        COALESCE(b_tecnico.nombre, 'Pendiente') AS tecnico_nombre
+      FROM ticket t
+      -- Join con base para los datos de quien creó el ticket
+      JOIN base b_usuario ON t.id_base = b_usuario.id_base
+      -- Left Joins para ver el nombre del técnico si es que ya tiene uno
+      LEFT JOIN tecnico tec ON t.id_tecnico = tec.id_tecnico
+      LEFT JOIN base b_tecnico ON tec.id_base = b_tecnico.id_base
+      WHERE TRIM(t.estado) ILIKE 'Abierto'
       ORDER BY t.fecha_creacion DESC
     `;
     const resultado = await pool.query(query);
-    res.json(resultado.rows); // Envía la lista de tickets abiertos al frontend
+    res.json(resultado.rows);
   } catch (error) {
     console.error("❌ Error en GET /tickets-por-asignar:", error.message);
-    res.status(500).json({ error: "Error interno del servidor" });
+    res.status(500).json({ error: "Error interno del servidor", detalle: error.message });
   }
 });
 
-// 2. Asignar técnico y cambiar estado a 'en proceso'
+// NUEVO 👉 2. Obtener el detalle completo de UN ticket por su ID (Para la pantalla de asignación)
+router.get('/detalle-ticket/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const query = `
+      SELECT 
+        t.id_ticket,
+        b_usuario.nombre AS nombre_usuario,
+        t.categoria_servicio,
+        t.subcategoria_falla,
+        t.nivel_prioridad,
+        t.grado_impacto,
+        to_char(t.fecha_creacion, 'DD/MM/YYYY') AS fecha_creacion_formateada, -- Formato de fecha corregido
+        t.estado,
+        t.titulo_falla,
+        t.descripcion_falla,
+        t.id_tecnico,
+        -- Trae el tipo de equipo combinando marca desde la tabla equipo
+        COALESCE(e.tipo_equipo || ' - ' || e.marca, 'N/A') AS equipo_nombre
+      FROM ticket t
+      JOIN base b_usuario ON t.id_base = b_usuario.id_base
+      LEFT JOIN equipo e ON t.id_equipo = e.id_equipo -- Join clave para resolver id_equipo
+      WHERE t.id_ticket = $1;
+    `;
+    
+    const resultado = await pool.query(query, [id]);
+
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({ error: "Ticket no encontrado" });
+    }
+
+    res.json(resultado.rows[0]);
+  } catch (error) {
+    console.error(`❌ Error en GET /detalle-ticket/${id}:`, error.message);
+    res.status(500).json({ error: "Error al obtener el detalle del ticket en el servidor" });
+  }
+});
+
+// 3. Asignar técnico y cambiar estado a 'En Proceso'
 router.put('/asignar-tecnico', async (req, res) => {
-  /* Extrae los datos necesarios del cuerpo de la petición (JSON enviado desde el frontend) */
   const { id_ticket, id_tecnico } = req.body;
 
-  /* Validación básica para asegurar que el cliente envió ambos IDs */
   if (!id_ticket || !id_tecnico) {
     return res.status(400).json({ error: "Faltan datos (id_ticket o id_tecnico)" });
   }
 
   try {
     const query = `
-      UPDATE tickets 
+      UPDATE ticket 
       SET id_tecnico = $1, 
-          estado = 'en proceso' 
+          estado = 'En Proceso' 
       WHERE id_ticket = $2 
-      RETURNING * /* Devuelve el registro modificado para confirmar los cambios */
-    `;
-    /* Uso de parámetros ($1, $2) para prevenir ataques de Inyección SQL */
+      RETURNING * `;
+    
     const resultado = await pool.query(query, [id_tecnico, id_ticket]);
 
-    /* Verifica si el ticket existía antes de intentar actualizarlo */
     if (resultado.rowCount === 0) {
       return res.status(404).json({ error: "Ticket no encontrado" });
     }
 
-    /* Se actualiza el estado del ticket (en proceso) */
     res.json({ 
-      mensaje: "Técnico asignado. Estado actualizado a 'en proceso'", 
+      mensaje: "Técnico asignado exitosamente. El ticket ahora está 'En Proceso'.", 
       ticket: resultado.rows[0] 
     });
 
-  /* Este catch hace que se capture por si hay un error en la base de datos */
   } catch (error) {
     console.error("❌ Error en PUT /asignar-tecnico:", error.message);
-    res.status(500).json({ error: "Error en la base de datos al asignar" });
+    res.status(500).json({ error: "Error en la base de datos al asignar técnico" });
   }
 });
 
-// Exportamos el router para que index.js pueda usarlo
 module.exports = router;

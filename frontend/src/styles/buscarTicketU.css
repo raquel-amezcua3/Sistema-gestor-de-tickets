@@ -50,6 +50,7 @@
 
 /* Tabla Principal - Posicionada más abajo */
 .tabla-wrapper-buscarTicketU {
+  font-size: 15px;
   margin-top: 60px; /* La tabla baja respecto al buscador */
   width: 100%;
   border: 1px solid #ccc;

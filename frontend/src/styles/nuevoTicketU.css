@@ -1,143 +1,191 @@
+/* Contenedor Principal */
 .container-nuevoTicketU {
   background-color: #ffffff;
   min-height: 100vh;
+  padding-bottom: 50px;
 }
 
 .contenido-ticket {
   padding: 20px 50px;
 }
 
+/* Título de la sección alineado con el diseño anterior */
 .titulo-seccion {
   font-size: 25px;
   font-weight: bold;
   margin-bottom: 20px;
   position: relative;
-  top: 110px;
-  left: -610px;
+  top: 80px; /* Ajustado para consistencia */
+  left: -590px;
   color: black;
 }
 
 /* El cuadro principal gris */
 .cuadro-formulario {
   background-color: #ececec;
-  padding: 30px;
+  padding: 40px;
   border-radius: 4px;
-  max-width: 2000px;
+  max-width: 1320px; /* Consistente con perfil y equipos */
+  height: 550px;
   margin: 0 auto;
   position: relative;
-  top: 110px;
+  top: 80px;
   color: black;
 }
 
 .encabezado-formulario {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 25px;
+  gap: 15px;
+  margin-bottom: 3px;
+  position: relative;
+  top: -25px;
 }
 
 .encabezado-formulario h3 {
-  font-size: 1.2rem;
+  font-size: 22px;
   font-weight: bold;
 }
 
-.icono-editar{
-  width: 50px;
+.icono-editar {
+  width: 55px;
   height: auto;
 }
 
-input.estado-ticket-abierto{
-  color: black !important;
-  font-weight: 500 !important;
-  border: none;
-}
-
-/* Rejilla de 2 columnas */
+/* Rejilla de 2 columnas principal */
 .grid-formulario {
   display: grid;
   grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
-  gap: 20px;
+  gap: 50px;
   align-items: start;
-  color: black;
+}
+
+/* Columnas internas */
+.columna-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  top: -10px;
 }
 
 .grupo-input {
   display: flex;
   align-items: center;
-  color: black;
+  text-align: left;
 }
 
 .grupo-input label {
-  width: 160px; /* Ancho fijo para las etiquetas para que los inputs se alineen */
+  width: 180px; /* Espacio para etiquetas */
   font-weight: bold;
-  font-size: 16.5px;
-  text-align: left;
+  font-size: 16px;
+  color: black;
 }
 
 .requerido {
   color: red;
-  margin-right: 3px;
+  margin-right: 4px;
 }
 
+/* Estilo para Inputs, Selects y Textarea */
 .grupo-input input, 
+.grupo-input select, 
 .grupo-input textarea {
   flex: 1;
-  padding: 8px;
-  border: none;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
   background-color: white;
+  border-radius: 4px;
   color: black;
+  font-size: 15px;
+  outline: none;
 }
 
-/* Para que la descripción ocupe el espacio hacia abajo en su columna */
+.input-readonly {
+  background-color: #f0f0f0 !important;
+  cursor: not-allowed;
+  border: 1px solid #d1d1d1 !important;
+}
+
+/* Área de descripción corregida */
 .area-texto {
-  grid-row: span 6; /* Se expande hacia abajo */
+  display: flex;
+  flex-direction: column; /* Mantenemos columna para que el título esté arriba del cuadro largo */
   align-items: flex-start;
+  gap: 10px;
+  grid-column: span 2; /* IMPORTANTE: Esto hace que el campo ocupe todo el ancho de las dos columnas */
+}
+
+.area-texto label {
+  width: 100%; /* Asegura que el título ocupe toda la línea superior */
+  white-space: nowrap; /* Evita que el texto del título se rompa en dos líneas */
+  display: block;
 }
 
 .area-texto textarea {
+  width: 100%; /* Ahora ocupará el 100% del ancho extendido (las 2 columnas) */
+  height: 400px; /* Un poquito más largo como pediste */
   resize: none;
-  width: 100%;
-  height: 150px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+/* Enlace para registrar equipo */
+.link-registrar-equipo {
+  color: #1a73e8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: -10px;
+  margin-left: 180px; /* Alineado con el inicio del select */
+  display: block;
+}
+
+.link-registrar-equipo:hover {
+  text-decoration: underline;
 }
 
 /* Botón enviar */
 .contenedor-boton {
   display: flex;
   justify-content: center;
-  margin-top: 30px;
+  margin-top: -1px;
 }
 
 .btn-enviar {
   background-color: #1a73e8;
   color: white;
   border: none;
-  padding: 10px 60px;
-  border-radius: 20px;
+  padding: 8px 100px;
+  border-radius: 25px;
   font-weight: bold;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 17px;
+  transition: background-color 0.3s;
 }
 
 .btn-enviar:hover {
   background-color: #155cb0;
 }
 
-/* Diseño para la ventana emergente */
-/* Contenedor del fondo oscuro */
+/* --- DISEÑO DEL MODAL (IGUAL A PERFIL/EQUIPOS) --- */
+/* --- DISEÑO DEL MODAL (IGUAL A PERFIL/EQUIPOS) --- */
+/* ==========================================================================
+   ESTILOS DE LA VENTANA EMERGENTE (MODAL EXITO)
+   ========================================================================== */
 .overlay-modal {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Oscurece el fondo */
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6); /* Oscurece el fondo */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000; /* Asegura que esté por encima de todo */
+  z-index: 9999; /* Asegura que esté por encima de todo */
 }
 
-/* La tarjeta blanca */
 .modal-exito {
   background-color: #f1f1f1;
   padding: 40px;
@@ -146,37 +194,23 @@ input.estado-ticket-abierto{
   width: 90%;
   max-width: 500px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  border: 2px solid #1a73e8; /* Borde azul como en tu imagen */
+  border: 2px solid #1a73e8;
 }
 
-/* El círculo del Check */
 .contenedor-check {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
-}
-
-.check-animado {
-  font-size: 80px;
-  color: #1a73e8;
-  transform: scaleX(-1) rotate(-45deg); /* Gira la L para que parezca un check */
-  display: inline-block;
-  position: relative;
-  top: -50px;
+  margin-bottom: 10px;
 }
 
 .modal-exito h2 {
-  font-size: 26px;
-  color: #000000;
-  margin-bottom: 30px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, sans-serif;
-  font-weight: 400;
-  position: relative;
-  top: 28px;
+  font-size: 24px;
+  color: #000;
+  margin-bottom: 25px;
+  font-weight: bold;
 }
 
-/* Botón Aceptar azul */
 .btn-aceptar {
   background-color: #1a73e8;
   color: white;
@@ -186,9 +220,7 @@ input.estado-ticket-abierto{
   font-weight: bold;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s;
-  position: relative;
-  top: 15px;
+  transition: background-color 0.2s;
 }
 
 .btn-aceptar:hover {

@@ -5,18 +5,16 @@ import '../styles/registro.css';
 function Registro() {
   const navigate = useNavigate();
   
-  // 1. Estado para todos los campos del formulario
   const [formData, setFormData] = useState({
     nombre: '',
     correo: '',
     telefono: '',
     extension: '',
     pass1: '',
-    pass2: '',
-    rol: 0 // Por defecto 0 (Cliente/Usuario normal)
+    pass2: ''
   });
+  
 
-  // Manejador único para todos los inputs
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -24,14 +22,13 @@ function Registro() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 2. Validación de contraseñas
     if (formData.pass1 !== formData.pass2) {
       alert("Las contraseñas no coinciden");
       return;
     }
 
     try {
-      // 3. Petición al Backend
+      // Ajustamos el body para que coincida EXACTAMENTE con tu backend
       const response = await fetch('/api/registro', {
         method: 'POST',
         headers: {
@@ -40,10 +37,9 @@ function Registro() {
         body: JSON.stringify({
           nombre: formData.nombre,
           correo: formData.correo,
-          contraseña: formData.pass1, // Enviamos pass1 como 'contraseña' para el backend
+          contrasena: formData.pass1, // Cambiado 'contraseña' por 'contrasena'
           telefono: formData.telefono,
-          extension: parseInt(formData.extension), // Convertir a número
-          rol: formData.rol
+          extension: parseInt(formData.extension)
         }),
       });
 
@@ -51,7 +47,7 @@ function Registro() {
 
       if (response.ok) {
         alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
-        navigate('/login'); // O la ruta de tu login
+        navigate('/login'); 
       } else {
         alert("Error: " + data.error);
       }
@@ -60,6 +56,7 @@ function Registro() {
       alert("No se pudo conectar con el servidor. ¿Está encendido el backend?");
     }
   };
+  
 
   return (
     <div className='container-registro'>
@@ -72,43 +69,38 @@ function Registro() {
         <h2 className='titulo-registro'>¡Registrate y obten soporte cuando lo necesites!</h2>
         
         <form className='formulario-registro' onSubmit={handleSubmit}>
-          {/* NOMBRE */}a
           <div className='campo-formulario-registro'>
-            <label htmlFor='nombre'>Nombre de usuario</label>
+            <label htmlFor='nombre'>Nombre completo</label>
             <input 
               type='text' id='nombre' name='nombre' required 
               value={formData.nombre} onChange={handleChange} 
             />
           </div>
 
-          {/* CORREO */}
           <div className='campo-formulario-registro'>
-            <label htmlFor='correo'>Correo</label>
+            <label htmlFor='correo'>Correo electrónico</label>
             <input 
               type='email' id='correo' name='correo' required 
               value={formData.correo} onChange={handleChange} 
             />
           </div>
           
-          {/* TELEFONO */}
           <div className='campo-formulario-registro'>
-            <label htmlFor='telefono'>Telefono</label>
+            <label htmlFor='telefono'>Teléfono</label>
             <input 
               type='text' id='telefono' name='telefono' required 
               maxLength="10" value={formData.telefono} onChange={handleChange}
             />
           </div>
 
-          {/* EXTENSION */}
           <div className='campo-formulario-registro'>
-            <label htmlFor='extension'>Extension</label>
+            <label htmlFor='extension'>Extensión</label>
             <input 
               type='text' id='extension' name='extension' required 
               value={formData.extension} onChange={handleChange}
             />
           </div>
 
-          {/* CONTRASEÑA 1 */}
           <div className='campo-formulario-registro'>
             <label htmlFor='pass1'>Contraseña</label>
             <input 
@@ -117,7 +109,6 @@ function Registro() {
             />
           </div>
 
-          {/* CONTRASEÑA 2 */}
           <div className='campo-formulario-registro'>
             <label htmlFor='pass2'>Repetir Contraseña</label>
             <input 
@@ -129,7 +120,7 @@ function Registro() {
           <button type='submit' className='boton-registrar'>Registrarse</button>
           
           <div className='cuenta'>
-            <a href='/login'>¿Ya tienes cuenta?</a>
+            <a href='/login'>¿Ya tienes cuenta? Inicia sesión</a>
           </div> 
         </form>
       </div>
@@ -137,4 +128,5 @@ function Registro() {
   );
 }
 
+// ESTA LÍNEA ES LA QUE TE DABA EL ERROR DE "MISSING EXPORT" EN EL BUILD
 export default Registro;

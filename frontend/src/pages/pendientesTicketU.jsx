@@ -1,3 +1,4 @@
+//El .js de esta pantalla es el de ticketsPendientes.js
 import React, { useState, useEffect } from 'react';
 import '../styles/pendientesTicketU.css';
 import { useNavigate } from 'react-router-dom';
@@ -6,18 +7,21 @@ import HeaderPU from '../components/HeaderPU';
 function PendientesTicketU() {
   const navigate = useNavigate();
   
-  // 1. Estados para los datos reales
+  // Estados para los datos reales
   const [tickets, setTickets] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [cargando, setCargando] = useState(true);
 
-  // 2. Cargar tickets pendientes al montar el componente
+  // Cargar tickets pendientes al montar el componente
+// Cargar tickets pendientes al montar el componente
   useEffect(() => {
     const obtenerPendientes = async () => {
-      const id_usuario = localStorage.getItem('id_usuario');
+      // 🔥 CORREGIDO: Búsqueda en cascada inteligente usando id_base
+      const id_usuario = localStorage.getItem('id_base') || localStorage.getItem('id_usuario') || localStorage.getItem('id');
       
-      if (!id_usuario) {
-        console.error("No se encontró el ID del usuario en el storage");
+      // Validamos que el ID exista y no sea una palabra corrupta de texto
+      if (!id_usuario || id_usuario === 'undefined' || id_usuario === 'null') {
+        console.error("No se encontró un ID válido en el storage");
         setCargando(false);
         return;
       }
@@ -41,7 +45,13 @@ function PendientesTicketU() {
     obtenerPendientes();
   }, []);
 
-  // 3. Lógica de filtrado para el buscador (ID o Título)
+  // Función auxiliar para recortar texto a lo que quepa visualmente
+  const recortarTexto = (texto, maximo = 45) => {
+    if (!texto) return "";
+    return texto.length > maximo ? texto.substring(0, maximo) + "..." : texto;
+  };
+
+  // Lógica de filtrado para el buscador (ID o Título)
   const ticketsFiltrados = tickets.filter((ticket) => {
     const idStr = ticket.id_ticket?.toString() || "";
     const tituloStr = ticket.titulo?.toLowerCase() || "";
@@ -97,16 +107,17 @@ function PendientesTicketU() {
                     onDoubleClick={() => navigate(`/detalle-ticket/${ticket.id_ticket}`)} 
                   >
                     <td>{ticket.id_ticket}</td>
-                    <td>{localStorage.getItem('usuarioNombre')}</td>
-                    <td>{ticket.titulo}</td>
-                    <td>{ticket.descripcion}</td>
+                    <td>{localStorage.getItem('usuarioNombre') || 'Prueba'}</td>
+                    {/* Aplicamos recorte visual preventivo */}
+                    <td title={ticket.titulo}>{recortarTexto(ticket.titulo, 30)}</td>
+                    <td title={ticket.descripcion}>{recortarTexto(ticket.descripcion, 45)}</td>
                     <td>{ticket.fecha}</td>
                     <td>
-                      <span className={`estado-badge ${ticket.estado.toLowerCase().replace(" ", "-")}`}>
+                      <span className={`estado-badge ${ticket.estado ? ticket.estado.toLowerCase().replace(" ", "-") : "abierto"}`}>
                         {ticket.estado}
                       </span>
                     </td>
-                    <td>{ticket.tecnico || 'Sin asignar'}</td>
+                    <td>{ticket.tecnico}</td>
                   </tr>
                 ))
               ) : (

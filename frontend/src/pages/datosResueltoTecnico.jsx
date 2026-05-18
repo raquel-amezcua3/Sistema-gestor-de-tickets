@@ -1,3 +1,4 @@
+// DatosResueltoTecnico.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/datosResueltoTecnico.css';
@@ -7,26 +8,69 @@ function DatosResueltoTecnico() {
   const navigate_datos_resuelto_tecnico = useNavigate();
   const { id } = useParams();
 
-  // Campos de los tickets
+  // Inicialización limpia de los campos del ticket
   const [ticket_datos_resuelto_tecnico, setTicket_datos_resuelto_tecnico] = useState({
-    id: '', nombre: '', correo: '', telefono: '', titulo: '', descripcion: '', fecha: '', estado: '', tecnico: '', fechaCierre: ''
+    id: '', 
+    nombre: 'Cargando...', 
+    correo: 'Cargando...', 
+    telefono: 'Cargando...', 
+    titulo: 'Cargando...', 
+    descripcion: 'Cargando...', 
+    fecha: '', 
+    estado: '', 
+    tecnico: '', 
+    fechaCierre: ''
   });
 
+  // Función para formatear la fecha ISO de la base de datos a algo legible (AAAA-MM-DD)
+  const formatearFecha = (fechaRaw) => {
+    if (!fechaRaw || fechaRaw === 'Sin registrar') return 'Sin registrar';
+    try {
+      const fecha = new Date(fechaRaw);
+      if (isNaN(fecha.getTime())) return fechaRaw; // Si ya es texto plano, lo deja igual
+      return fecha.toISOString().split('T')[0]; // Extrae solo la parte de la fecha YYYY-MM-DD
+    } catch (e) {
+      return fechaRaw;
+    }
+  };
+
   useEffect(() => {
-    // Esto sirve para buscar un ticket en la base de datos
-    const encontrado = { 
-      id: id || '101', 
-      nombre: 'Juan Pérez', 
-      correo: 'juan.p@bodesa.com', 
-      telefono: '3121234567', 
-      titulo: 'Error de Login', 
-      descripcion: 'No reconoce la contraseña al intentar ingresar al sistema desde la oficina. Se restablecieron credenciales.', 
-      fecha: '2026-03-10', 
-      estado: 'Cerrado', 
-      tecnico: 'Fernando Contreras', 
-      fechaCierre: '2026-03-11' 
+    const obtenerDetallesTicket = async () => {
+      if (!id || id === 'undefined' || id === 'null') {
+        console.error("❌ ID de ticket no válido recibido en la URL");
+        return;
+      }
+
+      try {
+        const url = `http://localhost:3000/api/datos-resuelto/${id}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (response.ok) {
+          // Extraemos la fecha buscando todas las combinaciones posibles que mande tu consulta SQL
+          const fechaCierreRaw = data.fecha_cierre || data.fechaCierre || data.fechacierre || '';
+
+          setTicket_datos_resuelto_tecnico({
+            id: data.id ? data.id.toString() : id,
+            nombre: data.nombre || 'Sin nombre',
+            correo: data.correo || 'Sin correo',
+            telefono: data.telefono || 'Sin teléfono',
+            titulo: data.titulo || 'Sin título',
+            descripcion: data.descripcion || 'Sin descripción',
+            fecha: formatearFecha(data.fecha),
+            estado: data.estado || 'Resuelto',
+            tecnico: data.tecnico || 'Sin asignar',
+            fechaCierre: fechaCierreRaw ? formatearFecha(fechaCierreRaw) : 'Sin registrar'
+          });
+        } else {
+          console.error("⚠️ El servidor respondió con un error:", data.error);
+        }
+      } catch (error) {
+        console.error("❌ Error de red al conectar con el servidor:", error);
+      }
     };
-    setTicket_datos_resuelto_tecnico(encontrado);
+
+    obtenerDetallesTicket();
   }, [id]);
 
   return (
@@ -104,6 +148,19 @@ function DatosResueltoTecnico() {
                 onClick={() => navigate_datos_resuelto_tecnico('/resueltoTecnico')}
               >
                 Regresar
+              </button>
+              
+              <button 
+                className="btn-azul-datos-resuelto-tecnico" 
+                onClick={() => navigate_datos_resuelto_tecnico(`/seguimientoTicketU/${id}`)}
+                style={{
+                  backgroundColor: '#848484', // Azul si está seleccionado, gris si no
+                  color: '#ffffff', // Texto blanco para ambos casos
+                  transition: 'background-color 0.2s ease', // Suaviza la transición del cambio de color
+                  marginLeft: '20px'
+                }}
+              >
+                Seguimiento ticket
               </button>
             </div>
           </div>

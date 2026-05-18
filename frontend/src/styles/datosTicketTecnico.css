@@ -1,6 +1,7 @@
 .container-datosT-Tecnico {
   background-color: #fff;
   min-height: 100vh;
+  font-family: Arial, sans-serif;
 }
 
 .contenido-datosT-Tecnico {
@@ -17,17 +18,18 @@
   margin-bottom: 20px;
   color: #000;
   position: relative;
-  left: -554px;
+  left: -540px;
 }
 
 .card-datosT-Tecnico {
-  width: 123%;
+  width: 125%;
   background-color: #ebebeb;
   color: black;
   border-radius: 4px;
   padding: 30px 40px; 
   position: relative;
-  left: -124px;
+  left: -140px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
 .header-card-datosT-Tecnico {
@@ -50,8 +52,7 @@
   color: #d32f2f;
   font-size: 13px;
   margin-bottom: 20px;
-  position: relative;
-  left: -410px;
+  text-align: left;
 }
 
 .rojo-datosT-Tecnico { color: #d32f2f; }
@@ -59,35 +60,42 @@
 .grid-formulario-datosT-Tecnico {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 60px;
+  gap: 40px;
   color: black;
-  text-align: left;
 }
 
 .grupo-input-datosT-Tecnico {
   display: flex;
-  align-items: center;
-  margin-bottom: 15px;
+  align-items: center; 
+  margin-bottom: 12px;
 }
 
 .grupo-input-datosT-Tecnico label {
-  width: 160px;
+  width: 180px; 
   font-weight: bold;
   font-size: 15px;
+  text-align: left;
 }
 
 .grupo-input-datosT-Tecnico input, 
-.select-estado-datosT-Tecnico {
+.select-estado-datosT-Tecnico,
+.textarea-datosT-Tecnico {
   flex: 1;
   padding: 8px 12px;
   border: none;
   border-radius: 4px;
   font-size: 15px;
+  background-color: #fff;
+  color: black;
 }
 
-.grupo-input-datosT-Tecnico input {
-  background-color: #fff !important;
-  color: black;
+.area-texto-datos {
+  align-items: flex-start;
+}
+
+.textarea-datosT-Tecnico {
+  height: 80px;
+  resize: none;
 }
 
 .estado-amarillo {
@@ -102,33 +110,99 @@
   font-weight: bold;
 }
 
-.select-estado-datosT-Tecnico option {
-  background-color: #fff;
-  color: black;
-  font-weight: normal;
-}
-
-.tecnico-bold-datosT-Tecnico {
-  font-weight: bold !important;
-  text-align: center;
-}
-
-.textarea-datosT-Tecnico {
-  flex: 1;
-  height: 135px;
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  background-color: #fff;
-  resize: none;
-  color: black;
-}
-
-.contenedor-botones-datosT-Tecnico {
-  margin-top: 10px;
+/* --- ESTILOS DE LOS 3 BOTONES INFERIORES --- */
+.fila-botones-final-datos {
+  margin-top: 40px;
   display: flex;
-  justify-content: space-around;
-  padding: 0 100px;
+  justify-content: space-between; /* Los separa como en la imagen */
+  align-items: center;
+  padding: 0 10px;
+}
+
+.btn-final-ok {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 10px 80px; /* Botón Ok es más ancho */
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.btn-final-gris {
+  background-color: #858585;
+  color: white;
+  border: none;
+  padding: 10px 35px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.btn-final-ok:hover { background-color: #1557b0; }
+.btn-final-gris:hover { background-color: #666; }
+
+/* --- MODALES --- */
+.overlay-modal-datosT-Tecnico {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 2000;
+}
+
+.modal-confirmar-DT, .modal-exito-datosT-Tecnico {
+  background: #ebebeb;
+  padding: 40px;
+  border-radius: 8px;
+  text-align: center;
+  width: 500px;
+}
+
+.titulo-pregunta-DT { font-size: 28px; margin-bottom: 30px; color: #000; }
+.flex-botones-DT { display: flex; justify-content: center; gap: 30px; }
+
+.btn-cancelar-DT {
+  background-color: #8e8e8e;
+  color: white;
+  border: none;
+  padding: 12px 40px;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-aceptar-pregunta-DT {
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  padding: 12px 40px;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-aceptar-pregunta-DT:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.mensaje-error-modal {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+
+
+/* ESTILOS PARA LOS BOTONES DE ABAJO */
+.contenedor-botones-datosT-Tecnico {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
 }
 
 .btn-azul-datosT-Tecnico {
@@ -139,142 +213,220 @@
   border-radius: 25px;
   cursor: pointer;
   font-weight: bold;
-  font-size: 16px;
 }
 
-.btn-azul-datosT-Tecnico:hover { background-color: #1557b0; }
+.btn-azul-datosT-Tecnico:hover{
+  background-color: #1557b0;
+}
 
+.btn-gris-datosT-Tecnico {
+  background-color: #858585;
+  color: white;
+  border: none;
+  padding: 12px 40px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+}
 
-/* --- Estilo de la ventana de "¿el ticket esta resuelto?  --- */
+.btn-gris-datosT-Tecnico:hover {
+  background-color: #1557b0;
+}
 
-.modal-confirmar-DT {
+/* MODAL SEGUIMIENTO (NUEVO) */
+.modal-seguimiento-container {
   background: #ebebeb;
-  padding: 40px;
+  width: 1000px;
   border-radius: 8px;
-  text-align: center;
-  width: 550px;
+  padding: 25px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  color: black;
 }
 
-.img-pregunta-DT {
-  width: 140px;
+.header-modal-seguimiento {
+  display: flex;
+  align-items: center;
+  gap: 15px;
   margin-bottom: 20px;
 }
 
-.titulo-pregunta-DT {
+.header-modal-seguimiento h2 {
   font-size: 32px;
-  margin-bottom: 40px;
-  color: #000;
+  color: #333;
+  text-align: center
 }
 
-.flex-botones-DT {
+.fila-seguimiento {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.fila-seguimiento label {
+  width: 200px;
+  font-weight: bold;
+  font-size: 16px;
+  color: black;
+  text-align: left;
+}
+
+.fila-seguimiento input, 
+.fila-seguimiento textarea {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 2px;
+  background: white;
+  color: black;
+}
+
+.estado-display-amarillo {
+  flex: 1;
+  background: #ffeb3b;
+  text-align: center;
+  font-weight: bold;
+  padding: 8px;
+  color: black;
+}
+
+.footer-modal-seguimiento {
+  margin-top: 20px;
   display: flex;
   justify-content: center;
-  gap: 40px;
+  gap: 20px;
 }
 
-.btn-cancelar-DT {
-  background-color: #8e8e8e;
-  color: white;
-  border: none;
-  padding: 12px 50px;
-  border-radius: 30px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-cancelar-DT:hover {
-    background-color: #1557b0;
-}
-
-.btn-aceptar-pregunta-DT {
-  background-color:  #1a73e8;;
-  color: white;
-  border: none;
-  padding: 12px 50px;
-  border-radius: 30px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-aceptar-pregunta-DT:hover {
-    background-color: #1557b0;
-}
-
-/* 
-Estilo de la ventana emergente de confirmacion de "Ticket resuelto correctamente" */
-.overlay-modal-datosT-Tecnico {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
-  display: flex; justify-content: center; align-items: center;
-  z-index: 1000;
-}
-
-.modal-exito-datosT-Tecnico {
-  background: white;
-  padding: 40px;
-  border-radius: 8px;
-  text-align: center;
-  width: 500px;
-}
-
-.ventana-texto{
-    position: relative;
-    top: -10px;
-    font-family: 'Roboto';
-    font-size: 30px;
-}
-
-.btn-aceptar-datosT-Tecnico {
+.btn-anadir-seguimiento {
   background-color: #1a73e8;
   color: white;
   border: none;
-  padding: 10px 40px;
-  border-radius: 20px;
-  margin-top: 20px;
+  padding: 12px 40px;
+  border-radius: 25px;
+  font-weight: bold;
   cursor: pointer;
 }
 
-.btn-aceptar-datosT-Tecnico:hover{
-     background-color: #1557b0;
+.btn-anadir-seguimiento:hover {
+  background-color: #1557b0;
+}
+
+.btn-cancelar-seguimiento {
+  background-color: #8e8e8e;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+.btn-cancelar-seguimiento:hover {
+  background-color: #1557b0;
+}
+
+.imagen-seguimiento-tecnico{
+  width: 50px;
+  height: auto;
+}
+
+
+.input-tiempo-seguimiento {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 2px;
+  background: white;
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  color: black;
+}
+
+/* Forzar la aparición del icono del reloj */
+.input-tiempo-seguimiento::-webkit-calendar-picker-indicator {
+    display: block !important;
+    cursor: pointer;
+    /* Si quieres cambiarle el color o estilo, puedes usar filtros */
+    filter: invert(0.5); 
+}
+
+.input-bloqueado {
+  background-color: #9e9e9e !important; /* Gris oscuro como en tu imagen */
+  color: #333;
+  cursor: not-allowed;
+}
+.aviso-bloqueo {
+  color: #f44336;
+  font-size: 12px;
+  margin-left: 20px;
 }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Mensaje de advertencia dentro del modal */
-.mensaje-error-modal {
-  color: #d32f2f;
-  background-color: #fce8e8;
-  padding: 10px;
-  border-radius: 4px;
-  font-size: 14px;
-  margin-bottom: 20px;
-  border: 1px solid #d32f2f;
+.select-estado-modal {
+  flex: 1;
+  border: none;
+  border-radius: 2px;
+  padding: 8px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
 }
 
-/* Estilo para el botón cuando está deshabilitado */
-.btn-deshabilitado {
-  background-color: #cccccc !important; /* Gris claro */
-  cursor: not-allowed !important;
-  opacity: 0.7;
+/* Paleta de colores de estados */
+.estado-azul {
+  background-color: #2196F3 !important; /* Azul */
+  color: white !important;
 }
 
-.btn-deshabilitado:hover {
-  background-color: #cccccc !important; /* Evita el efecto hover azul */
+.estado-amarillo {
+  background-color: #ffeb3b !important; /* Amarillo */
+  color: black !important;
+}
+
+.estado-rosa {
+  background-color: #f48fb1 !important; /* Rosa */
+  color: black !important;
+}
+
+.estado-verde {
+  background-color: #4caf50 !important; /* Verde */
+  color: white !important;
+}
+
+.estado-naranja {
+  background-color: #ff9800 !important; /* Naranja */
+  color: white !important;
+}
+
+
+/* Asegura que el texto dentro del modal sea negro, no blanco */
+.modal-exito-datosT-Tecnico {
+    /* ... tus estilos de centrado y borde ... */
+    color: #000 !important; /* Texto negro forzado */
+}
+
+/* Título negro */
+.titulo-exito-perfil-tecnico {
+    font-size: 24px;
+    color: #000;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Estilo del botón azul "Aceptar" (como el Ok de image_0.png) */
+.btn-aceptar-datosT-Tecnico {
+    width: 150px;
+    height: 40px;
+    background-color: #0066FF; /* Azul Tarelix */
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-aceptar-datosT-Tecnico:hover {
+    background-color: #0052cc;
 }

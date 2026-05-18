@@ -1,0 +1,196 @@
+.container-equipo-formularioR {
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.contenido-equipo-formularioR {
+  padding: 20px 50px;
+}
+
+.titulo-equipo-formularioR {
+  font-size: 25px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: black;
+  text-align: left;
+  position: relative;
+  top: 100px;
+  left: 35px;
+}
+
+/* Cuadro gris principal idéntico al de perfil */
+.cuadro-equipo-formularioR {
+  background-color: #ececec;
+  padding: 40px;
+  border-radius: 4px;
+  max-width: 1320px;
+  margin: 0 auto;
+  position: relative;
+  top: 100px;
+  left: 3px;
+  color: black;
+}
+
+.encabezado-equipo-formularioR {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.icono-equipo-formularioR {
+  width: 55px;
+  height: auto;
+}
+
+.encabezado-equipo-formularioR h3 {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* Layout de dos columnas */
+.cuerpo-equipo-formularioR {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.formulario-equipo-formularioR {
+  display: flex;
+  flex-direction: column;
+  gap: 55px;
+}
+
+.grupo-input-equipo-formularioR {
+  font-family: 'Roboto';
+  font-size: 25px;
+  display: flex;
+  text-align: left;
+  align-items: center;
+  position: relative;
+  top: -30px; /* Mantiene la alineación que tenías */
+}
+
+.grupo-input-equipo-formularioR label {
+  width: 180px; 
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.grupo-input-equipo-formularioR input {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background-color: white;
+  border-radius: 2px;
+  color: black;
+  font-size: 15px;
+}
+
+.contenedor-imagen-equipo-formularioR {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.imagen-equipo-formularioR {
+  width: 500px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Botones inferiores */
+.contenedor-botones-equipo-formularioR {
+  display: flex;
+  gap: 100px;
+  margin-top: 20px;
+  position: relative;
+  left: 70px;
+}
+
+.btn-ok-equipo-formularioR {
+  background-color: #a0a0a0;
+  color: white;
+  border: none;
+  padding: 10px 80px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-ok-equipo-formularioR:hover {
+    background-color: #1555b3;
+}
+
+.btn-registrar-equipo-formularioR {
+  background-color: #1a66d4; /* Gris como en la imagen */
+  color: white;
+  border: none;
+  padding: 10px 40px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-registrar-equipo-formularioR:hover {
+    background-color: #1555b3;
+}
+
+/* Modal Estilo Perfil */
+.overlay-modal-equipo-formularioR {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: black;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.overlay-modal-equipo-formularioR h2{
+  color: black;
+  font-weight: 100;
+  font-family: 'Roboto';
+}
+
+.modal-exito-equipo-formularioR {
+  background-color: #f1f1f1;
+  color: black;
+  padding: 40px;
+  border-radius: 4px;
+  text-align: center;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 2px solid #1a73e8;
+}
+
+.check-animado-equipo-formularioR {
+  font-size: 90px;
+  color: #1a73e8;
+  transform: scaleX(-1) rotate(-45deg);
+  display: inline-block;
+}
+
+.btn-aceptar-equipo-formularioR {
+  background-color: #1a66d4;
+  color: white;
+  border: none;
+  padding: 10px 80px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-aceptar-equipo-formularioR:hover {
+    background-color: #1555b3;
+}

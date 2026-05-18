@@ -1,48 +1,58 @@
-// Funcion para que aparezca en una tabla los tickets pendientes
+//La pantalla de esta funcion es pendientesTecnico.jsx
+// routes/ticketsPendientes.js
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// Funcion para obtener tickets pendientes de un usuario específico
-router.get('/:id_usuario', async (req, res) => {
-    // Extrae el ID del usuario desde los parámetros de la URL
-    const { id_usuario } = req.params;
+// Obtener tickets pendientes usando el id_base global del técnico o usuario
+router.get('/:id_identificador', async (req, res) => {
+    const { id_identificador } = req.params;
+
+    if (!id_identificador || id_identificador === 'undefined' || id_identificador === 'null' || isNaN(Number(id_identificador))) {
+        console.warn("⚠️ Consulta omitida en Pendientes: identificador inválido enviado:", id_identificador);
+        return res.status(200).json([]); 
+    }
 
     try {
-        // Consulta SQL para obtener solo tickets con estados de en pro eso
+        // 🔥 CORREGIDO: Ahora unimos al creador del ticket con la tabla 'base' (bu) 
+        // para garantizar que la columna 'nombre' exista y no rompa la base de datos.
         const query = `
             SELECT 
-                id_ticket, 
-                titulo, 
-                descripcion, 
-                estado, 
-                /* Formatea la fecha directamente desde PostgreSQL para facilitar la lectura en el cliente */
-                TO_CHAR(fecha_creacion, 'DD/MM/YYYY') as fecha
-            FROM tickets 
-            WHERE id_usuario = $1 
-            /* Filtro de lógica de negocio: Solo estados que requieren atención (se usa LOWER para evitar problemas de mayúsculas) */
-            AND (LOWER(estado) = 'abierto' OR LOWER(estado) = 'en espera')
-            /* Ordena los resultados por fecha de creación, mostrando primero los más recientes */
-            ORDER BY fecha_creacion DESC
+                t.id_ticket, 
+                t.titulo_falla AS titulo, 
+                t.descripcion_falla AS descripcion, 
+                CASE 
+                    WHEN LOWER(t.estado) = 'abierto' THEN 'Abierto'
+                    WHEN LOWER(t.estado) = 'en proceso' THEN 'En Proceso'
+                    WHEN LOWER(t.estado) = 'en espera de compra' THEN 'En Espera de Compra'
+                    WHEN LOWER(t.estado) = 'resuelto' THEN 'Resuelto'
+                    WHEN LOWER(t.estado) = 'cerrado' THEN 'Cerrado'
+                    ELSE t.estado 
+                END AS estado, 
+                t.nivel_prioridad,
+                TO_CHAR(t.fecha_creacion, 'DD/MM/YYYY') as fecha,
+                COALESCE(bu.nombre, 'Usuario Sistema') as nombre_usuario,
+                COALESCE(bt.nombre, 'Sin asignar') as tecnico
+            FROM ticket t
+            LEFT JOIN equipo e ON t.id_equipo = e.id_equipo
+            LEFT JOIN tecnico tec ON t.id_tecnico = tec.id_tecnico
+            LEFT JOIN base bt ON tec.id_base = bt.id_base
+            LEFT JOIN Usuario u ON t.id_usuario = u.id_usuario
+            LEFT JOIN base bu ON u.id_base = bu.id_base
+            WHERE (u.id_base = $1 OR t.id_base = $1 OR tec.id_base = $1) 
+              AND LOWER(t.estado) IN ('abierto', 'en proceso', 'en espera de compra')
+            ORDER BY t.id_ticket DESC
         `;
         
-        // Ejecución de la consulta utilizando parámetros para prevenir inyecciones SQL
-        const resultado = await pool.query(query, [id_usuario]);
-        
-        // Agregamos manualmente la propiedad tecnico para que el front no de error
-        // Mapeamos el arreglo original para inyectar el campo 'tecnico' a cada objeto
-        const filas = resultado.rows.map(ticket => ({
-            ...ticket,
-            tecnico: 'Pendiente' 
-        }));
+        const resultado = await pool.query(query, [parseInt(id_identificador, 10)]);
+        res.json(resultado.rows);
 
-        // Envío de la lista procesada en formato JSON
-        res.json(filas);
     } catch (error) {
-        
-        // Registro de error detallado en el servidor
         console.error("❌ ERROR DETALLADO EN PENDIENTES:", error.message);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ 
+            error: "No se pudieron obtener los tickets pendientes",
+            detalle: error.message 
+        });
     }
 });
 

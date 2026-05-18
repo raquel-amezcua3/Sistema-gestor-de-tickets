@@ -1,122 +1,224 @@
+/* ==========================================
+   1. CONTENEDORES PRINCIPALES DE LA ESTRUCTURA
+   ========================================== */
 .container-seguimiento-usuario {
-    background-color: #fff;
+    background-color: #ffffff; /* Fondo de la página blanco */
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;   
 }
 
 .contenido-seguimiento-usuario {
+    padding-top: 120px; /* Espacio para el Header */
     display: flex;
     justify-content: center;
-    align-items: center;
-    flex: 1;
+    padding-bottom: 30px;
     position: relative;
-    top: 40px;
-    left: -70px;
+    top: -25px;
 }
 
-.cuadro-gris-seguimiento-usuario {
-    width: 95%; /* Deja un pequeño margen a los lados */
-    max-width: 1600px; /* Aquí aumentas el límite */
-    height: 80%;
-    background-color: #ececec; /* Cambié el rojo por el gris de tu diseño */
-    padding: 40px;
-    border-radius: 4px;
-    text-align: center;
-    margin: 0 auto; /* Lo mantiene centrado */
-    position: relative;
-    left: 70px;
-}
-
-.titulo-seguimiento-usuario {
-    text-align: left;
-    font-size: 22px;
-    font-weight: bold;
-    margin-bottom: 30px;
-    color: #333;
-}
-
-.contenedor-pasos-seguimiento-usuario {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    margin-bottom: 40px;
-}
-
-/* Tarjeta base (Blanca) */
-.tarjeta-paso-seguimiento-usuario {
-    background-color: #fff;
-    padding: 30px 20px;
+/* EL CONTENEDOR GRIS DE FONDO */
+.cuadro-gris-fondo {
+    background-color: #ececec; /* Gris de tus otros diseños */
+    width: 90%;
+    max-width: 1320px;
+    padding: 30px 40px;
     border-radius: 4px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    min-height: 400px;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
 }
 
-/* Estado INACTIVO: Más gris y transparente */
-.tarjeta-paso-seguimiento-usuario.inactivo {
-    opacity: 0.5;
-    filter: grayscale(1); /* Opcional: hace que el icono también sea gris */
+/* CUADRO BLANCO INTERIOR */
+/* 1. CAMBIA ESTO: Deja que el fondo gris crezca libremente con el contenido */
+.cuadro-gris-fondo {
+    background-color: #ececec;
+    width: 90%;
+    max-width: 1320px;
+    padding: 30px 40px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    /* height: 610px;  <--- ELIMINA O COMENTA ESTA LÍNEA */
 }
 
-/* Estado ACTIVO: Resaltado con borde azul */
-.tarjeta-paso-seguimiento-usuario.activo {
-    opacity: 1;
-    border: 3px solid #1a73e8;
-    transform: scale(1.02);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+/* 2. CAMBIA ESTO: Asegura que el cuadro blanco no estire la pantalla */
+.cuadro-blanco-seguimiento {
+    background-color: #fff;
+    width: 100%;
+    padding: 35px;
+    border-radius: 15px;
+    box-sizing: border-box;
+    display: flex;         /* Agregado */
+    flex-direction: column;/* Agregado */
 }
 
-.icono-paso-seguimiento-usuario {
-    width: 100px;
-    height: auto;
-    position: relative;
-    top: 30px;
-   
-}
 
-.tarjeta-paso-seguimiento-usuario h3 {
-    font-size: 20px;
+
+.titulo-seguimiento-usuario {
+    font-size: 25px;
     font-weight: bold;
+    margin-bottom: 20px;
     color: #000;
-    position: relative;
-    top: 50px;
+    text-align: left;
 }
 
-.tarjeta-paso-seguimiento-usuario p {
-    width: 80%;
-    font-size: 14px;
-    color: #444;
+/* ==========================================
+   2. BARRA DE PROGRESO (Estilo Flechas)
+   ========================================== */
+.barra-progreso-contenedor {
+    display: flex;
+    width: 100%;
+    margin-bottom: 30px;
+    border: 2px solid #1a73e8;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 60px;
+}
+
+.paso-flecha {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #bcbcbc; /* Gris inactivo */
+    color: #555;
+    font-weight: bold;
+    font-size: 16px;
+    position: relative;
+    clip-path: polygon(95% 0, 100% 50%, 95% 100%, 0% 100%, 5% 50%, 0% 0%);
+    margin-right: -12px;
+}
+
+.paso-flecha:first-child { clip-path: polygon(95% 0, 100% 50%, 95% 100%, 0% 100%, 0% 0%); }
+.paso-flecha:last-child { clip-path: polygon(100% 0, 100% 100%, 0% 100%, 5% 50%, 0% 0%); margin-right: 0; }
+
+/* Colores de estados activos */
+.paso-flecha.activo { color: white; }
+.paso-flecha.activo:nth-child(1) { background-color: #2074ac; } /* Abierto */
+.paso-flecha.activo:nth-child(2) { background-color: #58ace4; } /* En proceso */
+.paso-flecha.activo:nth-child(3) { background-color: #f4a424; } /* Espera compra */
+.paso-flecha.activo:nth-child(4) { background-color: #06ba39; } /* Resuelto */
+.paso-flecha.activo:nth-child(5) { background-color: #c711ac; } /* Cerrado */
+
+/* ==========================================
+   3. SECCIÓN DE TRAZABILIDAD Y MENSAJES (SCROLL CORREGIDO)
+   ========================================== */
+/* 3. CAMBIA ESTO: Reducimos un poco el max-height para obligar a que aparezca el scroll */
+.seccion-trazabilidad {
+    border: 2px solid #1a73e8;
+    border-radius: 15px;
+    padding: 25px 30px;
+    background-color: #fff;
+    
+    /* Configuración forzada del scroll */
+    max-height: 320px;          /* Ajustado de 440px a 320px para forzar el scroll en pantallas comunes */
+    overflow-y: scroll !important; /* Cambiado de 'auto' a 'scroll' para forzar a que la barra sea visible siempre */
+    padding-right: 15px;
+}
+
+/* Estilo moderno y delgado de la barra de desplazamiento */
+.seccion-trazabilidad::-webkit-scrollbar {
+    width: 8px;
+}
+.seccion-trazabilidad::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+.seccion-trazabilidad::-webkit-scrollbar-thumb {
+    background: #1a73e8;
+    border-radius: 4px;
+}
+.seccion-trazabilidad::-webkit-scrollbar-thumb:hover {
+    background: #155cb0;
+}
+
+/* FILAS DE MENSAJES INDIVIDULES */
+.fila-seguimiento {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;       /* Separación compacta entre un bloque y otro */
+    align-items: flex-start;
+}
+
+.fila-seguimiento:last-child {
+    margin-bottom: 0;          /* Quita el margen al último para balancear el padding */
+}
+
+/* COLUMNA IZQUIERDA (TIEMPO / RELOJ / METADATOS) */
+.col-tiempo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 180px;
+    flex-shrink: 0;
+}
+
+.circulo-reloj img {
+    width: 45px;               /* Reloj ligeramente más pequeño y equilibrado */
+    height: 45px;
+}
+
+.datos-meta {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+    color: #000;
+    font-weight: 500;
     line-height: 1.4;
-    position: relative;
-    top: 70px;
 }
 
-/* Botón Enterado */
-.btn-enterado-seguimiento-usuario {
+/* CUADRO BLANCO DE COMENTARIOS TÉCNICOS */
+.cuadro-comentario-item {
+    flex: 1;
+    background-color: #fff;
+    border: 1px solid #bcbcbc;  /* Color coordinado con bordes limpios */
+    border-radius: 15px;
+    padding: 12px 20px;         /* Ajuste interno compacto */
+    text-align: left;
+}
+
+.detalles-tecnicos p {
+    margin: 0 0 6px 0;          /* Margen vertical compacto para las líneas de texto */
+    font-size: 13px;
+    color: #333;
+    line-height: 1.4;
+}
+
+.detalles-tecnicos p:last-child {
+    margin-bottom: 0;          /* Remueve espacio fantasma al final */
+}
+
+/* ==========================================
+   4. BOTÓN ENTERADO (PIE DE PÁGINA)
+   ========================================== */
+.contenedor-boton-footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;          /* En lugar de posiciones relativas negativas, usamos margen natural */
+}
+
+.btn-enterado-seguimiento {
     background-color: #1a73e8;
     color: white;
-    padding: 12px 60px;
+    padding: 8px 80px;         /* Ajustado el padding vertical de 2px a 8px para que se vea simétrico */
     border: none;
-    border-radius: 25px;
+    border-radius: 30px;
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.2s;
-    position: relative;
-    top: -15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: background-color 0.2s ease;
 }
 
-.btn-enterado-seguimiento-usuario:hover {
-    background-color: #1557b0;
+.btn-enterado-seguimiento:hover {
+    background-color: #155cb0;
 }
 
-/* Responsivo */
-@media (max-width: 900px) {
-    .contenedor-pasos-seguimiento-usuario {
-        grid-template-columns: 1fr 1fr;
-    }
+
+/* Esto es apra ocultar la hora */
+.datos-meta strong {
+    display: inline-block;
+    max-width: 75px;         /* Ajusta este ancho para que solo quepa la fecha DD/MM/YYYY */
+    white-space: nowrap;     /* Evita que la hora salte a una línea abajo */
+    overflow: hidden;        /* Esconde por completo la hora que se salga de los 90px */
+    text-overflow: clip;     /* Corta el texto limpiamente sin dejar puntos suspensivos */
 }

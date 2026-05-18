@@ -1,108 +1,139 @@
+/* Contenedor Principal */
 .container-perfil-tecnico {
   background-color: #ffffff;
   min-height: 100vh;
+  font-family: Arial, sans-serif;
 }
 
+/* Espaciado del contenido */
 .contenido-perfil-tecnico {
   padding: 20px 50px;
 }
 
+/* Título exterior "Mis datos" */
 .titulo-perfil-tecnico {
-  font-size: 25px;
+  font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
   position: relative;
-  top: 100px;
+  top: 80px;
   color: black;
   text-align: left;
   left: 35px;
 }
 
+/* Cuadro Gris Principal */
 .cuadro-perfil-tecnico {
   background-color: #ececec;
-  padding: 40px;
+  padding: 30px 40px;
   border-radius: 4px;
   max-width: 1320px;
   margin: 0 auto;
   position: relative;
-  top: 100px;
-  left: 3px;
+  top: 80px;
   color: black;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* Encabezado interno (Icono + Título + Aviso) */
 .encabezado-perfil-tecnico {
   display: flex;
   align-items: center;
   gap: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
 .icono-datos-perfil-tecnico {
-  width: 55px;
+  width: 50px;
   height: auto;
 }
 
 .encabezado-perfil-tecnico h3 {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: bold;
+  margin: 0;
 }
 
+.aviso-rojo-perfil {
+  color: #ff0000;
+  font-size: 13px;
+  font-weight: normal;
+  margin-left: 20px;
+}
+
+/* Cuerpo: Grid de dos columnas */
 .cuerpo-perfil-tecnico {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 40px;
-  align-items: center;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 50px;
+  align-items: flex-start;
 }
 
+/* Formulario */
 .formulario-perfil-tecnico {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px; /* Espacio entre filas de inputs */
 }
 
+/* Filas de Label + Input */
 .grupo-input-perfil-tecnico {
   display: flex;
-  text-align: left;
   align-items: center;
-  position: relative;
-  top: -30px;
+  text-align: left;
 }
 
 .grupo-input-perfil-tecnico label {
-  width: 180px;
+  width: 220px; /* Ancho fijo para alinear todos los inputs */
   font-weight: bold;
-  font-size: 16px;
+  font-size: 15px;
+  color: #000;
+}
+
+.asterisco-rojo {
+  color: red;
+  margin-right: 4px;
 }
 
 .grupo-input-perfil-tecnico input {
   flex: 1;
   padding: 8px 12px;
-  border: none;
+  border: 1px solid #ccc; /* Borde ligero para notar el input */
   background-color: white;
-  border-radius: 2px;
+  border-radius: 3px;
   color: black;
-  font-size: 15px;
+  font-size: 14px;
+  outline: none;
 }
 
+/* Estilo para campos NO editables (Grises) */
+.input-solo-lectura {
+  background-color: #dfdfdf !important;
+  color: #555 !important;
+  cursor: not-allowed;
+  border: 1px solid #bbb !important;
+}
+
+/* Columna de la derecha (Logo) */
 .contenedor-imagen-perfil-tecnico {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100%;
 }
 
 .imagen-logo-perfil-tecnico {
-  width: 300px;
-  height: 300px;
-  object-fit: cover;
-  border-radius: 4px;
+  width: 280px;
+  height: 280px;
+  object-fit: contain;
 }
 
+/* Contenedor de Botones Inferiores */
 .contenedor-botones-perfil-tecnico {
   display: flex;
-  gap: 100px;
-  margin-top: 0px;
-  position: relative;
-  left: 70px;
+  gap: 50px;
+  margin-top: 30px;
+  padding-left: 20px;
 }
 
 .btn-ok-perfil-tecnico {
@@ -110,10 +141,11 @@
   color: white;
   border: none;
   padding: 10px 80px;
-  border-radius: 20px;
+  border-radius: 25px;
   font-weight: bold;
   cursor: pointer;
   font-size: 16px;
+  transition: background 0.3s;
 }
 
 .btn-actualizar-perfil-tecnico {
@@ -121,10 +153,11 @@
   color: white;
   border: none;
   padding: 10px 40px;
-  border-radius: 20px;
+  border-radius: 25px;
   font-weight: bold;
   cursor: pointer;
   font-size: 16px;
+  transition: background 0.3s;
 }
 
 .btn-ok-perfil-tecnico:hover {
@@ -132,67 +165,60 @@
 }
 
 .btn-actualizar-perfil-tecnico:hover {
-  background-color: #8a8a8a;
+  background-color: #155cb0;
 }
 
-/* Modal */
+/* --- Modal de Éxito --- */
 .overlay-modal-perfil-tecnico {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 2000;
+  color: black;
 }
 
 .modal-exito-perfil-tecnico {
   background-color: #f1f1f1;
   padding: 40px;
-  border-radius: 4px;
+  border-radius: 8px;
   text-align: center;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  border: 2px solid #1a73e8;
-}
-
-.contenedor-check-perfil-tecnico {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
+  width: 400px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  border-top: 5px solid #1a73e8;
+  color: black
 }
 
 .check-animado-perfil-tecnico {
-  font-size: 90px;
+  font-size: 80px;
   color: #1a73e8;
+  display: block;
+  margin-bottom: 10px;
+  /* Simulación de check rotado */
   transform: scaleX(-1) rotate(-45deg);
-  display: inline-block;
 }
 
 .modal-exito-perfil-tecnico h2 {
-  font-size: 26px;
-  color: #000000;
-  margin-bottom: 30px;
-  font-family: 'Segoe UI', sans-serif;
-  font-weight: 400;
-  position: relative;
-  top: 25px;
+  font-size: 22px;
+  margin-bottom: 25px;
+  color: black;
 }
 
 .btn-aceptar-perfil-tecnico {
   background-color: #1a73e8;
   color: white;
   border: none;
-  padding: 10px 45px;
+  padding: 10px 50px;
   border-radius: 20px;
   font-weight: bold;
   cursor: pointer;
-  font-size: 16px;
-  position: relative;
-  top: 15px;
+}
+
+.btn-aceptar-perfil-tecnico:hover {
+ background-color: #155cb0;
 }

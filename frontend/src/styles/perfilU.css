@@ -149,7 +149,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.6); /* Oscurece el fondo suavemente */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -158,53 +158,66 @@
 
 .modal-exito-perfil-usuario {
   background-color: #f1f1f1;
-  padding: 40px;
-  border-radius: 4px;
+  padding: 35px 40px;
+  border-radius: 8px; /* Bordes ligeramente más suaves como la imagen */
   text-align: center;
   width: 90%;
-  max-width: 500px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  border: 2px solid #1a73e8; /* Borde azul como en la imagen */
+  max-width: 480px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra todos los elementos dentro del modal */
 }
 
+/* El círculo verde del éxito */
 .contenedor-check-perfil-usuario {
+  width: 100px;
+  height: 100px;
+  background-color: #059742; /* Verde idéntico al de tu referencia */
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+  box-shadow: inset 0 -4px 0 rgba(0,0,0,0.15); /* Sombra inferior interna */
 }
 
+/* La palomita blanca perfecta */
 .check-animado-perfil-usuario {
-  font-size: 90px;
-  color: #1a73e8;
-  transform: scaleX(-1) rotate(-45deg); /* Gira la L para que parezca un check */
-  display: inline-block;
+  font-size: 55px;
+  color: #ffffff; /* Palomita blanca */
+  font-weight: 100;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: -2px; /* Ajuste milimétrico de centrado vertical */
 }
 
 .modal-exito-perfil-usuario h2 {
-  font-size: 26px;
+  font-size: 25px;
   color: #000000;
-  margin-bottom: 30px;
+  margin-top: 15px;
+  margin-bottom: 25px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-weight: 400;
-  position: relative;
-  top: 25px;
 }
 
 .btn-aceptar-perfil-usuario {
   background-color: #1a73e8;
   color: white;
   border: none;
-  padding: 10px 45px;
-  border-radius: 20px;
+  padding: 12px 60px; /* Un poco más ancho para que luzca idéntico */
+  border-radius: 24px;
   font-weight: bold;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s;
-  position: relative;
-  top: 15px;
+  transition: background-color 0.2s, transform 0.1s;
 }
 
 .btn-aceptar-perfil-usuario:hover {
   background-color: #155cb0;
+}
+
+.btn-aceptar-perfil-usuario:active {
+  transform: scale(0.98);
 }

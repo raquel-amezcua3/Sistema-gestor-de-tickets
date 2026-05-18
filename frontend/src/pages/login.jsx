@@ -26,7 +26,7 @@ function Login() {
         },
         body: JSON.stringify({
           correo: credenciales.correo,
-          contraseña: credenciales.contraseña
+          contrasena: credenciales.contraseña // Enviamos 'contrasena' sin ñ para el backend
         }),
       });
 
@@ -36,14 +36,21 @@ function Login() {
         // 1. Convertimos el rol a número inmediatamente para evitar errores de comparación
         const rolNumerico = Number(data.usuario.rol);
 
-        // 2. Mantenemos tus nombres y agregamos el objeto 'usuario' para compatibilidad
+        // 2. Guardamos de forma explícita e independiente cada ID en el localStorage
         localStorage.setItem('id_usuario', data.usuario.id); 
+        localStorage.setItem('id_base', data.usuario.id_base); // ID central de la tabla Base
         localStorage.setItem('usuarioNombre', data.usuario.nombre);
         localStorage.setItem('usuarioRol', rolNumerico);
 
-        localStorage.setItem('usuario', JSON.stringify({ id: data.usuario.id, nombre: data.usuario.nombre, rol: rolNumerico }));
+        // Guardamos también el objeto agrupado por si lo usas en otros componentes
+        localStorage.setItem('usuario', JSON.stringify({ 
+          id: data.usuario.id, 
+          id_base: data.usuario.id_base,
+          nombre: data.usuario.nombre, 
+          rol: rolNumerico 
+        }));
 
-        // 3. Pequeña pausa de seguridad (50ms) para asegurar que el navegador guardó los datos antes de que el Header intente leerlos y me expulse.
+        // 3. Pequeña pausa de seguridad (50ms) para asegurar la escritura de datos
         setTimeout(() => {
           if (rolNumerico === 1) {
             navigate('/principalAdmin'); 

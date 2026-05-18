@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Agregamos useEffect
+import React, { useState, useEffect } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import '../styles/asignarAdmin.css';
 import EncabezadoAdmin from '../components/EncabezadoAdmin';
@@ -6,15 +6,13 @@ import EncabezadoAdmin from '../components/EncabezadoAdmin';
 function AsignarAdmin() {
   const navigate_asignar_admin = useNavigate();
 
-  // Ahora el estado inicial es un array vacío que se llenará desde la DB
   const [tickets_asignar_admin, setTickets_asignar_admin] = useState([]);
   const [busqueda_asignar_admin, setBusqueda_asignar_admin] = useState('');
   const [soloAbiertos_asignar_admin, setSoloAbiertos_asignar_admin] = useState(false);
 
-  // Funcion para treaer los tickets
   const obtenerTickets = async () => {
     try {
-      const response = await fetch('/api/admin/tickets-por-asignar');
+      const response = await fetch('/api/asignar-admin/tickets-por-asignar');
       if (response.ok) {
         const data = await response.json();
         setTickets_asignar_admin(data);
@@ -24,24 +22,22 @@ function AsignarAdmin() {
     }
   };
 
-  // Se ejecuta una sola vez al cargar la pantalla
   useEffect(() => {
     obtenerTickets();
   }, []);
 
-  // Lógica de filtrado
   const filtrados_asignar_admin = tickets_asignar_admin
     .filter((ticket) => {
       const coincide = 
         ticket.id.toString().includes(busqueda_asignar_admin) ||
-        ticket.nombre.toLowerCase().includes(busqueda_asignar_admin.toLowerCase());
+        (ticket.nombre_usuario && ticket.nombre_usuario.toLowerCase().includes(busqueda_asignar_admin.toLowerCase())) ||
+        (ticket.titulo_falla && ticket.titulo_falla.toLowerCase().includes(busqueda_asignar_admin.toLowerCase()));
       
-      // Filtramos por 'abierto' 
-      return soloAbiertos_asignar_admin ? (coincide && ticket.estado === 'abierto') : coincide;
+      return soloAbiertos_asignar_admin ? (coincide && ticket.estado.toLowerCase() === 'abierto') : coincide;
     })
     .sort((a, b) => {
-      if (a.estado === 'abierto' && b.estado !== 'abierto') return -1;
-      if (a.estado !== 'abierto' && b.estado === 'abierto') return 1;
+      if (a.estado.toLowerCase() === 'abierto' && b.estado.toLowerCase() !== 'abierto') return -1;
+      if (a.estado.toLowerCase() !== 'abierto' && b.estado.toLowerCase() === 'abierto') return 1;
       return 0;
     });
 
@@ -83,7 +79,6 @@ function AsignarAdmin() {
                 <th className="col-titulo-asignar-admin">Titulo</th>
                 <th className="col-desc-asignar-admin">Descripción</th>
                 <th className="col-fecha-asignar-admin">Fecha de creación</th>
-                <th className="col-fecha-asignar-admin">Fecha de cierre</th>
                 <th className="col-estado-asignar-admin">Estado</th>
                 <th className="col-tecnico-asignar-admin">Tecnico</th>
               </tr>
@@ -97,17 +92,15 @@ function AsignarAdmin() {
                   title="Doble clic para ver detalles"
                 >
                   <td>{ticket.id}</td>
-                  <td>{ticket.nombre}</td>
-                  <td>{ticket.titulo}</td>
-                  <td>{ticket.descripcion}</td>
+                  <td>{ticket.nombre_usuario}</td>
+                  <td>{ticket.titulo_falla}</td>
+                  <td>{ticket.descripcion_falla}</td>
                   <td>{ticket.fecha}</td>
-                  <td>{ticket.fechaCierre}</td>
-                  <td className={`estado-${ticket.estado.toLowerCase()}-asignar-admin`}>
+                  <td className={`estado-${ticket.estado.toLowerCase().replace(/\s+/g, '-')}-asignar-admin`}>
                     {ticket.estado}
                   </td>
                   <td>
-                    {/* Si el técnico es 'Pendiente' o nulo, mostrare un botón */}
-                    {ticket.tecnico === 'Pendiente' || !ticket.tecnico ? (
+                    {ticket.tecnico_nombre === 'Pendiente' || !ticket.tecnico_nombre ? (
                       <button 
                         className="btn-accion-asignar-admin"
                         onClick={(e) => {
@@ -118,14 +111,14 @@ function AsignarAdmin() {
                         Asignar
                       </button>
                     ) : (
-                      <span className="nombre-tecnico-listo-admin">{ticket.tecnico}</span>
+                      <span className="nombre-tecnico-listo-admin">{ticket.tecnico_nombre}</span>
                     )}
                   </td>
                 </tr>
               ))}
               {filtrados_asignar_admin.length === 0 && (
                 <tr>
-                  <td colSpan="8" style={{ textAlign: 'center', padding: '20px' }}>
+                  <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>
                     No hay tickets disponibles por ahora.
                   </td>
                 </tr>

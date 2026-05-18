@@ -5,41 +5,90 @@ import EncabezadoTecnico from '../components/EncabezadoTecnico';
 
 function DatosTicketTecnico() {
   const navigate_datosT_Tecnico = useNavigate();
-  // Obtención del ID del ticket directamente desde los parámetros de la URL configurada en el Router
   const { id } = useParams();
 
-  // Estados para controlar la visibilidad de los modales de confirmación y éxito
+  // Estados de modales
   const [modalExito_datosT_Tecnico, setModalExito_datosT_Tecnico] = useState(false);
   const [modalConfirmar_DT, setModalConfirmar_DT] = useState(false);
+  const [modalSeguimiento, setModalSeguimiento] = useState(false);
+  const [modalExitoSeguimiento, setModalExitoSeguimiento] = useState(false);
 
-  // Estado que almacena la información detallada del ticket
+  // Estado del ticket principal (Vista de lectura de la tarjeta)
   const [ticket_datosT_Tecnico, setTicket_datosT_Tecnico] = useState({
-    id: '', nombre: '', correo: '', telefono: '', titulo: '', descripcion: '', fecha: '', estado: '', tecnico: '', fechaCierre: ''
+    id: '', nombre: '', categoria: '', subcategoria: '', prioridad: '', impacto: '',
+    titulo: '', descripcion: '', equipo: '', fecha: '', estado: 'en proceso', tecnico: '', fechaCierre: ''
   });
 
-  // Lógica de validación: Se requiere que el estado sea 'Cerrado' y exista una fecha seleccionada para habilitar el guardado
-  const requisitosCompletos = ticket_datosT_Tecnico.estado === 'Cerrado' && ticket_datosT_Tecnico.fechaCierre !== '';
+  // Estado del formulario interno del modal de seguimiento
+  const [formSeguimiento, setFormSeguimiento] = useState({
+    estado: 'en proceso', diagnostico: '', fallaReal: '', accionTomada: '', piezas: '', tiempo: '',
+    fechaCierre: '' // 📅 Guardará la fecha seleccionada en el modal
+  });
 
-  // Cargar datos desde el backend
-  // Se ejecuta cada vez que el ID en la URL cambia para traer la información actualizada del ticket
+  const [tieneDiagnosticoPrevio, setTieneDiagnosticoPrevio] = useState(false);
+  const [tieneFallaPrevia, setTieneFallaPrevia] = useState(false);
+
+  // Carga inicial de datos
   useEffect(() => {
     const cargarDetalle = async () => {
       try {
         const response = await fetch(`/api/tecnico/tickets/detalle/${id}`);
         const data = await response.json();
         if (response.ok) {
-          // Se inicializa el estado con los datos del backend, manteniendo la fecha de cierre vacía para que el técnico la asigne
-          setTicket_datosT_Tecnico({ ...data, fechaCierre: '' });
+          const ticketFormateado = {
+            id: data.id ? data.id.toString() : id,
+            nombre: data.nombre || 'N/A',
+            categoria: data.categoria || 'Sin categoría',
+            subcategoria: data.subcategoria || 'Sin subcategoría',
+            prioridad: data.prioridad || 'Baja',
+            impacto: data.impacto || 'Bajo',
+            titulo: data.titulo || 'Sin título',
+            descripcion: data.descripcion || 'Sin descripción',
+            equipo: data.equipo || 'PC-ADMIN-01', 
+            fecha: data.fecha || '',
+            estado: data.estado || 'en proceso',
+            tecnico: data.tecnico || 'Sin asignar',
+            fechaCierre: data.fecha_cierre || '' 
+          };
+
+          setTicket_datosT_Tecnico(ticketFormateado);
+          
+          const diagExistente = data.diagnosticoHistorico || '';
+          const fallaExistente = data.fallaRealHistorica || '';
+
+          setTieneDiagnosticoPrevio(diagExistente.trim() !== '');
+          setTieneFallaPrevia(fallaExistente.trim() !== '');
+
+          setFormSeguimiento({ 
+            estado: data.estado || 'en proceso',
+            diagnostico: diagExistente,
+            fallaReal: fallaExistente,
+            accionTomada: '',
+            piezas: '',
+            tiempo: '',
+            fechaCierre: ''
+          });
         }
       } catch (err) {
-        console.error("Error al cargar detalle:", err);
+        console.error("Error al cargar detalle del ticket:", err);
       }
     };
     cargarDetalle();
   }, [id]);
 
-  // Funcion para guardar en la base de datos
-  // Envía una petición PUT al servidor para actualizar el estado del ticket y registrar su conclusión
+  const handleCambioEstadoPrincipal = (nuevoEstado) => {
+    setTicket_datosT_Tecnico(prev => ({ ...prev, estado: nuevoEstado }));
+  };
+
+  const handleCambioEstadoModal = (nuevoEstado) => {
+    setFormSeguimiento(prev => ({
+      ...prev,
+      estado: nuevoEstado,
+      // Si cambian el estado y ya no es resuelto, limpiamos la fecha por seguridad
+      fechaCierre: nuevoEstado === 'resuelto' ? prev.fechaCierre : ''
+    }));
+  };
+
   const confirmarResolucion = async () => {
     try {
       const response = await fetch(`/api/tecnico/tickets/resolver/${id}`, {
@@ -50,16 +99,75 @@ function DatosTicketTecnico() {
           fechaCierre: ticket_datosT_Tecnico.fechaCierre
         })
       });
-
       if (response.ok) {
-        setModalConfirmar_DT(false); // Cierra modal de pregunta
-        setModalExito_datosT_Tecnico(true); // Muestra modal de confirmación final
+        setModalConfirmar_DT(false);
+        setModalExito_datosT_Tecnico(true);
       }
     } catch (error) {
       alert("Error al conectar con el servidor");
     }
   };
 
+  // Guardar el seguimiento del modal
+  const handleAnadirSeguimiento = async () => {
+    // Validaciones básicas de campos requeridos comunes
+    if (!formSeguimiento.accionTomada.trim() || !formSeguimiento.piezas.trim() || !formSeguimiento.tiempo) {
+      alert("Por favor llena todos los campos obligatorios (*)");
+      return;
+    }
+
+    // 🔥 VALIDACIÓN CRÍTICA: Si es 'resuelto', la fecha de cierre en el modal no puede estar vacía
+    if (formSeguimiento.estado === 'resuelto' && !formSeguimiento.fechaCierre) {
+      alert("Para poner el ticket en estado Resuelto, debes ingresar la Fecha de Cierre obligatoriamente.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/tecnico/tickets/seguimiento/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          estado: formSeguimiento.estado,
+          diagnostico: formSeguimiento.diagnostico,
+          fallaReal: formSeguimiento.fallaReal,
+          accionTomada: formSeguimiento.accionTomada,
+          piezas: formSeguimiento.piezas,
+          tiempo: parseInt(formSeguimiento.tiempo, 10),
+          id_tecnico: 1,
+          fechaCierre: formSeguimiento.fechaCierre // Enviamos la fecha manual al backend
+        })
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (response.ok) {
+        setModalSeguimiento(false); 
+        setModalExitoSeguimiento(true); 
+      } else {
+        alert(`El servidor rechazó el comentario: ${data.mensaje || 'Error de procesamiento'}`);
+      }
+    } catch (error) {
+      console.error("Error de conexión con la API:", error);
+      alert("No se pudo conectar con el servidor.");
+    }
+  };
+
+  const manejarAceptarExitoSeguimiento = () => {
+    setModalExitoSeguimiento(false);
+    navigate_datosT_Tecnico(`/seguimientoTicketU/${id}`);
+  };
+
+  const handleBotonOkPrincipal = () => {
+    if (ticket_datosT_Tecnico.estado === 'Cerrado') {
+      setModalConfirmar_DT(true);
+    } else {
+      navigate_datosT_Tecnico('/pendientesTecnico');
+    }
+  };
+
+  const camposBloqueados = ticket_datosT_Tecnico.estado.toLowerCase() !== 'en proceso' && ticket_datosT_Tecnico.estado.toLowerCase() !== 'en espera de compra';
+
+  
   return (
     <div className="container-datosT-Tecnico">
       <EncabezadoTecnico />
@@ -76,80 +184,224 @@ function DatosTicketTecnico() {
 
             <div className="grid-formulario-datosT-Tecnico">
               <div className="columna-datosT-Tecnico">
-                {/* Campos de solo lectura (readOnly) para evitar la edición de datos de origen */}
-                <div className="grupo-input-datosT-Tecnico"><label>Nombre de usuario</label>
+                <div className="grupo-input-datosT-Tecnico">
+                  <label>Nombre de usuario</label>
                   <input type="text" value={ticket_datosT_Tecnico.nombre} readOnly />
                 </div>
-                <div className="grupo-input-datosT-Tecnico"><label>Fecha de creación</label>
-                  <input type="text" value={ticket_datosT_Tecnico.fecha} readOnly />
-                </div>
-                <div className="grupo-input-datosT-Tecnico"><label>Tecnico encargado</label>
-                  <input type="text" value={ticket_datosT_Tecnico.tecnico} readOnly className="tecnico-bold-datosT-Tecnico" />
-                </div>
-                {/* Control de edición de estado: Cambia dinámicamente la clase CSS según la selección */}
                 <div className="grupo-input-datosT-Tecnico">
-                  <label><span className="rojo-datosT-Tecnico">*</span>Estado del ticket</label>
-                  <select 
-                    className={`select-estado-datosT-Tecnico ${ticket_datosT_Tecnico.estado === 'Cerrado' ? 'estado-verde' : 'estado-amarillo'}`}
-                    value={ticket_datosT_Tecnico.estado}
-                    onChange={(e) => setTicket_datosT_Tecnico({...ticket_datosT_Tecnico, estado: e.target.value})}
-                  >
-                    <option value="en proceso">En proceso</option>
-                    <option value="Cerrado">Resuelto</option>
-                  </select>
+                  <label>Categoría</label>
+                  <input type="text" value={ticket_datosT_Tecnico.categoria} readOnly />
+                </div>
+                <div className="grupo-input-datosT-Tecnico">
+                  <label>Subcategoría</label>
+                  <input type="text" value={ticket_datosT_Tecnico.subcategoria} readOnly />
+                </div>
+                <div className="grupo-input-datosT-Tecnico">
+                  <label>Nivel de prioridad</label>
+                  <input type="text" value={ticket_datosT_Tecnico.prioridad} readOnly />
+                </div>
+                <div className="grupo-input-datosT-Tecnico">
+                  <label>Grado de impacto</label>
+                  <input type="text" value={ticket_datosT_Tecnico.impacto} readOnly />
+                </div>
+                <div className="grupo-input-datosT-Tecnico">
+                  <label>Fecha de creación</label>
+                  <input type="text" value={ticket_datosT_Tecnico.fecha} readOnly />
                 </div>
               </div>
 
               <div className="columna-datosT-Tecnico">
-                <div className="grupo-input-datosT-Tecnico"><label>Título</label>
+                <div className="grupo-input-datosT-Tecnico">
+  <label><span className="rojo-datosT-Tecnico">*</span>Estado del ticket</label>
+  <input 
+    type="text" 
+    className={`select-estado-datosT-Tecnico ${ticket_datosT_Tecnico.estado === 'Cerrado' ? 'estado-verde' : 'estado-amarillo'}`}
+    // Mapeamos el valor interno al texto que quiere ver el usuario
+    value={
+      ticket_datosT_Tecnico.estado === 'en proceso' ? 'En proceso' :
+      ticket_datosT_Tecnico.estado === 'en espera de compra' ? 'En espera de compra' : 
+      ticket_datosT_Tecnico.estado === 'Cerrado' ? 'Resuelto' : ticket_datosT_Tecnico.estado
+    }
+    readOnly // 👈 Aquí el readOnly SÍ funciona perfectamente porque es un input de texto
+  />
+</div>
+                <div className="grupo-input-datosT-Tecnico">
+                  <label>Título de la falla</label>
                   <input type="text" value={ticket_datosT_Tecnico.titulo} readOnly />
                 </div>
-                <div className="grupo-input-datosT-Tecnico"><label>Descripción</label>
+                <div className="grupo-input-datosT-Tecnico area-texto-datos">
+                  <label>Descripción</label>
                   <textarea className="textarea-datosT-Tecnico" value={ticket_datosT_Tecnico.descripcion} readOnly />
                 </div>
-                {/* Campo editable de fecha: Crucial para la resolución del ticket */}
                 <div className="grupo-input-datosT-Tecnico">
-                  <label>Fecha de cierre</label>
+                  <label>Equipo afectado</label>
+                  <input type="text" value={ticket_datosT_Tecnico.equipo} readOnly />
+                </div>
+                <div className="grupo-input-datosT-Tecnico">
+                  <label>Fecha de cierre (Lectura)</label>
                   <input 
-                    type="date" 
-                    value={ticket_datosT_Tecnico.fechaCierre} 
-                    onChange={(e) => setTicket_datosT_Tecnico({...ticket_datosT_Tecnico, fechaCierre: e.target.value})}
+                    type="text" 
+                    value={ticket_datosT_Tecnico.fechaCierre || 'No cerrado aún'} 
+                    readOnly
                   />
                 </div>
               </div>
             </div>
 
             <div className="contenedor-botones-datosT-Tecnico">
-              <button className="btn-azul-datosT-Tecnico" onClick={() => navigate_datosT_Tecnico('/pendientesTecnico')}>Volver</button>
-              <button className="btn-azul-datosT-Tecnico" onClick={() => setModalConfirmar_DT(true)}>Ticket resuelto</button>
+              <button className="btn-azul-datosT-Tecnico" onClick={handleBotonOkPrincipal}>Ok</button>
+              <button className="btn-gris-datosT-Tecnico" onClick={() => setModalSeguimiento(true)}>Seguimiento del ticket</button>
+              <button className="btn-gris-datosT-Tecnico" onClick={() => navigate_datosT_Tecnico(`/bitacoraETecnico/${id}`)}>Bitácora del equipo</button>
             </div>
           </div>
         </div>
       </main>
 
-      {/* Modal Confirmar: Realiza una validación visual antes de permitir el guardado definitivo */}
-      {modalConfirmar_DT && (
+      {/* MODAL DE SEGUIMIENTO */}
+      {modalSeguimiento && (
         <div className="overlay-modal-datosT-Tecnico">
-          <div className="modal-confirmar-DT">
-            <h2 className="titulo-pregunta-DT">¿El ticket está resuelto?</h2>
-            {/* Mensaje de error condicional si el técnico no ha cumplido los requisitos de cierre */}
-            {!requisitosCompletos && (
-              <p className="mensaje-error-modal">Debes seleccionar el estado <b>Resuelto</b> y elegir una <b>Fecha de cierre</b>.</p>
-            )}
-            <div className="flex-botones-DT">
-              <button className="btn-cancelar-DT" onClick={() => setModalConfirmar_DT(false)}>Cancelar</button>
-              {/* El botón de Aceptar se bloquea automáticamente mediante la propiedad disabled si no se validan los requisitos */}
-              <button className="btn-aceptar-pregunta-DT" onClick={confirmarResolucion} disabled={!requisitosCompletos}>Aceptar</button>
+          <div className="modal-seguimiento-container">
+            <div className="header-modal-seguimiento">
+               <img src="/img/ticket.png" alt="icon" style={{width: '40px'}} />
+               <h2>Seguimiento del ticket</h2>
+            </div>
+            <div className="form-seguimiento">
+              <div className="fila-seguimiento">
+                <label>Estado del ticket</label>
+                <select 
+                  className={`select-estado-modal ${
+                    formSeguimiento.estado === 'abierto' ? 'estado-azul' : 
+                    formSeguimiento.estado === 'en proceso' ? 'estado-amarillo' : 
+                    formSeguimiento.estado === 'en espera de compra' ? 'estado-rosa' : 
+                    formSeguimiento.estado === 'resuelto' ? 'estado-verde' : ''
+                  }`}
+                  value={formSeguimiento.estado}
+                  onChange={(e) => handleCambioEstadoModal(e.target.value)}
+                >
+                  <option value="abierto">Abierto</option>
+                  <option value="en proceso">En proceso</option>
+                  <option value="en espera de compra">En espera de compra</option>
+                  <option value="resuelto">Resuelto</option>
+                </select>
+              </div>
+
+              {/* 🔥 CAMPO DINÁMICO REQUERIDO: Aparece al lado del select solo si seleccionan "Resuelto" */}
+              {formSeguimiento.estado === 'resuelto' && (
+                <div className="fila-seguimiento campo-fecha-cierre-modal">
+                  <label><span className="rojo-datosT-Tecnico">*</span>Fecha de cierre del Ticket</label>
+                  <input 
+                    type="date" 
+                    value={formSeguimiento.fechaCierre}
+                    onChange={(e) => setFormSeguimiento({...formSeguimiento, fechaCierre: e.target.value})}
+                    style={{border: '2px solid #28a745', borderRadius: '5px', padding: '5px'}}
+                  />
+                </div>
+              )}
+              
+              <div className="fila-seguimiento">
+                <label>Fecha y hora</label>
+                <input type="text" value={new Date().toLocaleString()} readOnly className="input-bloqueado" />
+              </div>
+
+              <div className="fila-seguimiento">
+                <label>Técnico</label>
+                <input type="text" value={ticket_datosT_Tecnico.tecnico} readOnly className="input-bloqueado" />
+              </div>
+
+              <div className="fila-seguimiento">
+                <label>Diagnóstico técnico</label>
+                <textarea 
+                  value={formSeguimiento.diagnostico} 
+                  onChange={(e) => setFormSeguimiento({...formSeguimiento, diagnostico: e.target.value})} 
+                  disabled={camposBloqueados || tieneDiagnosticoPrevio}
+                  className={camposBloqueados || tieneDiagnosticoPrevio ? 'input-bloqueado' : ''}
+                  placeholder={tieneDiagnosticoPrevio ? "" : "Escribe el diagnóstico..."}
+                />
+              </div>
+
+              <div className="fila-seguimiento">
+                <label>Falla real</label>
+                <input 
+                  type="text" 
+                  value={formSeguimiento.fallaReal} 
+                  onChange={(e) => setFormSeguimiento({...formSeguimiento, fallaReal: e.target.value})} 
+                  disabled={camposBloqueados || tieneFallaPrevia}
+                  className={camposBloqueados || tieneFallaPrevia ? 'input-bloqueado' : ''}
+                  placeholder={tieneFallaPrevia ? "" : "Escribe la falla real..."}
+                />
+              </div>
+
+              <div className="fila-seguimiento">
+                <label><span className="rojo-datosT-Tecnico">*</span>Acción tomada</label>
+                <textarea 
+                  value={formSeguimiento.accionTomada} 
+                  onChange={(e) => setFormSeguimiento({...formSeguimiento, accionTomada: e.target.value})} 
+                />
+              </div>
+
+              <div className="fila-seguimiento">
+                <label><span className="rojo-datosT-Tecnico">*</span>Piezas reemplazadas</label>
+                <input 
+                  type="text" 
+                  value={formSeguimiento.piezas} 
+                  onChange={(e) => setFormSeguimiento({...formSeguimiento, piezas: e.target.value})} 
+                />
+              </div>
+
+              <div className="fila-seguimiento">
+                <label><span className="rojo-datosT-Tecnico">*</span>Tiempo laborando (minutos)</label>
+                <input 
+                  type="number" 
+                  min="0"
+                  placeholder="Ej. 45"
+                  className="input-tiempo-seguimiento"
+                  value={formSeguimiento.tiempo} 
+                  onChange={(e) => setFormSeguimiento({...formSeguimiento, tiempo: e.target.value})} 
+                />
+              </div>
+            </div>
+
+            <div className="footer-modal-seguimiento">
+              <button className="btn-cancelar-seguimiento" onClick={() => setModalSeguimiento(false)}>Cerrar</button>
+              <button className="btn-anadir-seguimiento" onClick={handleAnadirSeguimiento}>Añadir seguimiento</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal Éxito: Feedback visual al usuario tras la actualización exitosa en la DB */}
+      {/* MODAL COMENTARIO AGREGADO */}
+      {modalExitoSeguimiento && (
+        <div className="overlay-modal-datosT-Tecnico">
+          <div className="modal-exito-datosT-Tecnico">
+            <h2 className="titulo-exito-perfil-tecnico">¡Seguimiento guardado y Ticket cerrado!</h2>
+            <div className="contenedor-botones-perfil-tecnico">
+              <button className="btn-aceptar-datosT-Tecnico" onClick={manejarAceptarExitoSeguimiento}>
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL CONFIRMAR RESOLUCIÓN DIRECTA */}
+      {modalConfirmar_DT && (
+        <div className="overlay-modal-datosT-Tecnico">
+          <div className="modal-confirmar-DT">
+            <h2 className="titulo-pregunta-DT">¿El ticket está resuelto?</h2>
+            <p>Para cerrarlo completamente usa el botón de <b>Seguimiento del ticket</b> y cambia el estado a resuelto.</p>
+            <div className="flex-botones-DT">
+              <button className="btn-cancelar-DT" onClick={() => setModalConfirmar_DT(false)}>Regresar</button>
+              <button className="btn-aceptar-pregunta-DT" onClick={confirmarResolucion}>Aceptar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL EXITO GENERAL */}
       {modalExito_datosT_Tecnico && (
         <div className="overlay-modal-datosT-Tecnico">
           <div className="modal-exito-datosT-Tecnico">
-            <h2 className="ventana-texto">¡Ticket resuelto correctamente!</h2>
+            <h2 className="ventana-texto">¡Ticket procesado correctamente!</h2>
             <button className="btn-aceptar-datosT-Tecnico" onClick={() => navigate_datosT_Tecnico('/pendientesTecnico')}>Aceptar</button>
           </div>
         </div>

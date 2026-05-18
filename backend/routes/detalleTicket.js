@@ -1,83 +1,136 @@
-//Esta funcion es para tener detalles del ticket que se selecciona
+//Este .js sirve para la pantalla de detalleTicketU.jsx es para ver los detalles del ticket del usaurio
+// routes/detalleTicket.js
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// Obtener los detalles de un ticket específico por ID
+// --- 1. OBTENER DETALLES DEL TICKET Y SU HISTORIAL (GET) ---
 router.get('/:id', async (req, res) => {
-    const { id } = req.params; // Captura el ID desde la URL
+    const { id } = req.params;
+    
+    if (isNaN(id)) {
+        return res.status(400).json({ error: "El ID debe ser un número" });
+    }
+
     try {
-        const query = `
+        // 1. Obtener la información principal del ticket
+        const queryTicket = `
             SELECT 
                 t.id_ticket, 
-                u.nombre AS nombre_usuario, 
-                u.correo, 
-                u.telefono, 
-                u.extension, 
-                t.titulo, 
-                t.descripcion, 
+                b.nombre AS nombre_usuario, 
+                b.correo, 
+                b.telefono, 
+                b.extension, 
+                t.titulo_falla, 
+                t.descripcion_falla, 
+                t.categoria_servicio,
+                t.subcategoria_falla,
+                t.nivel_prioridad,
+                t.grado_impacto,
                 t.estado, 
                 t.id_tecnico,
-                /* Formatea la fecha de creación a formato legible día/mes/año */
+                CASE 
+                    WHEN e.id_equipo IS NOT NULL THEN 
+                        e.tipo_equipo || ' ' || e.marca || ' - S/N: ' || COALESCE(e.numero_serie, 'S/S')
+                    ELSE 'Ninguno'
+                END AS equipo_afectado, 
                 TO_CHAR(t.fecha_creacion, 'DD/MM/YYYY') as fecha,
                 t.fecha_cierre,
-                /* Compara la fecha actual con la de cierre para determinar si han pasado más de 24 horas */
                 (NOW() > t.fecha_cierre + INTERVAL '24 hours') as superar_limite
-            FROM tickets t
-            JOIN usuarios u ON t.id_usuario = u.id_usuario
+            FROM ticket t
+            JOIN base b ON t.id_base = b.id_base
+            LEFT JOIN equipo e ON t.id_equipo = e.id_equipo
             WHERE t.id_ticket = $1
         `;
-        // Ejecuta la consulta de forma segura usando el ID como parámetro
-        const resultado = await pool.query(query, [id]);
+        
+        const resultadoTicket = await pool.query(queryTicket, [id]);
 
-        // Valida si el ticket existe en la base de datos
-        if (resultado.rows.length === 0) {
+        if (resultadoTicket.rows.length === 0) {
             return res.status(404).json({ error: "Ticket no encontrado" });
         }
 
-        let ticket = resultado.rows[0];
+        let ticket = resultadoTicket.rows[0];
 
-        // LÓGICA DE 24 HORAS: 
-        // Si el estado es 'Resuelto' y ya pasó más de un día, lo forzamos a 'Cerrado'
+        // Lógica de 24 horas para cierre automático
         if (ticket.estado === 'Resuelto' && ticket.superar_limite) {
             ticket.estado = 'Cerrado';
-            // Actualizamos en la base de datos para que el cambio sea permanente
-            await pool.query(
-                "UPDATE tickets SET estado = 'Cerrado' WHERE id_ticket = $1", 
-                [id]
-            );
+            await pool.query("UPDATE ticket SET estado = 'Cerrado' WHERE id_ticket = $1", [id]);
         }
 
-        // Agregamos el campo tecnico manualmente para que el frontend no falle
-        ticket.tecnico = "Pendiente"; 
+        ticket.tecnico_status = ticket.id_tecnico ? "Asignado" : "Pendiente de asignar"; 
 
+        // 2. NUEVA CONSULTA: Obtener el historial de trazabilidad del ticket
+        // Traemos el nombre del técnico de la tabla 'base' uniendo por id_tecnico (id_base)
+        const queryHistorial = `
+            SELECT 
+                h.id_historial,
+                TO_CHAR(h.fecha_registro, 'DD/MM/YYYY, HH:MI p.m.') as fecha,
+                COALESCE(b_tec.nombre, 'Técnico Asignado') as usuario_nombre,
+                h.diagnostico_tecnico,
+                h.falla_real,
+                h.accion_tomada,
+                h.piezas_reemplazadas,
+                h.tiempo_laborado,
+                h.estado
+            FROM historial_trazabilidad h
+            LEFT JOIN base b_tec ON h.id_tecnico = b_tec.id_base
+            WHERE h.id_ticket = $1
+            ORDER BY h.fecha_registro ASC
+        `;
+
+        const resultadoHistorial = await pool.query(queryHistorial, [id]);
+        
+        // Adjuntamos el array de historiales al objeto del ticket principal como 'historial'
+        ticket.historial = resultadoHistorial.rows;
+
+        // Enviamos la respuesta completa al cliente
         res.json(ticket);
+
     } catch (error) {
-        console.error("❌ ERROR EN DETALLE:", error.message);
+        console.error("❌ ERROR EN GET DETALLE:", error.message);
         res.status(500).json({ error: error.message });
     }
 });
-
-// Actualizar información (título y descripción) de un ticket
+// --- 2. ACTUALIZAR TÍTULO Y DESCRIPCIÓN (PUT) ---
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
-    const { titulo, descripcion } = req.body; // Recibe los nuevos datos del cuerpo de la petición
+    const { titulo_falla, descripcion_falla } = req.body;
+
+    // Validación básica de entrada
+    if (!titulo_falla || !descripcion_falla) {
+        return res.status(400).json({ error: "Título y descripción son obligatorios para actualizar." });
+    }
+
     try {
-        // Verificamos si el ticket ya está cerrado para no permitir edición
-        const check = await pool.query("SELECT estado FROM tickets WHERE id_ticket = $1", [id]);
+        // Verificar si el ticket existe y su estado actual
+        const check = await pool.query("SELECT estado FROM ticket WHERE id_ticket = $1", [id]);
         
-        // Bloquea la edición si el estado es 'Cerrado' para mantener integridad de datos
-        if (check.rows[0]?.estado === 'Cerrado') {
-            return res.status(403).json({ error: "No se puede editar un ticket cerrado." });
+        if (check.rows.length === 0) {
+            return res.status(404).json({ error: "Ticket no encontrado." });
         }
 
-        // Ejecuta la actualización y retorna el registro modificado (RETURNING *)
-        const resultado = await pool.query(
-            "UPDATE tickets SET titulo = $1, descripcion = $2 WHERE id_ticket = $3 RETURNING *",
-            [titulo, descripcion, id]
-        );
-        res.json({ mensaje: "Actualizado", ticket: resultado.rows[0] });
+        if (check.rows[0].estado === 'Cerrado') {
+            return res.status(403).json({ error: "No se puede editar un ticket que ya está cerrado." });
+        }
+
+        // Actualización restringida a lo que solicita la vista del usuario
+        const queryUpdate = `
+            UPDATE ticket 
+            SET titulo_falla = $1, 
+                descripcion_falla = $2
+            WHERE id_ticket = $3 
+            RETURNING *
+        `;
+        
+        const resultado = await pool.query(queryUpdate, [titulo_falla, descripcion_falla, id]);
+
+        res.json({ 
+            mensaje: "Ticket actualizado con éxito", 
+            ticket: resultado.rows[0] 
+        });
+
     } catch (error) {
+        console.error("❌ ERROR EN PUT DETALLE:", error.message);
         res.status(500).json({ error: error.message });
     }
 });

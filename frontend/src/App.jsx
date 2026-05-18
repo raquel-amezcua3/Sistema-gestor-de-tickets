@@ -17,6 +17,10 @@ import BuscarTicketU from './pages/buscarTicketU';
 import DirectorioU from './pages/directorioU';
 import PerfilU from './pages/perfilU';
 import SeguimientoTicketU from './pages/seguimientoTicketU';
+import EquiposU from './pages/equiposU';
+import EquipoRegistro from './pages/equipoRegistro';
+import BitacoraEquipo from './pages/bitacoraEquipo';
+
 
 //Pantallas de Admin
 import PrincipalAdmin from './pages/principalAdmin';
@@ -27,6 +31,9 @@ import NuevoTAdmin from './pages/nuevoTAdmin';
 import BuscarAdmin from './pages/buscarAdmin';
 import DatosTicketAdmin from './pages/datosTicketAdmin';
 import AsignarAdmin from './pages/asignarAdmin';
+import CambiarPasswordAdmin from "./pages/CambiarPasswordAdmin"; 
+
+
 
 //Pantallas de Tecnico
 import PrincipalTecnico from './pages/principalTecnico';
@@ -37,6 +44,8 @@ import DatosResueltoTecnico from './pages/datosResueltoTecnico';
 import BuscarTecnico from './pages/buscarTecnico';
 import DirectorioTecnico from './pages/directorioTecnico';
 import PerfilTecnico from './pages/perfilTecnico';
+import BitacoraETecnico from './pages/bitacoraETecnico';
+
 
 
 
@@ -60,6 +69,9 @@ function App() {
         <Route path="/directorioU" element={<DirectorioU />} />
         <Route path="/perfilU" element={<PerfilU />} />
         <Route path="/seguimientoTicketU/:id" element={<SeguimientoTicketU />} />
+        <Route path="/equiposU" element={<EquiposU />} />
+        <Route path="/equipoRegistro" element={<EquipoRegistro />} />
+        <Route path="/bitacoraEquipo/:id" element={<BitacoraEquipo />} />
 
         {/* Pantallas del Administrador del sistema (rol 1) */}
         <Route path="/principalAdmin" element={<PrincipalAdmin />} />
@@ -80,6 +92,8 @@ function App() {
         <Route path="/buscarTecnico" element={<BuscarTecnico/>} /> 
         <Route path="/directorioTecnico" element={<DirectorioTecnico/>} /> 
         <Route path="/perfilTecnico" element={<PerfilTecnico/>} /> 
+        <Route path="/bitacoraETecnico/:id" element={<BitacoraETecnico/>} /> 
+        <Route path="/recuperar-admin-fácil" element={<CambiarPasswordAdmin />} />
         
         
       </Routes>

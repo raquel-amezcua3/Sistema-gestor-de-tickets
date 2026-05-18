@@ -1,3 +1,4 @@
+/* --- CONTENEDOR PRINCIPAL --- */
 .container-nuevo-T-admin {
   background-color: #ffffff;
   min-height: 100vh;
@@ -23,14 +24,15 @@
   top: 10px;
 }
 
+/* --- TARJETA GRIS (CARD) --- */
 .card-nuevo-T-admin {
-  width: 127%;
-  background-color: #ececec; /* Color gris de la tarjeta */
+  width: 125%;
+  height: 500px; /* Ajustado levemente para los nuevos campos */
+  background-color: #ececec;
   display: flex;
   border-radius: 4px;
-  padding: 35px;
+  padding: 20px 35px; /* Reducido padding vertical para ganar espacio */
   gap: 30px;
-  height: 520px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   position: relative;
   left: -140px;
@@ -45,7 +47,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 35px;
+  margin-bottom: 15px; /* Reducido de 35px para compactar */
 }
 
 .icono-nuevo-T-admin {
@@ -58,22 +60,24 @@
   color: black;
 }
 
+/* --- ESTRUCTURA DE INPUTS --- */
 .inputs-nuevo-T-admin {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 7px; /* Espaciado reducido para que quepan los 9 campos */
   color: black;
 }
 
 .grupo-input-nuevo-T-admin {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .grupo-input-nuevo-T-admin label {
-  width: 180px; /* Alineación uniforme de etiquetas */
-  font-weight: bold;
-  font-size: 16px;
+  width: 180px;
+  font-weight: 600;
+  font-size: 16px; /* Reducido de 16px para mejor proporción */
   color: black;
   text-align: left;
 }
@@ -86,13 +90,14 @@
 .grupo-input-nuevo-T-admin input {
   flex: 1;
   background-color: #ffffff;
-  border: none;
-  padding: 10px 12px;
+  border: 1px solid #ccc; /* Añadido borde sutil para visibilidad */
+  padding: 6px 12px; /* Padding más compacto */
   border-radius: 2px;
-  font-size: 16px;
+  font-size: 14px;
   color: black;
 }
 
+/* --- SECCIÓN DE IMAGEN --- */
 .seccion-imagen-nuevo-T-admin {
   flex: 1;
   display: flex;
@@ -101,35 +106,37 @@
 
 .img-decorativa-nuevo-T-admin {
   width: 100%;
+  height: 63%;
   border-radius: 4px;
   object-fit: cover;
+  position: relative;
+  top: -30px;
 }
 
+/* --- BOTÓN REGISTRAR --- */
 .contenedor-boton-nuevo-T-admin {
-  margin-top: 40px;
+  margin-top: 25px;
   display: flex;
-  justify-content: flex-start;
-  padding-left: 100px;
+  justify-content: center;
 }
 
 .btn-agregar-nuevo-T-admin {
-  background-color: #1a73e8; /* Azul del botón Agregar */
+  background-color: #1a73e8;
   color: white;
   border: none;
   padding: 10px 80px;
   border-radius: 25px;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: bold;
   cursor: pointer;
-  position: relative;
-  left: 100px;
+  transition: background 0.3s;
 }
 
 .btn-agregar-nuevo-T-admin:hover {
-    background-color: #155cb0;
+  background-color: #155cb0;
 }
 
-/* Modal Estilo image_0560c9.png */
+/* --- MODAL DE ÉXITO --- */
 .overlay-modal-nuevo-T-admin {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
@@ -168,4 +175,8 @@
   border-radius: 25px;
   font-weight: bold;
   cursor: pointer;
+}
+
+.btn-aceptar-nuevo-T-admin:hover {
+  background-color: #155cb0;
 }

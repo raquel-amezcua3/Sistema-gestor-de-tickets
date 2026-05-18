@@ -1,3 +1,4 @@
+// El .js de esta pantalla es el de ticketsPendientes.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/pendientesTecnico.css';
@@ -13,31 +14,31 @@ function PendientesTecnico() {
   useEffect(() => {
     const obtenerTicketsPendientes = async () => {
       try {
-        const idTecnico = localStorage.getItem('id_usuario');
+        const idTecnico = localStorage.getItem('id_base') || localStorage.getItem('id_usuario') || localStorage.getItem('id');
         
-        if (!idTecnico) {
-          console.error("No se encontró el ID del técnico en el localStorage");
+        if (!idTecnico || idTecnico === 'undefined' || idTecnico === 'null') {
+          console.error("❌ No se encontró un ID válido para el técnico en el localStorage");
+          setCargando(false);
           return;
         }
 
-        // Usamos la variable idTecnico en la URL
-        const response = await fetch(`/api/tecnico/tickets/pendientes/${idTecnico}`);
+        const response = await fetch(`http://localhost:3000/api/tickets-pendientes/${idTecnico}`);
         const data = await response.json();
 
         if (response.ok) {
           const dataFormateada = data.map(t => ({
-            id: t.id.toString(),
-            nombre: t.nombre_usuario,
-            titulo: t.titulo,
-            descripcion: t.descripcion,
+            id: t.id_ticket ? t.id_ticket.toString() : '',
+            nombre: t.nombre_usuario || 'Usuario Sistema', 
+            titulo: t.titulo || 'Sin título',
+            descripcion: t.descripcion || 'Sin descripción',
             fecha: t.fecha,
             estado: t.estado,
-            tecnico: t.nombre_tecnico
+            tecnico: t.tecnico || 'Sin asignar'
           }));
           setTickets_pendientes_tecnico(dataFormateada);
         }
       } catch (error) {
-        console.error("Error al conectar con el servidor:", error);
+        console.error("❌ Error al conectar con el servidor:", error);
       } finally {
         setCargando(false);
       }
@@ -76,7 +77,7 @@ function PendientesTecnico() {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Nombre</th>
+                <th>Usuario</th>
                 <th>Titulo</th>
                 <th>Descripción</th>
                 <th className="col-fecha-pendientes-tecnico">Fecha de creación</th>
@@ -94,6 +95,7 @@ function PendientesTecnico() {
                     className="fila-ticket-pendientes-tecnico"
                     onDoubleClick={() => navigate_pendientes_tecnico(`/datosTicketTecnico/${ticket.id}`)} 
                     title="Doble clic para gestionar este ticket"
+                    style={{ cursor: 'pointer' }}
                   >
                     <td>{ticket.id}</td>
                     <td>{ticket.nombre}</td>
@@ -107,7 +109,7 @@ function PendientesTecnico() {
               ) : (
                 <tr>
                   <td colSpan="7" className="sin-resultados-pendientes-tecnico">
-                    No tienes tickets en proceso actualmente.
+                    No tienes tickets pendientes actualmente.
                   </td>
                 </tr>
               )}

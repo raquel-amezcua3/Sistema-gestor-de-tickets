@@ -1,228 +1,218 @@
-.container-datos-ticket-admin {
-  background-color: #fff;
-  min-height: 100vh;
+.container-datosTicketAdmin {
+    background-color: #ffffff;
+    min-height: 100vh;
 }
 
-.contenido-datos-ticket-admin {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 20px;
-  position: relative;
-  top: 80px;
+.contenido-admin {
+    padding: 20px 50px;
 }
 
-.titulo-pagina-datos-admin {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #000;
-  position: relative;
-  top: 10px;
-  left: -570px;
-}
-
-.card-datos-ticket-admin {
-  width: 123%;
-  height: 480px;
-  background-color: #ebebeb;
-  color: black;
-  display: flex;
-  border-radius: 4px;
-  padding: 40px;
-  gap: 40px;
-  position: relative;
-  top: 20px;
-  left: -124px;
-}
-
-.seccion-info-datos-admin { flex: 1.2; }
-
-.header-card-datos-admin {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 30px;
-  position: relative;
-  top: -45%;
-}
-
-.icono-datos-admin { width: 40px; }
-
-.grupo-input-datos-admin {
-  display: flex;
-  text-align: left;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.grupo-input-datos-admin label {
-  width: 180px;
-  font-weight: bold;
-}
-
-.tecnico-label-admin{
+.titulo-seccion-admin {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 20px;
     position: relative;
-    left: 35%;
+    top: 80px;
+    left: -560px; /* Ajustado para que no se pierda a la izquierda */
+    color: black;
 }
 
-.tecnico-select-admin{
+.cuadro-formulario-admin {
+    background-color: #ececec;
+    padding: 40px;
+    border-radius: 4px;
+    max-width: 1330px;
+    height: 530px;
+    margin: 0 auto;
     position: relative;
-    left: 35%;
+    top: 80px;
+    color: black;
 }
 
-.descripcion-label-admin{
+.encabezado-formulario-admin {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.icono-ticket-admin {
+    width: 50px;
+    height: auto;
     position: relative;
-    left: 35%;
+    top: -20px;
 }
 
-.textarea-datos-admin {
-  flex: 1;
-  width: 200px;
-  height: 200px; /* Altura más grande para la descripción */
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  background-color: #fff;
-  color: #333;
-  font-family: inherit;
-  font-size: 15px;
-  resize: none;
-  position: relative;
-  left: 35%;
+.encabezado-formulario-admin h3 {
+    font-size: 22px;
+    font-weight: bold;
+    position: relative;
+    top: -5px;
 }
 
-
-.grupo-input-datos-admin input, 
-.grupo-input-datos-admin select {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 2px;
-  background-color: #fff;
-  color: black;
-  font-size: 16px;
+.nota-informativa-admin {
+    font-size: 14px;
+    color: #666; /* Un gris sutil */
+    margin: 0;
+    font-style: italic;
 }
 
-.seccion-imagen-datos-admin {
-  flex: 1;
-  display: flex;
-  align-items: center;
+.grid-formulario-admin {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    position: relative;
+    top: -25px;
 }
 
-
-
-.contenedor-botones-datos-admin {
-  margin-top: 40px;
-  display: flex;
-  gap: 20px;
-  position: relative;
-  left: 27%;
-  top: 5%;
+.columna-formulario-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
 }
 
-.ventana-texto-actualizar{
-  color: red;
+.grupo-input-admin {
+    display: flex;
+    align-items: center;
 }
 
-.btn-actualizar-datos-admin {
-  background-color: #1a73e8;
-  color: white;
-  border: none;
-  padding: 10px 40px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: bold;
-  font-family: 'Roboto';
-  font-size: 16px;
+.grupo-input-admin label {
+    width: 200px; /* Alineación exacta de etiquetas */
+    font-weight: bold;
+    font-size: 15px;
+    color: black;
 }
 
-.btn-actualizar-datos-admin:hover{
-   background-color: #1557b0;
+.input-readonly {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9 !important;
+    border-radius: 4px;
+    color: black;
 }
 
-/* Modal Estilo image_0560c9.png */
-.overlay-modal-datos-admin {
+.select-admin-editable {
+    flex: 1;
+    padding: 10px;
+    color: black;
+    border: 2px solid #1a73e8; /* Resaltado azul para indicar edición */
+    background-color: white;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.area-texto-admin {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    color: black;
+}
+
+.textarea-readonly {
+    color: black;
+    width: 100%;
+    height: 120px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    resize: none;
+    
+}
+
+/* Botones inferiores */
+.contenedor-botones-admin {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: -0px;
+}
+
+.btn-actualizar {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    padding: 10px 50px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-actualizar:hover {
+  background-color: #155cb0;
+}
+
+.btn-seguimiento {
+    background-color: #8a8a8a;
+    color: white;
+    border: none;
+    padding: 10px 40px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-seguimiento:hover {
+  background-color: #155cb0;
+}
+
+/* Modal */
+/* ==========================================================================
+   ESTILOS DE LA VENTANA EMERGENTE (MODAL EXITO)
+   ========================================================================== */
+.overlay-modal {
   position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6); /* Oscurece el fondo */
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999; /* Asegura que esté por encima de todo */
 }
 
-.modal-exito-datos-admin {
-  background: white;
+.modal-exito {
+  background-color: #f1f1f1;
   padding: 40px;
+  border-radius: 4px;
   text-align: center;
-  width: 400px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 2px solid #1a73e8;
 }
 
-.ventana-texto{
-   color: black;
-   margin-top: 50px;
-} 
+.contenedor-check {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
 
+.modal-exito h2 {
+  font-size: 24px;
+  color: #000;
+  margin-bottom: 25px;
+  font-weight: bold;
+}
 
-.img-check-datos-admin { width: 80px; margin-bottom: 20px; }
-
-.btn-aceptar-datos-admin {
+.btn-aceptar {
   background-color: #1a73e8;
   color: white;
   border: none;
-  padding: 10px 40px;
+  padding: 10px 45px;
   border-radius: 20px;
-  margin-top: 10px;
-  cursor: pointer;
-  position: relative;
-  top: 20px;
-}
-
-.btn-aceptar-datos-admin:hover{
-    background-color: #1557b0;
-}
-
-
-
-
-
-
-
-/* --- CAMBIO 1: GRID DE DOS COLUMNAS --- */
-.grid-formulario-datos-admin {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Divide la tarjeta en dos partes iguales */
-  gap: 50px; /* Espacio horizontal entre las dos columnas */
-  align-items: start;
-  position: relative;
-  top: 13%;
-  left: -36%;
-}
-
-/* --- CAMBIO 2: LABEL AL LADO DEL INPUT (FILA) --- */
-.grupo-input-datos-admin {
-  display: flex;
-  flex-direction: row; /* Pone el label a la izquierda del input */
-  align-items: center; 
-  margin-bottom: 25px;
-  gap: 15px;
-  width: 150%;
-}
-
-.grupo-input-datos-admin label {
-  width: 170px; /* Ancho fijo para que todos los inputs empiecen alineados */
   font-weight: bold;
-  text-align: left;
+  cursor: pointer;
   font-size: 16px;
-  flex-shrink: 0; /* Evita que el label se comprima */
+  transition: background-color 0.2s;
 }
 
-.grupo-input-datos-admin input, 
-.grupo-input-datos-admin select {
-  flex: 1; /* El input toma el resto del espacio disponible */
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  background-color: #fff;
-  color: black;
-  font-size: 16px;
+.btn-aceptar:hover {
+  background-color: #155cb0;
 }

@@ -6,8 +6,8 @@ import HeaderPU from '../components/HeaderPU';
 function PerfilU() {
   const navigate_perfil_usuario = useNavigate();
   
-  // Obtenemos el ID del usuario 
-  const id_usuario = localStorage.getItem('id_usuario');
+  // ✅ CORRECCIÓN: Obtenemos el id_base que requiere el backend para buscar en la tabla base
+  const id_base = localStorage.getItem('id_base');
 
   // Estado para controlar la visibilidad de la ventana emergente
   const [mostrarModal_perfil_usuario, setMostrarModal_perfil_usuario] = useState(false);
@@ -21,41 +21,57 @@ function PerfilU() {
     contrasena: ''
   });
 
-  // 1. Cargar datos de la base de datos, al entrar
+  // 1. Cargar datos de la base de datos al entrar
   useEffect(() => {
     const obtenerPerfil = async () => {
       try {
-        const response = await fetch(`/api/perfil/${id_usuario}`);
+        const response = await fetch(`/api/perfil/${id_base}`);
         const data = await response.json();
         if (response.ok) {
-          setDatos_perfil_usuario(data);
+          setDatos_perfil_usuario({
+            nombre: data.nombre || '',
+            correo: data.correo || '',
+            telefono: data.telefono || '',
+            extension: data.extension || '',
+            contrasena: '' // Dejar vacía por seguridad en la vista
+          });
+        } else {
+          console.error("Error en respuesta de perfil:", data.error);
         }
       } catch (error) {
         console.error("Error al cargar perfil:", error);
       }
     };
-    if(id_usuario) obtenerPerfil();
-  }, [id_usuario]);
+    
+    if (id_base) {
+      obtenerPerfil();
+    } else {
+      console.error("No se encontró el id_base en el localStorage");
+    }
+  }, [id_base]);
 
-  // 2. Funcion para actualizar en la base datso
+  // 2. Función para actualizar en la base de datos
   const handleActualizar_perfil_usuario = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
+    
     try {
-      const response = await fetch(`/api/perfil/${id_usuario}`, {
+      const response = await fetch(`/api/perfil/${id_base}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos_perfil_usuario)
       });
+
+      const data = await response.json();
 
       if (response.ok) {
         // Actualizamos el nombre en el storage por si cambió
         localStorage.setItem('usuarioNombre', datos_perfil_usuario.nombre);
         setMostrarModal_perfil_usuario(true);
       } else {
-        alert("No se pudieron actualizar los datos");
+        alert(data.error || "No se pudieron actualizar los datos");
       }
     } catch (error) {
-      console.error("Error en la petición:", error);
+      console.error("Error en la petición PUT:", error);
     }
   };
 
@@ -85,7 +101,7 @@ function PerfilU() {
               </div>
 
               <div className='grupo-input-perfil-usuario'>
-                <label>Correo electronico</label>
+                <label>Correo electrónico</label>
                 <input 
                   type="email" 
                   value={datos_perfil_usuario.correo}
@@ -94,7 +110,7 @@ function PerfilU() {
               </div>
 
               <div className='grupo-input-perfil-usuario'>
-                <label>Telefono</label>
+                <label>Teléfono</label>
                 <input 
                   type="text" 
                   value={datos_perfil_usuario.telefono}
@@ -112,9 +128,10 @@ function PerfilU() {
               </div>
 
               <div className='grupo-input-perfil-usuario'>
-                <label>Contraseña</label>
+                <label>Nueva Contraseña (Opcional)</label>
                 <input 
                   type="password" 
+                  placeholder="Dejar en blanco para no cambiar"
                   value={datos_perfil_usuario.contrasena}
                   onChange={(e) => setDatos_perfil_usuario({...datos_perfil_usuario, contrasena: e.target.value})}
                 />
@@ -145,12 +162,12 @@ function PerfilU() {
         </div>
       </main>
 
-      {/* Ventana emergente de datos actualizados correctamente */}
+      {/* Ventana emergente de éxito */}
       {mostrarModal_perfil_usuario && (
         <div className='overlay-modal-perfil-usuario'>
           <div className='modal-exito-perfil-usuario'>
             <div className='contenedor-check-perfil-usuario'>
-              <span className='check-animado-perfil-usuario'>L</span> 
+              <span className='check-animado-perfil-usuario'>✓</span> 
             </div>
             <h2>Datos actualizados correctamente</h2>
             <button 
@@ -162,6 +179,7 @@ function PerfilU() {
           </div>
         </div>
       )}
+      
     </div>
   );
 }

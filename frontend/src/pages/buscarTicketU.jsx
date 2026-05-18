@@ -1,3 +1,4 @@
+//La funcion de .js es la buscarTicketU.jsx
 import React, { useState, useEffect } from 'react';
 import '../styles/buscarTicketU.css';
 import { useNavigate } from 'react-router-dom';
@@ -6,7 +7,7 @@ import HeaderPU from '../components/HeaderPU';
 function BuscarTicketU() {
   const navigate_buscarTicketU = useNavigate();
   
-  // 1. Estados al buscar un ticket en el usuario de rol 0
+  // 1. Estados al buscar un ticket en el usuario
   const [tickets, setTickets] = useState([]); 
   const [busqueda, setBusqueda] = useState('');
   const [cargando, setCargando] = useState(true);
@@ -15,8 +16,8 @@ function BuscarTicketU() {
   useEffect(() => {
     const obtenerTodosLosTickets = async () => {
       try {
-        // Use la nueva ruta global que configure en el back
-        const response = await fetch(`/api/todos-los-tickets`);
+        // Apuntamos al endpoint principal que configuramos arriba
+        const response = await fetch('/api/todos-los-tickets');
         const data = await response.json();
         
         if (response.ok) {
@@ -33,6 +34,12 @@ function BuscarTicketU() {
 
     obtenerTodosLosTickets();
   }, []);
+
+  // Función para recortar el texto sobrante de la descripción en el cuadro de la tabla
+  const recortarTexto = (texto, maximo = 40) => {
+    if (!texto) return "";
+    return texto.length > maximo ? texto.substring(0, maximo) + "..." : texto;
+  };
 
   // 3. Lógica de filtrado por ID, Título o Nombre de Usuario
   const filtrados = tickets.filter((ticket) => {
@@ -88,18 +95,19 @@ function BuscarTicketU() {
                     onDoubleClick={() => navigate_buscarTicketU(`/detalle-ticket/${ticket.id_ticket}`)} 
                   >
                     <td><strong>{ticket.id_ticket}</strong></td>
-                    {/* Muestra el nombre del dueño del ticket */}
-                    <td>{ticket.nombre_usuario}</td>
-                    <td>{ticket.titulo}</td>
-                    <td className="celda-descripcion">{ticket.descripcion}</td>
+                    <td>{ticket.nombre_usuario || 'Desconocido'}</td>
+                    <td title={ticket.titulo}>{recortarTexto(ticket.titulo, 25)}</td>
+                    <td className="celda-descripcion" title={ticket.descripcion}>
+                      {recortarTexto(ticket.descripcion, 40)}
+                    </td>
                     <td>{ticket.fecha}</td>
                     <td>{ticket.fechacierre}</td>
                     <td>
-                      <span className={`estado-${ticket.estado}`}>
+                      <span className={`estado-badge estado-${ticket.estado ? ticket.estado.toLowerCase().replace(" ", "-") : "abierto"}`}>
                         {ticket.estado}
                       </span>
                     </td>
-                    <td>{ticket.tecnico || 'Sin asignar'}</td>
+                    <td>{ticket.tecnico}</td>
                   </tr>
                 ))
               ) : (

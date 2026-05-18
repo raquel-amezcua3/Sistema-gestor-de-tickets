@@ -1,0 +1,92 @@
+.container-bitacora-equipo {
+    min-height: 100vh;
+    background-color: #fff;
+    font-family: 'Arial', sans-serif;
+}
+
+.contenido-bitacora-equipo {
+    padding: 20px 60px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Alineación del título y botón según imagen */
+.seccion-superior-bitacora-equipo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 80px; /* Bajamos un poco para despegar del header */
+    margin-bottom: 30px;
+}
+
+.titulo-bitacora-equipo {
+    font-size: 26px;
+    font-weight: bold;
+    color: #000;
+    margin: 0;
+}
+
+/* Botón Azul Bodesa */
+.boton-registrar-bitacora-equipo {
+    background-color: #1a66d4;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+
+.boton-registrar-bitacora-equipo:hover {
+    background-color: #1555b3;
+}
+
+/* Estilo de Tabla Bitácora (Verde azulado) */
+.tabla-wrapper-bitacora-equipo {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.tabla-principal-bitacora-equipo {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-principal-bitacora-equipo th {
+    background-color: #7da0a0; /* Color verde azulado de la imagen */
+    color: white;
+    padding: 15px 10px;
+    text-align: center;
+    border-right: 1px solid #ffffff66;
+    font-size: 16px;
+    font-family: 'Roboto';
+    font-weight: bolder;
+}
+
+.tabla-principal-bitacora-equipo td {
+    padding: 40px 15px; /* Altura grande de las celdas como la imagen */
+    border-bottom: 1px solid #aaa;
+    border-right: 1px solid #aaa;
+    background-color: #e0e0e0; /* Gris de fondo de las celdas */
+    color: #333;
+    text-align: center;
+}
+
+/* Bordes finales */
+.tabla-principal-bitacora-equipo th:last-child,
+.tabla-principal-bitacora-equipo td:last-child {
+    border-right: none;
+}
+
+/* Quitar el último borde inferior para que no choque con el wrapper */
+.tabla-principal-bitacora-equipo tr:last-child td {
+    border-bottom: none;
+}

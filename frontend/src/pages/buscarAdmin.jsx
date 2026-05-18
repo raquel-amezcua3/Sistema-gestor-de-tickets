@@ -1,3 +1,5 @@
+//El .js de esta pantalla es buscarTicketAdmin.js (este es mas importante)
+//Tambien el de todosLosTickets.js
 import React, { useState, useEffect } from 'react';
 import '../styles/buscarAdmin.css';
 import { useNavigate } from 'react-router-dom';
@@ -6,12 +8,10 @@ import EncabezadoAdmin from '../components/EncabezadoAdmin';
 function BuscarAdmin() {
   const navigate_buscar_admin = useNavigate();
   
-  // 1. Estado para almacenar los tickets de la base de datos
   const [tickets_buscar_admin, setTickets_buscar_admin] = useState([]);
   const [busqueda_buscar_admin, setBusqueda_buscar_admin] = useState('');
   const [cargando, setCargando] = useState(true);
 
-  // 2. Efecto para cargar los datos 
   useEffect(() => {
     const cargarTickets = async () => {
       try {
@@ -21,12 +21,12 @@ function BuscarAdmin() {
         if (response.ok) {
           const dataAdaptada = data.map(t => ({
             id: t.id.toString(),
-            nombre: t.nombre_usuario,
-            titulo: t.titulo,
-            descripcion: t.descripcion,
+            nombre: t.nombre_usuario || 'N/A',
+            titulo: t.titulo || 'Sin título',
+            descripcion: t.descripcion || 'Sin descripción',
             fecha: t.fecha,
             fechaCierre: t.fecha_cierre,
-            estado: t.estado,
+            estado: t.estado || 'Abierto',
             tecnico: t.nombre_tecnico
           }));
           setTickets_buscar_admin(dataAdaptada);
@@ -41,14 +41,16 @@ function BuscarAdmin() {
     cargarTickets();
   }, []);
 
-  // 3. Lógica de filtrado (Búsqueda global por cualquier campo)
+  // Lógica de filtrado global mejorada por cualquier campo visible en la tabla
   const filtrados_buscar_admin = tickets_buscar_admin.filter((ticket) => {
     const busqueda = busqueda_buscar_admin.toLowerCase();
     return (
       ticket.id.toLowerCase().includes(busqueda) ||
       ticket.nombre.toLowerCase().includes(busqueda) ||
       ticket.titulo.toLowerCase().includes(busqueda) ||
-      ticket.estado.toLowerCase().includes(busqueda)
+      ticket.descripcion.toLowerCase().includes(busqueda) ||
+      ticket.estado.toLowerCase().includes(busqueda) ||
+      ticket.tecnico.toLowerCase().includes(busqueda)
     );
   });
 
@@ -67,7 +69,7 @@ function BuscarAdmin() {
             className="input-redondeado-buscar-admin"
             value={busqueda_buscar_admin}
             onChange={(e) => setBusqueda_buscar_admin(e.target.value)}
-            placeholder="Buscar por ID, Usuario, Titulo o Estado..."
+            placeholder="Buscar por ID, Usuario, Titulo, Técnico o Estado..."
           />
         </div>
 
@@ -87,7 +89,7 @@ function BuscarAdmin() {
             </thead>
             <tbody>
               {cargando ? (
-                <tr><td colSpan="8" style={{textAlign: 'center'}}>Cargando tickets...</td></tr>
+                <tr><td colSpan="8" style={{textAlign: 'center', padding: '20px'}}>Cargando tickets...</td></tr>
               ) : filtrados_buscar_admin.length > 0 ? (
                 filtrados_buscar_admin.map((ticket) => (
                   <tr 
@@ -95,6 +97,7 @@ function BuscarAdmin() {
                     className="fila-ticket-buscar-admin"
                     onDoubleClick={() => navigate_buscar_admin(`/datosTicketAdmin/${ticket.id}`)} 
                     style={{ cursor: 'pointer' }}
+                    title="Doble clic para ver detalles"
                   >
                     <td>{ticket.id}</td>
                     <td>{ticket.nombre}</td>
@@ -103,7 +106,7 @@ function BuscarAdmin() {
                     <td>{ticket.fecha}</td>
                     <td>{ticket.fechaCierre}</td>
                     <td>
-                      <span className={`badge-estado ${ticket.estado.toLowerCase()}`}>
+                      <span className={`badge-estado ${ticket.estado.toLowerCase().replace(/\s+/g, '-')}`}>
                         {ticket.estado}
                       </span>
                     </td>
@@ -112,7 +115,7 @@ function BuscarAdmin() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="sin-resultados-buscar-admin">
+                  <td colSpan="8" className="sin-resultados-buscar-admin" style={{textAlign: 'center', padding: '20px'}}>
                     No se encontraron coincidencias
                   </td>
                 </tr>

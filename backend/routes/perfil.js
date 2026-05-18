@@ -1,57 +1,75 @@
-// Funcion para ver el perfil del usuario, funcion que utilizan los 3 roles.
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const bcrypt = require('bcrypt'); // Añadido por seguridad si actualizan clave
 
-// OBTENER DATOS
-// Endpoint dinámico que recibe el ID del usuario por parámetro en la URL
-router.get('/:id', async (req, res) => {
-    const { id } = req.params;
+// 1. OBTENER DATOS (GET)
+router.get('/:id_base', async (req, res) => {
+    const { id_base } = req.params;
     try {
-        // Se incluye la extension
-        const query = 'SELECT nombre, correo, telefono, extension, "contraseña" FROM usuarios WHERE id_usuario = $1';
-        const resultado = await pool.query(query, [id]);
+        const query = `
+            SELECT nombre, correo, telefono, extension, contrasena 
+            FROM base 
+            WHERE id_base = $1
+        `;
+        const resultado = await pool.query(query, [id_base]);
 
-        // Validación de existencia: Si no hay filas, el usuario no existe en la base de datos
         if (resultado.rows.length === 0) {
-            return res.status(404).json({ error: "Usuario no encontrado" });
+            return res.status(404).json({ error: "Perfil no encontrado" });
         }
 
-        const usuario = resultado.rows[0];
-        // Retornamos un objeto estructurado al frontend
-        res.json({
-            nombre: usuario.nombre,
-            correo: usuario.correo,
-            telefono: usuario.telefono,
-            extension: usuario.extension || "", 
-            contrasena: usuario.contraseña
-        });
+        res.json(resultado.rows[0]);
+
     } catch (error) {
+        console.error("❌ Error al obtener perfil:", error.message);
         res.status(500).json({ error: error.message });
     }
 });
 
-// Actualizar datos
-// Funcion para modificar la información del perfil del usuario
-router.put('/:id', async (req, res) => {
-    const { id } = req.params;
-
+// 2. ACTUALIZAR DATOS (PUT)
+router.put('/:id_base', async (req, res) => {
+    const { id_base } = req.params;
     const { nombre, correo, telefono, extension, contrasena } = req.body;
 
     try {
-        // Actualizar la extension 
-        const query = `
-            UPDATE usuarios 
-            SET nombre = $1, correo = $2, telefono = $3, extension = $4, "contraseña" = $5 
-            WHERE id_usuario = $6 
-            RETURNING *`; 
+        let query;
+        let valores;
+
+        // Si el usuario envió una contraseña nueva, la encriptamos antes de guardar
+        if (contrasena && contrasena.trim() !== "") {
+            const saltRounds = 10;
+            const passEncriptada = await bcrypt.hash(contrasena, saltRounds);
+            
+            query = `
+                UPDATE base 
+                SET nombre = $1, correo = $2, telefono = $3, extension = $4, contrasena = $5 
+                WHERE id_base = $6 
+                RETURNING id_base, nombre, correo, telefono, extension;
+            `;
+            valores = [nombre, correo, telefono, extension, passEncriptada, id_base];
+        } else {
+            // Si vino vacía, actualizamos todo excepto la contraseña existente
+            query = `
+                UPDATE base 
+                SET nombre = $1, correo = $2, telefono = $3, extension = $4
+                WHERE id_base = $5 
+                RETURNING id_base, nombre, correo, telefono, extension;
+            `;
+            valores = [nombre, correo, telefono, extension, id_base];
+        }
         
-        // Mapeo de valores para los placeholders ($1, $2, etc.) para prevenir inyecciones SQL
-        const valores = [nombre, correo, telefono, extension, contrasena, id];
         const resultado = await pool.query(query, valores);
         
-        res.json({ mensaje: "Perfil actualizado", usuario: resultado.rows[0] });
+        if (resultado.rows.length === 0) {
+            return res.status(404).json({ error: "No se pudo actualizar, el perfil no existe." });
+        }
+
+        res.json({ 
+            mensaje: "Perfil actualizado correctamente", 
+            usuario: resultado.rows[0] 
+        });
     } catch (error) {
+        console.error("❌ Error al actualizar perfil:", error.message);
         res.status(500).json({ error: error.message });
     }
 });

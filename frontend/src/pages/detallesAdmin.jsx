@@ -1,3 +1,5 @@
+//El .js de esta pantalla es detallesAdmin.js
+// detallesAdmin.jsx
 import React, { useState, useEffect } from 'react';
 import '../styles/detallesAdmin.css';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -5,34 +7,36 @@ import EncabezadoAdmin from '../components/EncabezadoAdmin';
 
 function DetallesAdmin() {
   const navigate_lista_admin = useNavigate();
-  // Obtención del ID del técnico desde los parámetros de la URL
-  const { id } = useParams();
+  const { id } = useParams(); // id_tecnico de la URL
 
-  // Estados para controlar la interfaz: modo edición y visibilidad de modales
   const [editando, setEditando] = useState(false);
   const [modalExito, setModalExito] = useState(false);
   const [modalConfirmarBaja, setModalConfirmarBaja] = useState(false);
   const [modalEliminado, setModalEliminado] = useState(false);
 
-  // Estado que agrupa la información del técnico
   const [tecnico_lista_admin, setTecnico_lista_admin] = useState({
-    nombre: '', correo: '', telefono: '', extension: '', contrasena: '********'
+    nombre: '', 
+    correo: '', 
+    telefono: '', 
+    extension: '', 
+    especialidad: '',
+    contrasena: '********'
   });
 
-  // 1. Cargar datos del técnico desde el backend
-  // Se ejecuta al montar el componente para obtener la información del técnico por su ID
   useEffect(() => {
     const cargarTecnico = async () => {
       try {
-        const res = await fetch(`/api/admin/usuarios/tecnicos/${id}`);
+        const res = await fetch(`/api/admin/detalle-tecnico-perfil/${id}`);
         const data = await res.json();
         if (res.ok) {
           setTecnico_lista_admin({
-            nombre: data.nombre,
-            correo: data.correo,
-            telefono: data.telefono,
-            extension: data.extension,
-            contrasena: '********' // Se oculta la contraseña real por seguridad 
+            nombre: data.nombre || '',
+            correo: data.correo || '',
+            telefono: data.telefono || '',
+            extension: data.extension || '',
+            // Si es null o dice 'sin asignar', lo dejamos vacío o limpio para editar con facilidad
+            especialidad: (data.especialidad && data.especialidad.toLowerCase() !== 'sin asignar') ? data.especialidad : '',
+            contrasena: '********' 
           });
         }
       } catch (err) {
@@ -42,8 +46,6 @@ function DetallesAdmin() {
     cargarTecnico();
   }, [id]);
 
-  // 2. Guardar actualización
-  // Envía los datos modificados al servidor mediante el método PUT
   const handleGuardarActualizacion = async () => {
     try {
       const res = await fetch(`/api/admin/usuarios/tecnicos/${id}`, {
@@ -52,16 +54,16 @@ function DetallesAdmin() {
         body: JSON.stringify(tecnico_lista_admin)
       });
       if (res.ok) {
-        setModalExito(true); // Muestra confirmación de éxito
-        setEditando(false);  // Bloquea los inputs nuevamente
+        setModalExito(true);
+        setEditando(false);
+      } else {
+        alert("Ocurrió un problema en el servidor al intentar actualizar.");
       }
     } catch (err) {
       alert("Error al actualizar");
     }
   };
 
-  // 3. Confirmar y ejecutar eliminación (Baja)
-  // Utiliza el método DELETE. Incluye validación por si el técnico tiene dependencias (tickets)
   const confirmarBaja = async () => {
     try {
       const res = await fetch(`/api/admin/usuarios/tecnicos/${id}`, {
@@ -69,7 +71,7 @@ function DetallesAdmin() {
       });
       if (res.ok) {
         setModalConfirmarBaja(false);
-        setModalEliminado(true); // Muestra modal de eliminación final
+        setModalEliminado(true);
       } else {
         alert("No se puede eliminar el técnico (puede tener tickets asignados)");
       }
@@ -93,9 +95,8 @@ function DetallesAdmin() {
             </div>
 
             <div className="inputs-detalles-admin">
-              {/* Los inputs cambian entre modo lectura y modo edición según el estado 'editando' */}
               <div className="grupo-input-detalles-admin">
-                <label><span className="rojo-detalles-admin">*</span>Nombre de usuario</label>
+                <label><span className="rojo-detalles-admin">*</span>Nombre</label>
                 <input 
                   type="text" 
                   value={tecnico_lista_admin.nombre} 
@@ -104,6 +105,7 @@ function DetallesAdmin() {
                   className={editando ? "input-editable" : ""} 
                 />
               </div>
+
               <div className="grupo-input-detalles-admin">
                 <label><span className="rojo-detalles-admin">*</span>Correo electronico</label>
                 <input 
@@ -114,6 +116,7 @@ function DetallesAdmin() {
                   className={editando ? "input-editable" : ""} 
                 />
               </div>
+
               <div className="grupo-input-detalles-admin">
                 <label><span className="rojo-detalles-admin">*</span>Telefono</label>
                 <input 
@@ -124,6 +127,7 @@ function DetallesAdmin() {
                   className={editando ? "input-editable" : ""} 
                 />
               </div>
+
               <div className="grupo-input-detalles-admin">
                 <label>Extension</label>
                 <input 
@@ -134,6 +138,19 @@ function DetallesAdmin() {
                   className={editando ? "input-editable" : ""} 
                 />
               </div>
+
+              <div className="grupo-input-detalles-admin">
+                <label><span className="rojo-detalles-admin">*</span>Especialidad</label>
+                <input 
+                  type="text" 
+                  placeholder="Sin asignar (Escribe una especialidad)"
+                  value={tecnico_lista_admin.especialidad} 
+                  onChange={(e) => setTecnico_lista_admin({...tecnico_lista_admin, especialidad: e.target.value})}
+                  readOnly={!editando} 
+                  className={editando ? "input-editable" : ""} 
+                />
+              </div>
+
               <div className="grupo-input-detalles-admin">
                 <label><span className="rojo-detalles-admin">*</span>Contraseña</label>
                 <input 

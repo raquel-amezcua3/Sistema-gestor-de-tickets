@@ -1,61 +1,102 @@
-/* Esta funcion es para buscar un ticket  */
+//La pantalla de este .js es buscarTicket.jsx
+// routes/buscarTicket.js
 const express = require('express');
 const router = express.Router();
-const pool = require('../db'); // Importa la conexión a la base de datos PostgreSQL
+const pool = require('../db'); 
 
-// Ruta GET para obtener los detalles de un ticket específico mediante su ID
+// 1. ENDPOINT GLOBAL: Trae absolutamente todos los tickets del sistema
+router.get('/', async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                t.id_ticket, 
+                t.id_usuario, 
+                t.id_base,
+                -- CORRECCIÓN CRUCIAL: Buscamos el nombre real usando la relación correcta de tablas,
+                -- y usamos COALESCE con t.id_base por si el ticket se creó sin un id_usuario válido.
+                COALESCE(b_usr.nombre, b_directa.nombre, 'Desconocido') AS nombre_usuario,
+                t.titulo_falla AS titulo,            -- Alias exacto para React
+                t.descripcion_falla AS descripcion,  -- Alias exacto para React
+                t.categoria_servicio,
+                t.nivel_prioridad,
+                t.grado_impacto,
+                t.estado,
+                TO_CHAR(t.fecha_creacion, 'DD/MM/YYYY') as fecha,
+                COALESCE(TO_CHAR(t.fecha_cierre, 'DD/MM/YYYY'), '—') as fechacierre,
+                COALESCE(bt.nombre, 'Sin asignar') as tecnico, -- Alias para React
+                e.marca as equipo_marca
+            FROM ticket t
+            -- Camino correcto: ticket -> usuario (id_usuario) -> base (id_base)
+            LEFT JOIN usuario u ON t.id_usuario = u.id_usuario
+            LEFT JOIN base b_usr ON u.id_base = b_usr.id_base
+            -- Camino de respaldo directo por si id_usuario es nulo/inválido en tickets viejos
+            LEFT JOIN base b_directa ON t.id_base = b_directa.id_base
+            
+            LEFT JOIN equipo e ON t.id_equipo = e.id_equipo
+            LEFT JOIN tecnico tec ON t.id_tecnico = tec.id_tecnico
+            LEFT JOIN base bt ON tec.id_base = bt.id_base  
+            ORDER BY t.id_ticket DESC;
+        `;
+        
+        const resultado = await pool.query(query);
+        res.json(resultado.rows); 
+        
+    } catch (error) {
+        console.error("❌ Error al obtener todos los tickets:", error.message);
+        res.status(500).json({ error: "Error al consultar los tickets", detalle: error.message });
+    }
+});
+
+// 2. ENDPOINT ESPECÍFICO: Buscar un único ticket por ID numérico
 router.get('/:id', async (req, res) => {
-    // 1. Extraemos el ID de los parámetros de la URL (ej: /tickets/101)
     const { id } = req.params;
 
-    // 2. Validación de seguridad: Verificamos que el ID sea realmente un número
     if (isNaN(id)) {
         return res.status(400).json({ error: "El ID debe ser un número" });
     }
 
     try {
-        // 3. Consulta SQL  
         const query = `
             SELECT 
-                id_ticket, 
-                id_usuario, 
-                titulo, 
-                descripcion, 
-                /* TO_CHAR formatea la fecha del servidor a un formato legible (Día/Mes/Año) */
-                TO_CHAR(fecha_creacion, 'DD/MM/YYYY') as fecha,
-                /* COALESCE verifica si la fecha de cierre es nula; si lo es, pone una rayita '—' */
-                COALESCE(TO_CHAR(fecha_cierre, 'DD/MM/YYYY'), '—') as fechacierre,
-                estado
-            FROM tickets 
-            WHERE id_ticket = $1
+                t.id_ticket, 
+                t.id_usuario, 
+                t.id_base,
+                COALESCE(b_usr.nombre, b_directa.nombre, 'Desconocido') AS nombre_usuario,
+                t.titulo_falla AS titulo, 
+                t.descripcion_falla AS descripcion, 
+                t.categoria_servicio,
+                t.nivel_prioridad,
+                t.grado_impacto,
+                t.estado,
+                TO_CHAR(t.fecha_creacion, 'DD/MM/YYYY HH24:MI') as fecha,
+                COALESCE(TO_CHAR(t.fecha_cierre, 'DD/MM/YYYY'), '—') as fechacierre,
+                COALESCE(bt.nombre, 'Sin asignar') as tecnico,
+                e.marca as equipo_marca,
+                e.tipo_equipo
+            FROM ticket t
+            -- Mismo puente de corrección para el detalle individual
+            LEFT JOIN usuario u ON t.id_usuario = u.id_usuario
+            LEFT JOIN base b_usr ON u.id_base = b_usr.id_base
+            LEFT JOIN base b_directa ON t.id_base = b_directa.id_base
+            
+            LEFT JOIN equipo e ON t.id_equipo = e.id_equipo
+            LEFT JOIN tecnico tec ON t.id_tecnico = tec.id_tecnico
+            LEFT JOIN base bt ON tec.id_base = bt.id_base
+            WHERE t.id_ticket = $1;
         `;
         
-        // 4. Ejecutamos la consulta usando parámetros ($1) para evitar inyecciones SQL
         const resultado = await pool.query(query, [id]);
 
-        // 5. Si la base de datos no devuelve filas, significa que el ticket no existe
         if (resultado.rows.length === 0) {
             return res.status(404).json({ error: "Ticket no encontrado" });
         }
 
-        // 6. Procesamiento de la información antes de enviarla al frontend
-        const ticket = resultado.rows[0];
-        
-        /* Agregamos la propiedad 'tecnico' manualmente. 
-           Esto asegura que el Frontend encuentre este campo aunque no venga de la base de datos,
-           evitando que la tabla o los detalles se vean vacíos o den error.
-        */
-        ticket.tecnico = "Pendiente"; 
-
-        // 7. Enviamos el objeto final al frontend con un estatus de éxito (200 OK implícito)
-        res.json(ticket); 
+        res.json(resultado.rows[0]); 
         
     } catch (error) {
-        // 8. Manejo de errores del servidor o de conexión a la base de datos
-        console.error("❌ Error real:", error.message);
-        res.status(500).json({ error: error.message });
+        console.error("❌ Error en buscarTicket por ID:", error.message);
+        res.status(500).json({ error: "Error al consultar el ticket", detalle: error.message });
     }
 });
 
-// Exportamos el router para que index.js pueda usarlo
 module.exports = router;
