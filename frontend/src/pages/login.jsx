@@ -33,18 +33,25 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
+        // 🕵️‍♂️ RASTREADOR DE SEGURIDAD: Esto te dirá en la consola exactamente qué propiedades trae tu usuario.
+        console.log("🚨 REVISIÓN DE DATOS DEL BACKEND. El objeto usuario contiene exactamente esto:", data.usuario);
+
         // 1. Convertimos el rol a número inmediatamente para evitar errores de comparación
         const rolNumerico = Number(data.usuario.rol);
 
+        // Buscamos cualquier posible ID que mande tu backend, si todos fallan dejamos temporalmente el id_base
+        const idDetectado = data.usuario.id_usuario || data.usuario.id || data.usuario.id_tecnico || data.usuario.id_base;
+
         // 2. Guardamos de forma explícita e independiente cada ID en el localStorage
-        localStorage.setItem('id_usuario', data.usuario.id); 
+        localStorage.setItem('id_usuario', idDetectado); 
         localStorage.setItem('id_base', data.usuario.id_base); // ID central de la tabla Base
         localStorage.setItem('usuarioNombre', data.usuario.nombre);
         localStorage.setItem('usuarioRol', rolNumerico);
 
         // Guardamos también el objeto agrupado por si lo usas en otros componentes
         localStorage.setItem('usuario', JSON.stringify({ 
-          id: data.usuario.id, 
+          id: idDetectado, 
+          id_usuario: idDetectado,
           id_base: data.usuario.id_base,
           nombre: data.usuario.nombre, 
           rol: rolNumerico 

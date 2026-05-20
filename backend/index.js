@@ -168,7 +168,8 @@ app.use('/api/admin', detallesAdminRouter);
 app.use('/api', bitacoraEquipoRouter);
 
 // --- RUTAS DEL TÉCNICO ---
-app.use('/api/tecnico/tickets', ticketsTecnico);
+/* app.use('/api/tecnico/tickets', ticketsTecnico); */
+app.use('/api/tecnico/tickets', require('./routes/ticketsTecnico'));
 app.use('/api/equipo', equipoRouter);
 app.use('/api/tecnico/perfil', require('./routes/perfilTecnico'));
 app.use('/api/datos-resuelto', datosResueltoRouter);

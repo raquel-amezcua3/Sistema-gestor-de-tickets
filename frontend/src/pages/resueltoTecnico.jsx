@@ -1,5 +1,6 @@
 //El .js de esta pantalla es ticketsTecnico.js
 // ResueltoTecnico.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/resueltoTecnico.css';
@@ -13,35 +14,44 @@ function ResueltoTecnico() {
   // 1. Cargar datos reales del backend
   useEffect(() => {
     const cargarTicketsResueltos = async () => {
-      const idTecnico = localStorage.getItem('id_base') || localStorage.getItem('id_usuario') || localStorage.getItem('id'); 
-      console.log("1. ID del técnico recuperado con éxito:", idTecnico); 
+      
+      // 🕵️‍♂️ Obtenemos directamente el id_base que tu Login guarda al 100%
+      const idBase = localStorage.getItem('id_base');
 
-      if (!idTecnico || idTecnico === 'undefined' || idTecnico === 'null') {
-        console.error("ERROR: No hay una sesión o ID técnico válido en el almacenamiento");
+      console.log("🔍 id_base enviado a la consulta:", idBase); 
+
+      if (!idBase || idBase === 'undefined' || idBase === 'null') {
+        console.error("❌ ERROR: No se encontró id_base en el LocalStorage.");
         return;
       }
 
       try {
-        const url = `http://localhost:3000/api/tecnico/tickets/resueltos/${idTecnico}`;
-        console.log("2. Llamando a la URL:", url);
+        const urlBase = window.location.hostname === 'localhost' 
+          ? 'http://localhost:3000' 
+          : 'https://sistema-tarelix.onrender.com';
+
+        const url = `${urlBase}/api/tecnico/tickets/resueltos/${idBase}`;
+        console.log("📡 Enviando petición a:", url);
 
         const response = await fetch(url);
         const data = await response.json();
         
-        console.log("3. Respuesta completa del servidor:", data); 
+        console.log("📦 Datos inyectados en la tabla:", data); 
 
         if (response.ok) {
           setTickets_resuelto_tecnico(data);
+        } else {
+          console.error("Error en respuesta del servidor:", data.error);
         }
       } catch (error) {
-        console.error("4. Error en el FETCH de resueltos:", error);
+        console.error("Error crítico en el FETCH de resueltos:", error);
       }
     };
 
     cargarTicketsResueltos();
   }, []);
 
-  // 2. Lógica de filtrado
+  // 2. Lógica de filtrado para la barra de búsqueda superior
   const filtrados_resuelto_tecnico = tickets_resuelto_tecnico.filter((ticket) => {
     const idStr = ticket.id ? ticket.id.toString().toLowerCase() : '';
     const nombreStr = ticket.nombre ? ticket.nombre.toLowerCase() : '';
@@ -98,7 +108,6 @@ function ResueltoTecnico() {
                     <td>{ticket.titulo}</td>
                     <td>{ticket.descripcion}</td>
                     <td>{ticket.fecha}</td>
-                    {/* 🔑 CORREGIDO: Mapeo seguro para capturar la fecha sin importar el formato del alias */}
                     <td>{ticket.fecha_cierre || ticket.fechacierre || 'Sin registrar'}</td>
                     <td className="estado-cerrado-resuelto-tecnico">{ticket.estado}</td>
                     <td>{ticket.tecnico}</td>
