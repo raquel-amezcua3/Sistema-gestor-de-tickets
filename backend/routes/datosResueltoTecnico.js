@@ -1,5 +1,7 @@
-//Esta funcion muestra  los datos de un ticket resuelto, en la pantalla de datosResueltosTecnco.jsx
-// routes/datosResueltoTecnico.js
+//La pantalla datosResueltoTecnico.jsx su .js es datosResueltoTecnico.js
+//En esta pantalla se muestra la tabla de tickets resueltos por el tecnico
+// TECNICO
+
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');

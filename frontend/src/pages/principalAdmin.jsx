@@ -1,3 +1,4 @@
+//Esta es la pantalla de principal del admin, donde todas las herramientas
 import React from 'react';
 import '../styles/prinicipalAdmin.css';
 import { useNavigate } from 'react-router-dom';

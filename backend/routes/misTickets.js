@@ -1,7 +1,7 @@
-//Esta funcion trae todos los tickets que ha registrado un usuario. 
-//Esta funcion es del archivo todosTicketsU.jsx (de la pantalla de usuario).
+//Los archivos son todosTicketU.jsx y el .js es misTickets.js
+//Lo que hace este codigo es, mostrar los datos de "mis tickets" del usuario en una tabla
+//USUARIO
 
-// routes/misTickets.js
 const express = require('express');
 const router = express.Router();
 const pool = require('../db'); 
@@ -10,14 +10,12 @@ const pool = require('../db');
 router.get('/:id_identificador', async (req, res) => {
     const { id_identificador } = req.params;
 
-    // Control de seguridad contra nulos o textos corruptos en la URL
     if (!id_identificador || id_identificador === 'undefined' || id_identificador === 'null' || isNaN(Number(id_identificador))) {
         console.warn("⚠️ Consulta omitida: identificador inválido enviado por el cliente:", id_identificador);
         return res.status(200).json([]); 
     }
 
     try {
-        // 🔥 CONSULTA MODIFICADA: Agregamos el CASE para formatear estéticamente el texto del estado
         const query = `
             SELECT 
                 t.id_ticket, 
@@ -35,12 +33,28 @@ router.get('/:id_identificador', async (req, res) => {
                 e.marca as equipo, 
                 e.tipo_equipo,
                 TO_CHAR(t.fecha_creacion, 'DD/MM/YYYY') as fecha,
-                COALESCE(TO_CHAR(t.fecha_cierre, 'DD/MM/YYYY'), '—') as fechacierre,
-                b.nombre as usuario_nombre
+                
+                -- 🔥 CORRECCIÓN CRÍTICA: Solo calcula la fecha de cierre si está Resuelto o Cerrado
+                CASE 
+                    WHEN LOWER(t.estado) IN ('resuelto', 'cerrado') THEN
+                        TO_CHAR(
+                            COALESCE(
+                                t.fecha_cierre, 
+                                (SELECT fecha_registro FROM historial_trazabilidad WHERE id_ticket = t.id_ticket ORDER BY fecha_registro DESC LIMIT 1)
+                            ), 
+                            'DD/MM/YYYY'
+                        )
+                    ELSE '—'
+                END AS fecha_cierre, 
+
+                b.nombre as usuario_nombre,
+                COALESCE(bt.nombre, 'Pendiente') AS tecnico
             FROM ticket t
             LEFT JOIN equipo e ON t.id_equipo = e.id_equipo 
             LEFT JOIN Usuario u ON t.id_usuario = u.id_usuario
             LEFT JOIN Base b ON u.id_base = b.id_base
+            LEFT JOIN tecnico tec ON t.id_tecnico = tec.id_tecnico
+            LEFT JOIN Base bt ON tec.id_base = bt.id_base
             WHERE u.id_base = $1 OR t.id_base = $1
             ORDER BY t.id_ticket DESC
         `;

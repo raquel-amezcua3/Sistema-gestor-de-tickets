@@ -1,3 +1,4 @@
+//Este es el .js de la pantalla de datosTicketTecnico.jsx
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');

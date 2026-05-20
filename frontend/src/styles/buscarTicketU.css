@@ -51,7 +51,7 @@
 /* Tabla Principal - Posicionada más abajo */
 .tabla-wrapper-buscarTicketU {
   font-size: 15px;
-  margin-top: 60px; /* La tabla baja respecto al buscador */
+  margin-top: 30px; /* La tabla baja respecto al buscador */
   width: 100%;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -65,12 +65,12 @@
 }
 
 .tabla-tickets-buscarTicketU th {
-  background-color: #5b9bd5; 
+  background-color: #2b78e4; 
   color: white;
   text-align: center;
   padding: 12px 15px;
-  border-right: 1px solid #ffffff44;
-  font-weight: 500;
+  border-right: 1px solid #ccc;
+  font-weight: 800;
 }
 
 .col-fecha-buscarTicketU {
@@ -85,7 +85,7 @@
   padding: 12px 15px;
   border-bottom: 1px solid #ccc;
   border-right: 1px solid #ccc;
-  background-color: #eeeeee; 
+  background-color: #d9d9d9;
   color: #333;
   text-align: center;
 }

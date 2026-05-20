@@ -68,12 +68,12 @@
 }
 
 .tabla-tickets-todosTickettU th {
-  background-color: #5b9bd5; 
+  background-color: #2b78e4;; 
   color: white;
   text-align: center;
   padding: 10px 15px;
   border-right: 1px solid #ffffff44;
-  font-weight: 500;
+  font-weight: 800;
   font-size: 16px;
 }
 

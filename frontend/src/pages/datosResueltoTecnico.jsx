@@ -1,4 +1,7 @@
-// DatosResueltoTecnico.jsx
+//La pantalla datosResueltoTecnico.jsx su .js es datosResueltoTecnico.js
+//En esta pantalla se muestra la tabla de tickets resueltos por el tecnico
+// TECNICO
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/datosResueltoTecnico.css';

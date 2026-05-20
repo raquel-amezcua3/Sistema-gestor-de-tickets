@@ -1,3 +1,9 @@
+//La pantalla datosTicketAdmin.jsx su .js es datosTicketAdmin.js
+//En esta pantalla se muestran los detalles del ticket.
+// ADMIN
+
+
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/datosTicketAdmin.css';
@@ -35,7 +41,7 @@ function DatosTicketAdmin() {
 
                 // 2. Cargar Detalle del Ticket usando el ID de la URL
                 const resTick = await fetch(`/api/datos-ticket-admin/detalle-ticket/${id}`);
-const dataTick = await resTick.json();
+                const dataTick = await resTick.json();
                 
                 if (resTick.ok) {
                     setTicket({

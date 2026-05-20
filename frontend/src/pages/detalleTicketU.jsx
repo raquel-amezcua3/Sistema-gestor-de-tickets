@@ -1,4 +1,7 @@
 //Esta pantalla es para ver los detalles del ticket del usaurio, el .js es detalleTicket.js
+// Archivos detalleTicketU.jsx y detalleTicket.js
+// USUARIO
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/detalleTicketU.css';
@@ -8,19 +11,18 @@ function DetalleTicketU() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Estados alineados con las propiedades de la base de datos
+  // Estados limpios y perfectamente alineados con las respuestas del Backend
   const [ticketData, setTicketData] = useState({
     nombre_usuario: '',
-    correo: '',
-    telefono: '',
-    fecha: '',
-    tecnico_status: '',
-    estado: '',
     categoria_servicio: '',
     subcategoria_falla: '',
     nivel_prioridad: '',
     grado_impacto: '',
-    equipo_afectado: ''
+    fecha_creacion: '',
+    fecha_cierre: '',
+    estado: '',
+    equipo_afectado: '',
+    tecnico_encargado: ''
   });
 
   const [titulo, setTitulo] = useState('');
@@ -35,7 +37,18 @@ function DetalleTicketU() {
         const data = await response.json();
 
         if (response.ok) {
-          setTicketData(data);
+          setTicketData({
+            nombre_usuario: data.nombre_usuario || '',
+            categoria_servicio: data.categoria_servicio || '',
+            subcategoria_falla: data.subcategoria_falla || '',
+            nivel_prioridad: data.nivel_prioridad || '',
+            grado_impacto: data.grado_impacto || '',
+            fecha_creacion: data.fecha_creacion || '',
+            fecha_cierre: data.fecha_cierre || '—',
+            estado: data.estado || '',
+            equipo_afectado: data.equipo_afectado || 'Ninguno',
+            tecnico_encargado: data.tecnico_encargado || 'Pendiente de asignar'
+          });
           setTitulo(data.titulo_falla || '');
           setDescripcion(data.descripcion_falla || '');
         } else {
@@ -93,45 +106,57 @@ function DetalleTicketU() {
           </div>
 
           <div className='grid-form-detalle-TU'>
-            {/* Columna Izquierda */}
+            {/* COLUMNA IZQUIERDA */}
             <div className='columna-detalle-TU'>
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Nombre de usuario</label>
-                <input type="text" value={ticketData.nombre_usuario || ''} readOnly className='input-readonly-detalle-TU' />
+                <input type="text" value={ticketData.nombre_usuario} readOnly className='input-readonly-detalle-TU' />
               </div>
 
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Categoría de servicios</label>
-                <input type="text" value={ticketData.categoria_servicio || ''} readOnly className='input-readonly-detalle-TU' />
+                <input type="text" value={ticketData.categoria_servicio} readOnly className='input-readonly-detalle-TU' />
               </div>
 
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Subcategoría de falla</label>
-                <input type="text" value={ticketData.subcategoria_falla || ''} readOnly className='input-readonly-detalle-TU' />
+                <input type="text" value={ticketData.subcategoria_falla} readOnly className='input-readonly-detalle-TU' />
               </div>
 
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Nivel de prioridad</label>
-                <input type="text" value={ticketData.nivel_prioridad || ''} readOnly className='input-readonly-detalle-TU' />
+                <input type="text" value={ticketData.nivel_prioridad} readOnly className='input-readonly-detalle-TU' />
               </div>
 
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Grado de impacto</label>
-                <input type="text" value={ticketData.grado_impacto || ''} readOnly className='input-readonly-detalle-TU' />
+                <input type="text" value={ticketData.grado_impacto} readOnly className='input-readonly-detalle-TU' />
               </div>
               
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Fecha de creación</label>
-                <input type="text" value={ticketData.fecha || ''} readOnly className='input-readonly-detalle-TU' />
+                <input type="text" value={ticketData.fecha_creacion} readOnly className='input-readonly-detalle-TU' />
+              </div>
+
+              <div className='grupo-input-detalle-TU'>
+                <label className='label-campo-detalle-TU'>Fecha de cierre</label>
+                <input type="text" value={ticketData.fecha_cierre} readOnly className='input-readonly-detalle-TU' />
               </div>
             </div>
 
-            {/* Columna Derecha */}
+            {/* COLUMNA DERECHA */}
             <div className='columna-detalle-TU'>
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Estado del ticket</label>
-                <input type="text" value={ticketData.estado || ''} readOnly className='input-readonly-detalle-TU' />
+                <input type="text" value={ticketData.estado} readOnly className='input-readonly-detalle-TU' />
               </div>
+
+              <div className='grupo-input-detalle-TU'>
+                <label className='label-campo-detalle-TU'>Técnico Encargado</label>
+                <input type="text" value={ticketData.tecnico_encargado} readOnly className='input-readonly-detalle-TU' />
+              </div>
+
+              
 
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Título de la falla</label>
@@ -154,7 +179,7 @@ function DetalleTicketU() {
 
               <div className='grupo-input-detalle-TU'>
                 <label className='label-campo-detalle-TU'>Equipo afectado</label>
-                <input type="text" value={ticketData.equipo_afectado || 'Ninguno'} readOnly className='input-readonly-detalle-TU' />
+                <input type="text" value={ticketData.equipo_afectado} readOnly className='input-readonly-detalle-TU' />
               </div>
             </div>
           </div>
@@ -170,7 +195,7 @@ function DetalleTicketU() {
         </div>
       </main>
 
-      {/* VENTANA EMERGENTE ORIGINAL CENTRADA (CORREGIDA) */}
+      {/* VENTANA EMERGENTE DE ÉXITO */}
       {mostrarModal && (
         <div className='overlay-modal'>
           <div className='modal-exito'>
@@ -178,7 +203,7 @@ function DetalleTicketU() {
               <img className='icono-exito' alt='exito' src='/img/comprobado.png' style={{ width: '80px', height: 'auto' }} />
             </div>
             <h2>Cambios guardados correctamente</h2>
-            <button className='btn-aceptar' onClick={() => { setMostrarModal(false); navigate('/pendientesTicketU'); }}>
+            <button className='btn-aceptar' onClick={() => { setMostrarModal(false); navigate('/todosTicketU'); }}>
               Aceptar
             </button>
           </div>

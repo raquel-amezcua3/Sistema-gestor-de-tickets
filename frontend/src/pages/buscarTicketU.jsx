@@ -75,11 +75,11 @@ function BuscarTicketU() {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Reportado por</th>
+                <th>Usuario</th>
                 <th>Título</th>
                 <th>Descripción</th>
                 <th className="col-fecha-buscarTicketU">Creación</th>
-                <th className="col-fecha-buscarTicketU">Cierre</th>
+                {/* <th className="col-fecha-buscarTicketU">Cierre</th> */}
                 <th>Estado</th>
                 <th className="col-tecnico-buscarTicketU">Técnico</th>
               </tr>
@@ -101,7 +101,7 @@ function BuscarTicketU() {
                       {recortarTexto(ticket.descripcion, 40)}
                     </td>
                     <td>{ticket.fecha}</td>
-                    <td>{ticket.fechacierre}</td>
+                    {/* <td>{ticket.fechacierre}</td> */}
                     <td>
                       <span className={`estado-badge estado-${ticket.estado ? ticket.estado.toLowerCase().replace(" ", "-") : "abierto"}`}>
                         {ticket.estado}

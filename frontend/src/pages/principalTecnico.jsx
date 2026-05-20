@@ -1,3 +1,4 @@
+//Esta es la pantalla de principal del tecnico, donde aparecen todas las herramientas
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/principalTecnico.css';

@@ -1,3 +1,7 @@
+//La pantalla datosTicketAdmin.jsx su .js es datosTicketAdmin.js
+//En esta pantalla se muestran los detalles del ticket.
+// ADMIN
+
 const express = require('express');
 const router = express.Router();
 const pool = require('../db'); // Verifica que la ruta hacia tu conexión 'db' sea correcta

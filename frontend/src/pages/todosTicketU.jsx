@@ -1,4 +1,7 @@
-//El .js de esta pantalla es el de misTickets.js
+//Los archivos son todosTicketU.jsx y el .js es misTickets.js
+//Lo que hace este codigo es, mostrar los datos de "mis tickets" del usuario en una tabla
+//USUARIO
+
 import React, { useState, useEffect } from 'react'; 
 import '../styles/todosTicketU.css';
 import { useNavigate } from 'react-router-dom';
@@ -11,49 +14,44 @@ function TodosTicketU() {
   const [busqueda_todosTickettU, setBusqueda_todosTickettU] = useState('');
   const [cargando, setCargando] = useState(true);
 
-  // Lógica para traer los datos del Backend
-useEffect(() => {
-  const obtenerTickets = async () => {
-    // Buscamos exhaustivamente en las claves que usas en el sistema
-    const id_usuario = localStorage.getItem('id_base') || localStorage.getItem('id_usuario') || localStorage.getItem('id');
-    
-    // Si no existe, o si tiene almacenado textualmente la palabra "undefined"
-    if (!id_usuario || id_usuario === 'undefined') {
-      console.error("No se encontró un ID de usuario válido en el localStorage");
-      setCargando(false);
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/mis-tickets/${id_usuario}`);
-      const data = await response.json();
+  useEffect(() => {
+    const obtenerTickets = async () => {
+      const id_usuario = localStorage.getItem('id_base') || localStorage.getItem('id_usuario') || localStorage.getItem('id');
       
-      if (response.ok) {
-        setTickets_todosTickettU(data); 
-      } else {
-        console.error("Error al obtener tickets:", data.error);
+      if (!id_usuario || id_usuario === 'undefined') {
+        console.error("No se encontró un ID de usuario válido en el localStorage");
+        setCargando(false);
+        return;
       }
-    } catch (error) {
-      console.error("Error de conexión:", error);
-    } finally {
-      document.title = "Mis Tickets"; // Opcional, o lo que gustes
-      setCargando(false);
-    }
-  };
 
-  obtenerTickets();
-}, []);
+      try {
+        const response = await fetch(`/api/mis-tickets/${id_usuario}`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          setTickets_todosTickettU(data); 
+        } else {
+          console.error("Error al obtener tickets:", data.error);
+        }
+      } catch (error) {
+        console.error("Error de conexión:", error);
+      } finally {
+        document.title = "Mis Tickets";
+        setCargando(false);
+      }
+    };
 
-  // Función utilitaria para evitar desbordes en celdas largas
+    obtenerTickets();
+  }, []);
+
   const recortarTexto = (texto, maximo = 40) => {
     if (!texto) return "";
     return texto.length > maximo ? texto.substring(0, maximo) + "..." : texto;
   };
 
-  // Lógica de filtrado dinámico (Actualizada a las propiedades nativas)
   const filtrados_todosTickettU = tickets_todosTickettU.filter((ticket) => {
     const idStr = ticket.id_ticket?.toString() || "";
-    const tituloStr = (ticket.titulo || ticket.titulo_falla || "")?.toLowerCase(); // Soporta ambos formatos
+    const tituloStr = (ticket.titulo || ticket.titulo_falla || "")?.toLowerCase();
     const estadoStr = ticket.estado?.toLowerCase() || "";
     const termino = busqueda_todosTickettU.toLowerCase();
 
@@ -87,8 +85,8 @@ useEffect(() => {
                 <th>Nombre</th>
                 <th>Título</th>
                 <th>Descripción</th>
-                <th className="col-fecha-todosTickettU">Fecha Creación</th>
-                <th className="col-fecha-todosTickettU">Fecha Cierre</th>
+                <th className="col-fecha-todosTickettU">Creado</th>
+                <th className="col-fecha-todosTickettU">Cierre</th>
                 <th>Estado</th>
                 <th className="col-tecnico-todosTickettU">Técnico</th>
               </tr>
@@ -102,7 +100,6 @@ useEffect(() => {
                 </tr>
               ) : filtrados_todosTickettU.length > 0 ? (
                 filtrados_todosTickettU.map((ticket) => {
-                  // Respaldo dinámico de campos para evitar celdas vacías
                   const tituloFinal = ticket.titulo || ticket.titulo_falla;
                   const descripcionFinal = ticket.descripcion || ticket.descripcion_falla;
                   const fechaFinal = ticket.fecha || ticket.fecha_creacion;
@@ -114,19 +111,23 @@ useEffect(() => {
                       onDoubleClick={() => navigate_todosTickettU(`/detalle-ticket/${ticket.id_ticket}`)} 
                     >
                       <td><strong>{ticket.id_ticket}</strong></td>
-                      <td>{localStorage.getItem('usuarioNombre') || 'Prueba'}</td>
+                      <td>{ticket.usuario_nombre || 'Usuario'}</td>
                       <td title={tituloFinal}>{recortarTexto(tituloFinal, 25)}</td>
                       <td className="celda-descripcion" title={descripcionFinal}>
                         {recortarTexto(descripcionFinal, 35)}
                       </td>
                       <td>{fechaFinal}</td>
-                      <td>{ticket.fechacierre}</td> 
+                      
+                      {/* 🛠️ LLAMADO EXACTO AL NUEVO CAMPO FORMATEADO */}
+                      {/* Renderiza de forma limpia la fecha procesada por el backend */}
+                      <td>{ticket.fecha_cierre}</td>
+                      
                       <td>
-                        <span className={`estado-badge estado-${ticket.estado ? ticket.estado.toLowerCase().replace(" ", "-") : "abierto"}`}>
+                        <span className={`estado-badge estado-${ticket.estado ? ticket.estado.toLowerCase().replace(/\s+/g, "-") : "abierto"}`}>
                           {ticket.estado}
                         </span>
                       </td>
-                      <td>{ticket.tecnico || 'Pendiente'}</td>
+                      <td>{ticket.tecnico}</td>
                     </tr>
                   );
                 })

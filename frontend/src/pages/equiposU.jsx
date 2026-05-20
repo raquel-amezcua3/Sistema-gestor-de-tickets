@@ -95,7 +95,7 @@ function EquiposU() {
                                 <th>Tipo de equipo</th>
                                 <th>Marca</th>
                                 <th>Numero de serie</th>
-                                <th>Contador de fallas</th>
+                               {/*  <th>Contador de fallas</th> */}
                             </tr>
                         </thead>
                         <tbody>
@@ -124,7 +124,7 @@ function EquiposU() {
                                         <td>{equipo.tipo_equipo || 'No especificado'}</td>
                                         <td>{equipo.marca}</td>
                                         <td>{equipo.numero_serie || '—'}</td>
-                                        <td>{equipo.contador_fallas ?? 0}</td>
+                                        {/* <td>{equipo.contador_fallas ?? 0}</td> */}
                                     </tr>
                                 ))
                             )}

@@ -1,5 +1,7 @@
-//Este .js sirve para la pantalla de detalleTicketU.jsx es para ver los detalles del ticket del usaurio
-// routes/detalleTicket.js
+//Esta pantalla es para ver los detalles del ticket del usaurio, el .js es detalleTicket.js
+// Archivos detalleTicketU.jsx y detalleTicket.js
+// USUARIO
+
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
@@ -29,17 +31,35 @@ router.get('/:id', async (req, res) => {
                 t.grado_impacto,
                 t.estado, 
                 t.id_tecnico,
+                -- 🔥 OBTENEMOS EL NOMBRE DEL TÉCNICO ENCARGADO
+                COALESCE(b_tec.nombre, 'Pendiente de asignar') AS tecnico_encargado,
                 CASE 
                     WHEN e.id_equipo IS NOT NULL THEN 
                         e.tipo_equipo || ' ' || e.marca || ' - S/N: ' || COALESCE(e.numero_serie, 'S/S')
                     ELSE 'Ninguno'
                 END AS equipo_afectado, 
-                TO_CHAR(t.fecha_creacion, 'DD/MM/YYYY') as fecha,
-                t.fecha_cierre,
+                TO_CHAR(t.fecha_creacion, 'DD/MM/YYYY') as fecha_creacion,
+                
+                -- 🔥 LOGICA DE FECHA DE CIERRE CONTROLADA
+                CASE 
+                    WHEN LOWER(t.estado) IN ('resuelto', 'cerrado') THEN
+                        TO_CHAR(
+                            COALESCE(
+                                t.fecha_cierre, 
+                                (SELECT fecha_registro FROM historial_trazabilidad WHERE id_ticket = t.id_ticket ORDER BY fecha_registro DESC LIMIT 1)
+                            ), 
+                            'DD/MM/YYYY'
+                        )
+                    ELSE '—'
+                END AS fecha_cierre,
+                
                 (NOW() > t.fecha_cierre + INTERVAL '24 hours') as superar_limite
             FROM ticket t
             JOIN base b ON t.id_base = b.id_base
             LEFT JOIN equipo e ON t.id_equipo = e.id_equipo
+            -- 🔥 JOIN ADICIONAL PARA EXTRAER EL NOMBRE DEL TÉCNICO ENCARGADO
+            LEFT JOIN tecnico tec ON t.id_tecnico = tec.id_tecnico
+            LEFT JOIN base b_tec ON tec.id_base = b_tec.id_base
             WHERE t.id_ticket = $1
         `;
         
@@ -59,8 +79,7 @@ router.get('/:id', async (req, res) => {
 
         ticket.tecnico_status = ticket.id_tecnico ? "Asignado" : "Pendiente de asignar"; 
 
-        // 2. NUEVA CONSULTA: Obtener el historial de trazabilidad del ticket
-        // Traemos el nombre del técnico de la tabla 'base' uniendo por id_tecnico (id_base)
+        // 2. Obtener el historial de trazabilidad del ticket
         const queryHistorial = `
             SELECT 
                 h.id_historial,
@@ -79,11 +98,9 @@ router.get('/:id', async (req, res) => {
         `;
 
         const resultadoHistorial = await pool.query(queryHistorial, [id]);
-        
-        // Adjuntamos el array de historiales al objeto del ticket principal como 'historial'
         ticket.historial = resultadoHistorial.rows;
 
-        // Enviamos la respuesta completa al cliente
+        // Enviamos la respuesta completa al cliente con las nuevas propiedades fijadas
         res.json(ticket);
 
     } catch (error) {
@@ -91,18 +108,17 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
 // --- 2. ACTUALIZAR TÍTULO Y DESCRIPCIÓN (PUT) ---
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { titulo_falla, descripcion_falla } = req.body;
 
-    // Validación básica de entrada
     if (!titulo_falla || !descripcion_falla) {
         return res.status(400).json({ error: "Título y descripción son obligatorios para actualizar." });
     }
 
     try {
-        // Verificar si el ticket existe y su estado actual
         const check = await pool.query("SELECT estado FROM ticket WHERE id_ticket = $1", [id]);
         
         if (check.rows.length === 0) {
@@ -113,7 +129,6 @@ router.put('/:id', async (req, res) => {
             return res.status(403).json({ error: "No se puede editar un ticket que ya está cerrado." });
         }
 
-        // Actualización restringida a lo que solicita la vista del usuario
         const queryUpdate = `
             UPDATE ticket 
             SET titulo_falla = $1, 

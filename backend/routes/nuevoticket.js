@@ -1,5 +1,7 @@
-//La pantalla de esta funcion nuevoTicketU.jsx
-// routes/nuevoticket.js
+//La pantalla de nuevoTicketU.jsx y nuevoTicket.js
+//Esta pantalla es para que el usuario levante un ticket en el sistema.
+// USUARIO
+
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');

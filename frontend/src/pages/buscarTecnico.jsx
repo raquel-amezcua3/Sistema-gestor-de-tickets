@@ -1,3 +1,4 @@
+//Pantalla buscarTecnico.jsx su .js es todosLosTickets.js
 import React, { useState, useEffect } from 'react';
 import '../styles/buscarTecnico.css';
 import { useNavigate } from 'react-router-dom';
@@ -73,10 +74,10 @@ function BuscarTecnico() {
             <thead>
               <tr>
                 <th className="col-id-buscar-ticket-tecnico">ID</th>
-                <th className="col-nombre-buscar-ticket-tecnico">Nombre</th>
+                <th className="col-nombre-buscar-ticket-tecnico">Usuario</th>
                 <th className="col-titulo-buscar-ticket-tecnico">Titulo</th>
                 <th className="col-desc-buscar-ticket-tecnico">Descripción</th>
-                <th className="col-fecha-buscar-ticket-tecnico">Fecha de creación</th>
+                <th className="col-fecha-buscar-ticket-tecnico">Creado</th>
                 {/* <th className="col-fecha-buscar-ticket-tecnico">Fecha de cierre</th> */}
                 <th className="col-estado-buscar-ticket-tecnico">Estado</th>
                 <th className="col-tecnico-buscar-ticket-tecnico">Tecnico</th>

@@ -1,3 +1,4 @@
+//Ña pantalla datosTicketTecnico.jsx su .js es datosTicketTecnico.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/datosTicketTecnico.css';
@@ -212,19 +213,19 @@ function DatosTicketTecnico() {
 
               <div className="columna-datosT-Tecnico">
                 <div className="grupo-input-datosT-Tecnico">
-  <label><span className="rojo-datosT-Tecnico">*</span>Estado del ticket</label>
-  <input 
-    type="text" 
-    className={`select-estado-datosT-Tecnico ${ticket_datosT_Tecnico.estado === 'Cerrado' ? 'estado-verde' : 'estado-amarillo'}`}
-    // Mapeamos el valor interno al texto que quiere ver el usuario
-    value={
-      ticket_datosT_Tecnico.estado === 'en proceso' ? 'En proceso' :
-      ticket_datosT_Tecnico.estado === 'en espera de compra' ? 'En espera de compra' : 
-      ticket_datosT_Tecnico.estado === 'Cerrado' ? 'Resuelto' : ticket_datosT_Tecnico.estado
-    }
-    readOnly // 👈 Aquí el readOnly SÍ funciona perfectamente porque es un input de texto
-  />
-</div>
+                  <label><span className="rojo-datosT-Tecnico">*</span>Estado del ticket</label>
+                  <input 
+                    type="text" 
+                    className={`select-estado-datosT-Tecnico ${ticket_datosT_Tecnico.estado === 'Cerrado' ? 'estado-verde' : 'estado-amarillo'}`}
+                    // Mapeamos el valor interno al texto que quiere ver el usuario
+                    value={
+                      ticket_datosT_Tecnico.estado === 'en proceso' ? 'En proceso' :
+                      ticket_datosT_Tecnico.estado === 'en espera de compra' ? 'En espera de compra' : 
+                      ticket_datosT_Tecnico.estado === 'Cerrado' ? 'Resuelto' : ticket_datosT_Tecnico.estado
+                    }
+                    readOnly // 👈 Aquí el readOnly SÍ funciona perfectamente porque es un input de texto
+                  />
+                </div>
                 <div className="grupo-input-datosT-Tecnico">
                   <label>Título de la falla</label>
                   <input type="text" value={ticket_datosT_Tecnico.titulo} readOnly />

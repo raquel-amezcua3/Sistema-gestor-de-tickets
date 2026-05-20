@@ -1,5 +1,4 @@
-//El .js de esta pantalla es buscarTicketAdmin.js (este es mas importante)
-//Tambien el de todosLosTickets.js
+//Pantalla buscarAdmin.jsx su .js es todosLosTickets.js
 import React, { useState, useEffect } from 'react';
 import '../styles/buscarAdmin.css';
 import { useNavigate } from 'react-router-dom';
@@ -82,7 +81,7 @@ function BuscarAdmin() {
                 <th className="col-titulo-buscar-admin">Titulo</th>
                 <th className="col-desc-buscar-admin">Descripción</th>
                 <th className="col-fecha-buscar-admin">Creado</th>
-                <th className="col-fecha-buscar-admin">Cerrado</th>
+                {/* <th className="col-fecha-buscar-admin">Cerrado</th> */}
                 <th className="col-estado-buscar-admin">Estado</th>
                 <th className="col-tecnico-buscar-admin">Tecnico</th>
               </tr>
@@ -104,7 +103,7 @@ function BuscarAdmin() {
                     <td>{ticket.titulo}</td>
                     <td>{ticket.descripcion}</td>
                     <td>{ticket.fecha}</td>
-                    <td>{ticket.fechaCierre}</td>
+                   {/*  <td>{ticket.fechaCierre}</td> */}
                     <td>
                       <span className={`badge-estado ${ticket.estado.toLowerCase().replace(/\s+/g, '-')}`}>
                         {ticket.estado}

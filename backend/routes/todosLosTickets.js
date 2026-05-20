@@ -1,4 +1,4 @@
-//Funcion para ver todos los tickets que hay en el sistema, pantalla buscarAdmin.jsx
+//Funcion para ver todos los tickets que hay en el sistema, pantalla buscarAdmin.jsx y buscarTecnico.jsx
 // routes/todosLosTickets.js
 const express = require('express');
 const router = express.Router();

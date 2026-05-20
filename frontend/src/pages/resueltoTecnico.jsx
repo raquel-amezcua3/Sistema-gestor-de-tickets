@@ -1,5 +1,6 @@
-//El .js de esta pantalla es ticketsTecnico.js
-// ResueltoTecnico.jsx
+//Los archivos son resueltoTecnico.jsx y el .js es ticketsTecnico.js
+//Lo que hace este codigo es, mostrar la tabla de tickets resueltos que tiene el tecnico
+// TECNICO
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';

@@ -1,16 +1,79 @@
-//El .js de esta pantalla es nuevoTicket.js
-// NuevoTicketU.jsx
+//La pantalla de nuevoTicketU.jsx y nuevoTicket.js
+//Esta pantalla es para que el usuario levante un ticket en el sistema.
+// USUARIO
+
 import React, { useState, useEffect } from 'react'; 
 import '../styles/nuevoTicketU.css';
 import { useNavigate, Link } from 'react-router-dom';
 import HeaderPU from '../components/HeaderPU';
+
+// 1. Mapeo de subcategorías por categoría
+const SUBCATEGORIAS_MAP = {
+   Hardware: [
+      "Fallo de encendido", 
+      "Lentitud en equipo", 
+      "Equipo congelado", 
+      "Problemas de Periféricos", 
+      "Problemas de Impresión", 
+      "Daño físico",
+      "Añadir mas RAM a mi laptop"
+   ],
+   Software: [
+      "Instalación de software", 
+      "Actualización de software", 
+      "Error en el Sistema Operativo", 
+      "Fallo de Correo Electrónico", 
+      "Problema con Software de Empresa", 
+      "Sospecha de virus"
+   ],
+   Redes: [
+      "Sin acceso a Internet en mi computadora", 
+      "Problemas con el Wi-Fi", 
+      "Fallo de conexión VPN", 
+      "Carpetas compartidas",
+      "Cambiar nombre en telefono fijo"
+   ],
+   Accesos: [
+      "Restablecer contraseña", 
+      "Alta de nuevo ingreso", 
+      "Baja de usuario", 
+      "Permisos especiales"
+   ],
+   Mantenimiento: [
+      "Mantenimiento preventivo", 
+      "Respaldo de información", 
+      "Mudanza / Reubicación de equipo",
+      "Mantenimiento de impresora",
+      "Instalacion de tóner",
+      "Cambio de tóner"
+   ],
+   Prestamo: [
+      "Cable Ethernet", 
+      "Proyector", 
+      "Bocina portatil mini", 
+      "Laptop (disponible en soporte)",
+      "Telefono fijo",
+      "Monitor",
+      "Teclado",
+      "Mouse",
+      "Regulador de voltaje",
+      "Multicontacto",
+      "Escaner",
+      "Cable VGA", 
+      "Cable HDMI", 
+      "Cargador de computadora HP", 
+      "Cargador de computadora Lenovo", 
+      "Cargador de computadora Dell", 
+      "Cargador de computadora Thinkpad"
+   ],
+   Otra: [] 
+};
 
 function NuevoTicketU() {
    const navigate = useNavigate();
    const [mostrarModal, setMostrarModal] = useState(false);
    const [misEquipos, setMisEquipos] = useState([]); 
 
-   // Extraemos los IDs desde el localStorage
    const idUsuarioLogueado = localStorage.getItem('id_usuario'); 
    const idBaseLogueado = localStorage.getItem('id_base');       
 
@@ -46,31 +109,53 @@ function NuevoTicketU() {
    }, [idBaseLogueado]);
 
    const handleChange = (e) => {
-      setTicket({ 
-         ...ticket, 
-         [e.target.name]: e.target.value 
-      });
+      const { name, value } = e.target;
+
+      if (name === "categoria") {
+         setTicket({
+            ...ticket,
+            categoria: value,
+            otra_categoria: '',
+            subcategoria: '',
+            otra_subcategoria: '',
+            equipo_id: '' // Reiniciamos el equipo al cambiar categoría
+         });
+      } else if (name === "subcategoria") {
+         setTicket({
+            ...ticket,
+            subcategoria: value,
+            otra_subcategoria: ''
+         });
+      } else {
+         setTicket({ 
+            ...ticket, 
+            [name]: value 
+         });
+      }
    };
 
    const handleSubmit = async (e) => {
       e.preventDefault();
 
-      // Validación preventiva en el cliente
       if (!idUsuarioLogueado || !idBaseLogueado) {
          alert("No se detectó una sesión activa (faltan id_usuario o id_base en el localStorage).");
          return;
       }
 
-      if (!ticket.equipo_id) {
+      // Validación Condicional: Si NO es préstamo, obligar a seleccionar un equipo
+      if (ticket.categoria !== 'Prestamo' && !ticket.equipo_id) {
          alert("Por favor, selecciona el equipo afectado.");
          return;
       }
 
-      // Estructuramos el cuerpo asegurando conversiones limpias a números enteros
+      // Definimos qué ID numérico enviar al backend
+      // Si es préstamo, enviamos un ID comodín existente (ej. 1). Si tienes otro ID asignado para "General", cámbialo aquí.
+      const idEquipoFinal = ticket.categoria === 'Prestamo' ? 1 : parseInt(ticket.equipo_id, 10);
+
       const bodyData = {
          id_base: parseInt(idBaseLogueado, 10),
          id_usuario: parseInt(idUsuarioLogueado, 10),
-         id_equipo: parseInt(ticket.equipo_id, 10),
+         id_equipo: idEquipoFinal,
          categoria_servicio: ticket.categoria === 'Otra' ? ticket.otra_categoria : ticket.categoria,
          subcategoria_falla: ticket.subcategoria === 'Otra' ? ticket.otra_subcategoria : ticket.subcategoria,
          titulo_falla: ticket.titulo,
@@ -79,7 +164,6 @@ function NuevoTicketU() {
          grado_impacto: ticket.impacto
       };
 
-      // 🔥 HIKING DE CONTROL: Abre tu consola del navegador (F12) para validar qué datos se envían
       console.log("Datos enviados al servidor en bodyData:", bodyData);
 
       try {
@@ -98,7 +182,6 @@ function NuevoTicketU() {
                prioridad: '', impacto: '', titulo: '', descripcion: '', equipo_id: ''
             });
          } else {
-            // Te mostrará detalladamente si es un error de validación o base de datos
             alert("Error en el servidor: " + (data.error || data.detalle));
          }
       } catch (error) {
@@ -106,6 +189,8 @@ function NuevoTicketU() {
          alert("No se pudo conectar con el servidor.");
       }
    };
+
+   const opcionesSubcategorias = ticket.categoria ? SUBCATEGORIAS_MAP[ticket.categoria] || [] : [];
 
    return (
       <div className='container-nuevoTicketU'>
@@ -139,26 +224,38 @@ function NuevoTicketU() {
                            <label><span className='requerido'>*</span>Categoría de servicios</label>
                            <select name="categoria" value={ticket.categoria} onChange={handleChange} required>
                               <option value="">Seleccione...</option>
-                              <option value="Hardware">Hardware</option>
-                              <option value="Software">Software</option>
+                              <option value="Hardware">Hardware (Equipo y Componentes fisicos)</option>
+                              <option value="Software">Software (Sistemas y Aplicaciones)</option>
                               <option value="Redes">Redes</option>
+                              <option value="Accesos">Cuenta, Accesos y Contraseñas</option>
+                              <option value="Mantenimiento">Mantenimiento y Servicios preventivos</option>
+                              <option value="Prestamo">Préstamo de Equipamiento</option>
+                              <option value="Otra">Otra</option>
                            </select>
                         </div>
+
+                        {ticket.categoria === 'Otra' && (
+                           <div className='grupo-input campo-extra'>
+                              <label><span className='requerido'>*</span>Especifique Categoría</label>
+                              <input type="text" name="otra_categoria" value={ticket.otra_categoria} onChange={handleChange} required placeholder="¿Qué tipo de servicio es?" />
+                           </div>
+                        )}
 
                         <div className='grupo-input'>
                            <label><span className='requerido'>*</span>Subcategoría de falla</label>
                            <select name="subcategoria" value={ticket.subcategoria} onChange={handleChange} required>
                               <option value="">Seleccione...</option>
-                              <option value="Fallo de encendido">Fallo de encendido</option>
-                              <option value="Lentitud">Lentitud</option>
-                              <option value="Virus">Virus</option>
-                              <option value="Otra">Otra</option>
+                              {opcionesSubcategorias.map((sub, index) => (
+                                 <option key={index} value={sub}>{sub}</option>
+                              ))}
+                              {ticket.categoria && <option value="Otra">Otra</option>}
                            </select>
                         </div>
+
                         {ticket.subcategoria === 'Otra' && (
                            <div className='grupo-input campo-extra'>
-                              <label>Especifique subcategoría</label>
-                              <input type="text" name="otra_subcategoria" value={ticket.otra_subcategoria} onChange={handleChange} required />
+                              <label><span className='requerido'>*</span>Especifique subcategoría</label>
+                              <input type="text" name="otra_subcategoria" value={ticket.otra_subcategoria} onChange={handleChange} required placeholder="Escribe el fallo aquí" />
                            </div>
                         )}
 
@@ -201,34 +298,45 @@ function NuevoTicketU() {
                         </div>
 
                         <div className='grupo-input area-texto'>
-                           <label>
-                              <span className='requerido'>*</span>Descripción ¿qué sucede?
-                           </label>
-                           <textarea 
-                              name='descripcion' 
-                              value={ticket.descripcion} 
-                              onChange={handleChange} 
-                              required 
-                              placeholder="Detalla el problema..."
-                           />
+                           <label><span className='requerido'>*</span>Descripción ¿qué sucede?</label>
+                           <textarea name='descripcion' value={ticket.descripcion} onChange={handleChange} required placeholder="Detalla el problema..."/>
                         </div>
 
+                        {/* El campo Equipo afectado cambia dinámicamente si es un préstamo */}
                         <div className='grupo-input'>
-                           <label><span className='requerido'>*</span>Equipo afectado</label>
-                           <select name="equipo_id" value={ticket.equipo_id} onChange={handleChange} required>
-                              <option value="">Seleccione un equipo...</option>
-                              {misEquipos.length > 0 ? (
-                                 misEquipos.map((eq) => (
-                                    <option key={eq.id_equipo} value={eq.id_equipo}>
-                                       {eq.tipo_equipo} {eq.marca} - S/N: {eq.numero_serie}
-                                    </option>
-                                 ))
+                           <label>
+                              {ticket.categoria !== 'Prestamo' && <span className='requerido'>*</span>}
+                              Equipo afectado
+                           </label>
+                           <select 
+                              name="equipo_id" 
+                              value={ticket.categoria === 'Prestamo' ? "" : ticket.equipo_id} 
+                              onChange={handleChange} 
+                              required={ticket.categoria !== 'Prestamo'}
+                              disabled={ticket.categoria === 'Prestamo'}
+                              className={ticket.categoria === 'Prestamo' ? "input-readonly" : ""}
+                           >
+                              {ticket.categoria === 'Prestamo' ? (
+                                 <option value="">Solicito préstamo (No aplica equipo)</option>
                               ) : (
-                                 <option value="" disabled>No tienes equipos registrados</option>
+                                 <>
+                                    <option value="">Seleccione un equipo...</option>
+                                    {misEquipos.length > 0 ? (
+                                       misEquipos.map((eq) => (
+                                          <option key={eq.id_equipo} value={eq.id_equipo}>
+                                             {eq.tipo_equipo} {eq.marca} - S/N: {eq.numero_serie}
+                                          </option>
+                                       ))
+                                    ) : (
+                                       <option value="" disabled>No tienes equipos registrados</option>
+                                    )}
+                                 </>
                               )}
                            </select>
                         </div>
-                        <Link to="/equipoRegistro" className="link-registrar-equipo">+ Registrar nuevo equipo</Link>
+                        {ticket.categoria !== 'Prestamo' && (
+                           <Link to="/equipoRegistro" className="link-registrar-equipo">+ Registrar nuevo equipo</Link>
+                        )}
                      </div>
                   </div>
 
@@ -256,4 +364,5 @@ function NuevoTicketU() {
       </div>
    );
 }
+
 export default NuevoTicketU;
