@@ -21,6 +21,8 @@ import EquiposU from './pages/equiposU';
 import EquipoRegistro from './pages/equipoRegistro';
 import BitacoraEquipo from './pages/bitacoraEquipo';
 
+import BitacoraEUsuario from './pages/bitacoraEUsuario';
+
 
 //Pantallas de Admin
 import PrincipalAdmin from './pages/principalAdmin';
@@ -94,7 +96,8 @@ function App() {
         <Route path="/perfilTecnico" element={<PerfilTecnico/>} /> 
         <Route path="/bitacoraETecnico/:id" element={<BitacoraETecnico/>} /> 
         <Route path="/recuperar-admin-fácil" element={<CambiarPasswordAdmin />} />
-        
+
+        <Route path="/bitacoraU/:id_equipo" element={<BitacoraEUsuario />} />
         
       </Routes>
     </Router>

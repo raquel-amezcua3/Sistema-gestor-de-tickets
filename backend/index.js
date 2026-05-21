@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const path = require('path');
 const pool = require('./db'); 
 
-// Rutas modularizadas existentes
+// Enrutadores modularizados
 const nuevoticketRoutes = require('./routes/nuevoticket');
 const asignarAdminRoutes = require('./routes/asignarAdmin');
 const usuariosAdminRoutes = require('./routes/usuariosAdmin'); 
@@ -17,8 +17,9 @@ const datosTicketAdminRouter = require('./routes/datosTicketAdmin');
 const todosLosTicketsRouter = require('./routes/todosLosTickets');
 const detallesAdminRouter = require('./routes/detallesAdmin');
 const bitacoraEquipoRouter = require('./routes/bitacoraETecnico');
+const bitacoraUsuarioRouter = require('./routes/bitacoraEUsuario');
 
-// Nuevas rutas exclusivas sin intervención de la tabla Usuario
+// Enrutadores adicionales
 const listaAdminRouter = require('./routes/ListaAdmin');
 const cargaticketsAdminRouter = require('./routes/cargaticketsAdmin');
 const datosResueltoRouter = require('./routes/datosResueltoTecnico');
@@ -38,9 +39,25 @@ pool.query('SELECT NOW()', (err, res) => {
   }
 });
 
+// =========================================================================
 // --- RUTAS DE LA APP ---
-app.use('/api/tickets', nuevoticketRoutes);
+// =========================================================================
 
+// 📌 1. Bitácora de equipo (Prioridad Alta)
+app.use('/api/bitacora-equipo', bitacoraEquipoRouter);
+app.use('/api/bitacora-usuario', bitacoraUsuarioRouter);
+
+// 📌 2. Gestión de Tickets y Flujos Generales
+app.use('/api/tickets', nuevoticketRoutes);
+app.use('/api/mis-tickets', require('./routes/misTickets'));
+app.use('/api/buscar-ticket', require('./routes/buscarTicket'));
+app.use('/api/todos-los-tickets', require('./routes/buscarTicket'));
+app.use('/api/tickets-pendientes', require('./routes/ticketsPendientes'));
+app.use('/api/detalle-ticket', require('./routes/detalleTicket'));
+app.use('/api/perfil', require('./routes/perfil'));
+app.use('/api/directorio', require('./routes/directorio'));
+
+// 📌 3. Autenticación y Registro Directo
 app.post('/api/registro', async (req, res) => {
   const { nombre, correo, contrasena, telefono, extension } = req.body;
   if (!nombre || !correo || !contrasena || !telefono || !extension) {
@@ -67,7 +84,6 @@ app.post('/api/registro', async (req, res) => {
   }
 });
 
-// 🔥 MODIFICADO PARA OBTENER EL id_usuario CORRECTO 🔥
 app.post('/api/login', async (req, res) => {
   const { correo, contrasena, contraseña } = req.body;
   const passwordIngresada = contrasena || contraseña;
@@ -77,21 +93,20 @@ app.post('/api/login', async (req, res) => {
   }
 
   try {
-    // Consulta modificada para buscar en Usuario si no es Admin o Técnico
     const queryLogin = `
       SELECT 
         b.id_base, b.nombre, b.correo, b.contrasena,
-        u.id_usuario, -- Traemos el id_usuario
+        u.id_usuario,
         CASE 
-          WHEN a.id_admin IS NOT NULL THEN 1 -- Admin
-          WHEN t.id_tecnico IS NOT NULL THEN 2 -- Técnico
-          WHEN u.id_usuario IS NOT NULL THEN 3 -- Usuario normal que sube tickets
-          ELSE 3 -- fallback
+          WHEN a.id_admin IS NOT NULL THEN 1
+          WHEN t.id_tecnico IS NOT NULL THEN 2
+          WHEN u.id_usuario IS NOT NULL THEN 3
+          ELSE 3
         END AS rol
       FROM Base b
       LEFT JOIN Administrador a ON b.id_base = a.id_base
       LEFT JOIN Tecnico t ON b.id_base = t.id_base
-      LEFT JOIN Usuario u ON b.id_base = u.id_base -- Hacemos el join con Usuario
+      LEFT JOIN Usuario u ON b.id_base = u.id_base
       WHERE b.correo = $1
     `;
     const result = await pool.query(queryLogin, [correo]);
@@ -102,12 +117,11 @@ app.post('/api/login', async (req, res) => {
     const coinciden = await bcrypt.compare(passwordIngresada, usuarioEncontrado.contrasena);
 
     if (coinciden) {
-      // Devolvemos el id_usuario en el login
       res.json({
         mensaje: "¡Bienvenido!",
         usuario: {
           id_base: usuarioEncontrado.id_base,
-          id_usuario: usuarioEncontrado.id_usuario, // <-- Aquí va el ID que faltaba
+          id_usuario: usuarioEncontrado.id_usuario,
           nombre: usuarioEncontrado.nombre,
           rol: usuarioEncontrado.rol 
         }
@@ -121,6 +135,51 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// 📌 4. Rutas del Administrador
+app.use('/api/asignar-admin', asignarAdminRoutes); 
+app.use('/api/admin/usuarios', usuariosAdminRoutes); 
+app.use('/api/admin/registrar-tecnico', registroTecnicoAdmin);
+app.use('/api/admin/registro-Admin', registroAdmin);
+app.use('/api/admin/detalle-tecnico-perfil', require('./routes/datosTecnicoDetalle'));
+app.use('/api/admin/busqueda', require('./routes/buscarTicketAdmin'));
+app.use('/api/admin/lista-tecnicos', listaAdminRouter);
+app.use('/api/admin/carga-tickets', cargaticketsAdminRouter);
+app.use('/api/datos-ticket-admin', datosTicketAdminRouter); 
+app.use('/api/admin/busqueda', todosLosTicketsRouter);
+app.use('/api/admin', detallesAdminRouter);
+
+// 📌 5. Rutas del Técnico y Seguimiento Directo
+app.use('/api/tecnico/tickets', require('./routes/datosTicketTecnico'));
+app.use('/api/tecnico/perfil', require('./routes/perfilTecnico'));
+app.use('/api/datos-resuelto', datosResueltoRouter);
+
+app.post('/api/tecnico/tickets/seguimiento/:id', async (req, res) => {
+  const id_ticket = req.params.id;
+  const { estado, diagnostico, fallaReal, accionTomada, piezas, tiempo, id_tecnico, id_base } = req.body;
+
+  try {
+      await pool.query('BEGIN');
+      const queryHistorial = `
+          INSERT INTO historial_trazabilidad 
+          (id_ticket, id_base, id_tecnico, fecha_registro, diagnostico_tecnico, falla_real, accion_tomada, piezas_reemplazadas, tiempo_laborado, estado) 
+          VALUES ($1, $2, $3, NOW(), $4, $5, $6, $7, $8, $9)
+      `;
+      const valoresHistorial = [id_ticket, id_base || 1, id_tecnico || 1, diagnostico, fallaReal, accionTomada, piezas, tiempo || 0, estado];
+      await pool.query(queryHistorial, valoresHistorial);
+
+      const queryUpdateTicket = `UPDATE ticket SET estado = $1 WHERE id_ticket = $2`;
+      await pool.query(queryUpdateTicket, [estado, id_ticket]);
+      await pool.query('COMMIT');
+
+      return res.status(200).json({ mensaje: "Seguimiento añadido y ticket actualizado correctamente" });
+  } catch (error) {
+      await pool.query('ROLLBACK');
+      console.error("❌ Error en historial_trazabilidad:", error.message);
+      return res.status(500).json({ error: "Error interno al guardar la trazabilidad", detalle: error.message });
+  }
+});
+
+// 📌 6. Rutas de Equipos (Se colocan al final del prefijo /api/equipo para no interceptar subrutas)
 app.post('/api/registrar-nuevo-equipo', async (req, res) => {
   const { id_usuario, id_base, tipo_equipo, marca, numero_serie } = req.body;
   if (!id_usuario || !id_base || !tipo_equipo || !marca) {
@@ -132,8 +191,7 @@ app.post('/api/registrar-nuevo-equipo', async (req, res) => {
       VALUES ($1, $2, $3, $4, $5)
       RETURNING id_equipo;
     `;
-    const values = [id_usuario, id_base, tipo_equipo, marca, numero_serie];
-    const resultado = await pool.query(query, values);
+    const resultado = await pool.query(query, [id_usuario, id_base, tipo_equipo, marca, numero_serie]);
     res.status(201).json({ mensaje: "Equipo registrado correctamente", id_equipo: resultado.rows[0].id_equipo });
   } catch (error) {
     console.error("❌ Error directo al insertar equipo:", error.message);
@@ -141,96 +199,7 @@ app.post('/api/registrar-nuevo-equipo', async (req, res) => {
   }
 });
 
-app.use('/api/mis-tickets', require('./routes/misTickets'));
-app.use('/api/buscar-ticket', require('./routes/buscarTicket'));
-app.use('/api/todos-los-tickets', require('./routes/buscarTicket'));
-app.use('/api/tickets-pendientes', require('./routes/ticketsPendientes'));
-app.use('/api/detalle-ticket', require('./routes/detalleTicket'));
-app.use('/api/perfil', require('./routes/perfil'));
-app.use('/api/directorio', require('./routes/directorio'));
-app.use('/api/tecnico/tickets', require('./routes/datosTicketTecnico'));
-
-
-
-// --- RUTAS DEL ADMINISTRADOR ---
-app.use('/api/asignar-admin', asignarAdminRoutes); 
-app.use('/api/admin/usuarios', usuariosAdminRoutes); 
-app.use('/api/admin/registrar-tecnico', registroTecnicoAdmin);
-app.use('/api/admin/registro-Admin', registroAdmin);
-app.use('/api/admin/detalle-tecnico-perfil', require('./routes/datosTecnicoDetalle'));
-app.use('/api/admin/busqueda', require('./routes/buscarTicketAdmin'));
-app.use('/api/admin/lista-tecnicos', listaAdminRouter);
-app.use('/api/admin/carga-tickets', cargaticketsAdminRouter);
-app.use('/api/datos-ticket-admin', datosTicketAdminRouter); 
-app.use('/api/equipo', require('./routes/inputEquipo'));
-app.use('/api/admin/busqueda', todosLosTicketsRouter);
-app.use('/api/admin', detallesAdminRouter);
-app.use('/api', bitacoraEquipoRouter);
-
-// --- RUTAS DEL TÉCNICO ---
-/* app.use('/api/tecnico/tickets', ticketsTecnico); */
-app.use('/api/tecnico/tickets', require('./routes/ticketsTecnico'));
-app.use('/api/equipo', equipoRouter);
-app.use('/api/tecnico/perfil', require('./routes/perfilTecnico'));
-app.use('/api/datos-resuelto', datosResueltoRouter);
-
-// 🔥 RUTA DIRECTA INYECTADA AQUÍ (Ya no requiere un archivo externo)
-app.post('/api/tecnico/tickets/seguimiento/:id', async (req, res) => {
-  const id_ticket = req.params.id;
-  const { 
-      estado, 
-      diagnostico, 
-      fallaReal, 
-      accionTomada, 
-      piezas, 
-      tiempo,
-      id_tecnico,
-      id_base
-  } = req.body;
-
-  try {
-      await pool.query('BEGIN');
-
-      const queryHistorial = `
-          INSERT INTO historial_trazabilidad 
-          (id_ticket, id_base, id_tecnico, fecha_registro, diagnostico_tecnico, falla_real, accion_tomada, piezas_reemplazadas, tiempo_laborado, estado) 
-          VALUES ($1, $2, $3, NOW(), $4, $5, $6, $7, $8, $9)
-      `;
-
-      const valoresHistorial = [
-          id_ticket,
-          id_base || 1,        
-          id_tecnico || 1,     
-          diagnostico,
-          fallaReal,
-          accionTomada,
-          piezas,
-          tiempo || 0,
-          estado
-      ];
-
-      await pool.query(queryHistorial, valoresHistorial);
-
-      const queryUpdateTicket = `
-          UPDATE ticket 
-          SET estado = $1 
-          WHERE id_ticket = $2
-      `;
-      
-      await pool.query(queryUpdateTicket, [estado, id_ticket]);
-      await pool.query('COMMIT');
-
-      return res.status(200).json({ mensaje: "Seguimiento añadido y ticket actualizado correctamente" });
-
-  } catch (error) {
-      await pool.query('ROLLBACK');
-      console.error("❌ Error en historial_trazabilidad:", error.message);
-      return res.status(500).json({ 
-          error: "Error interno al guardar la trazabilidad", 
-          detalle: error.message 
-      });
-  }
-});
+app.use('/api/equipo', equipoRouter); 
 
 // --- FRONTEND STATIC DELIVERY ---
 app.use(express.static(path.join(__dirname, '../frontend/dist')));

@@ -1,90 +1,100 @@
-//FALTA
+//El archivo es bitacoraETecnico.jsx y bitacoraETecnico.js
+//Esta pantalla sirve para que el tecnico vea la bitacora de los equipos y pueda poner comentarios.
+// TECNICO
+
 const express = require('express');
 const router = express.Router();
 const pool = require('../db'); 
 
 // =========================================================================
-// 1. GET: Obtener comentarios por equipo
+// 1. GET: Obtener el historial completo y cruzar nombres de la tabla Base
 // =========================================================================
-// @route   GET /api/tecnico/tickets/detalle/:id
-router.get('/detalle/:id', async (req, res) => {
-    const { id } = req.params;
+router.get('/:id_equipo', async (req, res) => {
+    const { id_equipo } = req.params;
 
-    if (isNaN(id)) {
-        return res.status(400).json({ error: "El ID del ticket debe ser un número válido." });
+    if (isNaN(id_equipo)) {
+        return res.status(400).json({ error: "El ID del equipo debe ser un número válido." });
     }
 
     try {
-        // 🔥 AGREGAMOS t.id_equipo para poder mandarlo a la bitácora
         const query = `
             SELECT 
-                t.id_ticket AS id,
-                t.id_equipo AS id_equipo, -- <--- ¡AQUÍ ESTÁ LA CLAVE!
-                bu.nombre AS nombre,
-                t.categoria_servicio AS categoria,
-                t.subcategoria_falla AS subcategoria,
-                t.nivel_prioridad AS prioridad,
-                t.grado_impacto AS impacto,
-                TO_CHAR(t.fecha_creacion, 'DD/MM/YYYY') AS fecha,
-                t.estado AS estado_crudo,
-                t.titulo_falla AS titulo,
-                t.descripcion_falla AS descripcion,
-                COALESCE(e.tipo_equipo || ' - ' || e.marca, 'N/A') AS equipo_nombre,
-                COALESCE(bt.nombre, 'Sin asignar') AS tecnico,
-                (SELECT h.diagnostico_tecnico FROM historial_trazabilidad h WHERE h.id_ticket = t.id_ticket AND h.diagnostico_tecnico IS NOT NULL ORDER BY h.id_historial DESC LIMIT 1) AS ultimo_diagnostico,
-                (SELECT h.falla_real FROM historial_trazabilidad h WHERE h.id_ticket = t.id_ticket AND h.falla_real IS NOT NULL ORDER BY h.id_historial DESC LIMIT 1) AS ultima_falla_real
-            FROM ticket t
-            JOIN base bu ON t.id_base = bu.id_base
-            LEFT JOIN equipo e ON t.id_equipo = e.id_equipo
-            LEFT JOIN tecnico tec ON t.id_tecnico = tec.id_tecnico
-            LEFT JOIN base bt ON tec.id_base = bt.id_base
-            WHERE t.id_ticket = $1;
+                b.id_comentario,
+                b.id_equipo,
+                b.id_tecnico,
+                b.id_base,
+                b.fecha_comentario,
+                b.componente_afectado,
+                b.tipo_modificacion,
+                b.referencia_pieza,
+                b.estado_actual,
+                u.nombre AS nombre_tecnico
+            FROM bitacora_equipo b
+            LEFT JOIN Base u ON b.id_base = u.id_base
+            WHERE b.id_equipo = $1
+            ORDER BY b.fecha_comentario DESC;
         `;
-
-        const resultado = await pool.query(query, [id]);
-
-        if (resultado.rows.length === 0) {
-            return res.status(404).json({ error: "Ticket no encontrado" });
-        }
-
-        const ticket = resultado.rows[0];
-
-        // --- NORMALIZACIÓN DEL ESTADO ---
-        let estadoFormateado = 'en proceso'; 
-        const estadoBD = ticket.estado_crudo ? ticket.estado_crudo.toLowerCase().trim() : '';
-
-        if (estadoBD === 'resuelto' || estadoBD === 'cerrado') {
-            estadoFormateado = 'Cerrado';
-        } else if (estadoBD === 'en espera de compra') {
-            estadoFormateado = 'en espera de compra';
-        } else if (estadoBD === 'abierto') {
-            estadoFormateado = 'en proceso';
-        }
-
-        // Construimos la respuesta mapeada perfectamente para tu DatosTicketTecnico.jsx
-        const respuestaFormateada = {
-            id: ticket.id,
-            id_equipo: ticket.id_equipo, // 🔥 Enviamos el id numérico real al frontend
-            nombre: ticket.nombre || 'Usuario del Sistema',
-            categoria: ticket.categoria || 'Sin categoría',
-            subcategoria: ticket.subcategoria || 'General',
-            prioridad: ticket.prioridad || 'Baja',
-            impacto: ticket.impacto || 'Bajo',
-            titulo: ticket.titulo || 'Sin título',
-            descripcion: ticket.descripcion || 'Sin descripción',
-            equipo: ticket.equipo_nombre, 
-            fecha: ticket.fecha || '',
-            estado: estadoFormateado,
-            tecnico: ticket.tecnico,
-            diagnosticoHistorico: ticket.ultimo_diagnostico || '',
-            fallaRealHistorica: ticket.ultima_falla_real || ''
-        };
-
-        res.status(200).json(respuestaFormateada);
+        
+        const resultado = await pool.query(query, [parseInt(id_equipo, 10)]);
+        res.status(200).json(resultado.rows);
 
     } catch (error) {
-        console.error("❌ Error al obtener detalle del ticket para técnico:", error.message);
+        console.error("❌ Error al obtener la bitácora del equipo:", error.message);
         res.status(500).json({ error: "Error interno del servidor", detalle: error.message });
     }
 });
+
+// =========================================================================
+// 2. POST: Insertar un nuevo comentario en la bitácora de manera dinámica
+// =========================================================================
+router.post('/', async (req, res) => {
+    const { 
+        id_equipo, 
+        id_tecnico, 
+        id_base, 
+        componente_afectado, 
+        tipo_modificacion, 
+        referencia_pieza, 
+        estado_actual 
+    } = req.body;
+
+    if (!id_equipo || !id_tecnico || !id_base || !componente_afectado || !tipo_modificacion || !estado_actual) {
+        return res.status(400).json({ error: "Faltan campos obligatorios en el cuerpo de la solicitud." });
+    }
+
+    try {
+        const query = `
+            INSERT INTO bitacora_equipo (
+                id_equipo, 
+                id_tecnico, 
+                id_base, 
+                fecha_comentario, 
+                componente_afectado, 
+                tipo_modificacion, 
+                referencia_pieza, 
+                estado_actual
+            ) 
+            VALUES ($1, $2, $3, NOW(), $4, $5, $6, $7)
+            RETURNING *;
+        `;
+
+        const valores = [
+            parseInt(id_equipo, 10), 
+            parseInt(id_tecnico, 10), 
+            parseInt(id_base, 10), 
+            componente_afectado.trim(), 
+            tipo_modificacion.trim(), 
+            referencia_pieza || 'N/A', 
+            estado_actual
+        ];
+
+        const resultado = await pool.query(query, valores);
+        res.status(201).json({ mensaje: "Registro guardado con éxito", registro: resultado.rows[0] });
+
+    } catch (error) {
+        console.error("❌ Error al insertar en bitacora_equipo:", error.message);
+        res.status(500).json({ error: "Error interno del servidor", detalle: error.message });
+    }
+});
+
 module.exports = router;

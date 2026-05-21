@@ -1,4 +1,3 @@
-//El .js de esta pantalla es equipoU.js
 import React, { useState, useEffect } from 'react';
 import '../styles/equiposU.css';
 import { useNavigate } from 'react-router-dom';
@@ -12,13 +11,10 @@ function EquiposU() {
     const [cargando, setCargando] = useState(true);
 
     // 1. Cargar los equipos desde la base de datos al montar el componente
-// 1. Cargar los equipos desde la base de datos al montar el componente
     useEffect(() => {
         const obtenerEquiposUser = async () => {
-            // 🔥 CORREGIDO: Búsqueda en cascada inteligente para obtener el identificador válido
             const idUsuario = localStorage.getItem('id_base') || localStorage.getItem('id_usuario') || localStorage.getItem('id'); 
 
-            // Control preventivo por si no existe sesión activa o es un texto corrupto
             if (!idUsuario || idUsuario === 'undefined' || idUsuario === 'null') {
                 console.error("No se encontró un ID válido en el storage");
                 setCargando(false);
@@ -53,9 +49,29 @@ function EquiposU() {
         return marca.includes(termino) || tipo.includes(termino) || serie.includes(termino);
     });
 
-    // Función para redirigir a la bitácora (detalles)
+    // 📌 Redirección inteligente corregida
     const manejarDobleClick = (id) => {
-        navigate(`/bitacoraEquipo/${id}`);
+        try {
+            const usuarioLogueado = localStorage.getItem('usuario') || sessionStorage.getItem('usuario');
+            
+            if (usuarioLogueado) {
+                const parsed = JSON.parse(usuarioLogueado);
+                
+                // Buscamos si explícitamente es un usuario común
+                const esUsuario = parsed.id_usuario || parsed.rol?.toLowerCase() === 'usuario' || !parsed.id_tecnico;
+
+                if (esUsuario) {
+                    // Redirige a la ruta asignada para los usuarios ordinarios
+                    navigate(`/bitacoraU/${id}`, { state: { idEquipoReal: id } });
+                    return;
+                }
+            }
+        } catch (error) {
+            console.error("Error al detectar el rol en el doble click:", error);
+        }
+
+        // Si es técnico o falla la comprobación, va a la del técnico
+        navigate(`/bitacoraEquipo/${id}`, { state: { idEquipoReal: id } });
     };
 
     return (
@@ -95,7 +111,6 @@ function EquiposU() {
                                 <th>Tipo de equipo</th>
                                 <th>Marca</th>
                                 <th>Numero de serie</th>
-                               {/*  <th>Contador de fallas</th> */}
                             </tr>
                         </thead>
                         <tbody>
@@ -124,7 +139,6 @@ function EquiposU() {
                                         <td>{equipo.tipo_equipo || 'No especificado'}</td>
                                         <td>{equipo.marca}</td>
                                         <td>{equipo.numero_serie || '—'}</td>
-                                        {/* <td>{equipo.contador_fallas ?? 0}</td> */}
                                     </tr>
                                 ))
                             )}
