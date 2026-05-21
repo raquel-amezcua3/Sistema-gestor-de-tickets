@@ -149,7 +149,8 @@ app.use('/api/admin/busqueda', todosLosTicketsRouter);
 app.use('/api/admin', detallesAdminRouter);
 
 // 📌 5. Rutas del Técnico y Seguimiento Directo
-app.use('/api/tecnico/tickets', require('./routes/datosTicketTecnico'));
+app.use('/api/tecnico/tickets', require('./routes/ticketsTecnico'));
+
 app.use('/api/tecnico/perfil', require('./routes/perfilTecnico'));
 app.use('/api/datos-resuelto', datosResueltoRouter);
 

@@ -1,4 +1,5 @@
 //Ña pantalla datosTicketTecnico.jsx su .js es datosTicketTecnico.js
+//Ña pantalla datosTicketTecnico.jsx su .js es datosTicketTecnico.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/datosTicketTecnico.css';

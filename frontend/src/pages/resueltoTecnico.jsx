@@ -2,6 +2,7 @@
 //Lo que hace este codigo es, mostrar la tabla de tickets resueltos que tiene el tecnico
 // TECNICO
 
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/resueltoTecnico.css';
