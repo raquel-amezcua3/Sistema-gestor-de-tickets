@@ -18,7 +18,7 @@ function DatosTicketTecnico() {
   // Estado del ticket principal (Vista de lectura de la tarjeta)
   const [ticket_datosT_Tecnico, setTicket_datosT_Tecnico] = useState({
     id: '', nombre: '', categoria: '', subcategoria: '', prioridad: '', impacto: '',
-    titulo: '', descripcion: '', equipo: '', fecha: '', estado: 'en proceso', tecnico: '', fechaCierre: ''
+    titulo: '', descripcion: '', equipo: '', fecha: '', estado: 'en proceso', tecnico: '', id_tecnico: 6, fechaCierre: ''
   });
 
   // Estado del formulario interno del modal de seguimiento
@@ -30,67 +30,56 @@ function DatosTicketTecnico() {
   const [tieneDiagnosticoPrevio, setTieneDiagnosticoPrevio] = useState(false);
   const [tieneFallaPrevia, setTieneFallaPrevia] = useState(false);
 
-  // Carga inicial de datos
- // Carga inicial de datos corregida
-useEffect(() => {
-  // 1. Guardián: Si el id de la URL aún no está listo, no hagas la petición
-  if (!id) return; 
+  // Carga inicial de datos (Corregido para evitar retrasos y usar la ruta correcta de técnico)
+  useEffect(() => {
+    if (!id) return; // Guardián si el ID de la URL no está listo inmediatamente
 
-  const cargarDetalle = async () => {
-    try {
-      console.log("Cargando datos para el ticket ID:", id); // Para monitorear en tu consola
-      const response = await fetch(`https://sistema-tarelix.onrender.com/api/detalle-ticket/${id}`);
-      const data = await response.json();
-      
-      if (response.ok) {
-        const ticketFormateado = {
-          id: data.id_ticket ? data.id_ticket.toString() : id,
-          nombre: data.nombre_usuario || 'N/A',
-          categoria: data.categoria_servicio || 'Sin categoría',
-          subcategoria: data.subcategoria_falla || 'Sin subcategoría',
-          prioridad: data.nivel_prioridad || 'Baja',
-          impacto: data.grado_impacto || 'Bajo',
-          titulo: data.titulo_falla || 'Sin título',
-          descripcion: data.descripcion_falla || 'Sin descripción',
-          equipo: data.equipo_affected || data.equipo_afectado || 'N/A', 
-          fecha: data.fecha_creacion || '',
-          estado: data.estado || 'en proceso',
-          tecnico: data.tecnico_encargado || 'Sin asignar',
-          fechaCierre: data.fecha_cierre || '' 
-        };
-
-        setTicket_datosT_Tecnico(ticketFormateado);
+    const cargarDetalle = async () => {
+      try {
+        const response = await fetch(`https://sistema-tarelix.onrender.com/api/tecnico/detalle-ticket/detalle/${id}`);
+        const data = await response.json();
         
-        let diagExistente = '';
-        let fallaExistente = '';
-        if (data.historial && data.historial.length > 0) {
-          const ultimoHistorial = data.historial[data.historial.length - 1];
-          diagExistente = ultimoHistorial.diagnostico_tecnico || '';
-          fallaExistente = ultimoHistorial.falla_real || '';
+        if (response.ok) {
+          setTicket_datosT_Tecnico({
+            id: data.id ? data.id.toString() : id,
+            nombre: data.nombre,
+            categoria: data.categoria,
+            subcategoria: data.subcategoria,
+            prioridad: data.prioridad,
+            impacto: data.impacto,
+            titulo: data.titulo,
+            descripcion: data.descripcion,
+            equipo: data.equipo, 
+            fecha: data.fecha,
+            estado: data.estado,
+            tecnico: data.tecnico,
+            id_tecnico: data.id_tecnico || 6, // Respaldo ID por defecto si viene nulo de la consulta
+            fechaCierre: data.fechaCierre || '' 
+          });
+
+          // Controlar si ya existen textos guardados en la trazabilidad anterior
+          setTieneDiagnosticoPrevio(data.diagnosticoHistorico ? data.diagnosticoHistorico.trim() !== '' : false);
+          setTieneFallaPrevia(data.fallaRealHistorica ? data.fallaRealHistorica.trim() !== '' : false);
+
+          setFormSeguimiento({ 
+            estado: data.estado || 'en proceso',
+            diagnostico: data.diagnosticoHistorico || '',
+            fallaReal: data.fallaRealHistorica || '',
+            accionTomada: '',
+            piezas: '',
+            tiempo: '',
+            fechaCierre: ''
+          });
+        } else {
+          console.error("El servidor devolvió un error al traer el ticket:", data.error);
         }
-
-        setTieneDiagnosticoPrevio(diagExistente.trim() !== '');
-        setTieneFallaPrevia(fallaExistente.trim() !== '');
-
-        setFormSeguimiento({ 
-          estado: data.estado || 'en proceso',
-          diagnostico: diagExistente,
-          fallaReal: fallaExistente,
-          accionTomada: '',
-          piezas: '',
-          tiempo: '',
-          fechaCierre: ''
-        });
-      } else {
-        console.error("El servidor devolvió un error al traer el ticket:", data.error);
+      } catch (err) {
+        console.error("Error al cargar detalle del ticket:", err);
       }
-    } catch (err) {
-      console.error("Error al cargar detalle del ticket:", err);
-    }
-  };
+    };
 
-  cargarDetalle();
-}, [id]); // 2. IMPORTANTE: 'id' aquí vigila los cambios de la URL
+    cargarDetalle();
+  }, [id]);
 
   const handleCambioEstadoModal = (nuevoEstado) => {
     setFormSeguimiento(prev => ({
@@ -119,49 +108,53 @@ useEffect(() => {
     }
   };
 
-  // Guardar el seguimiento del modal
+  // Guardar el seguimiento del modal sincrónico con las variables esperadas por el backend
   const handleAnadirSeguimiento = async () => {
-    if (!formSeguimiento.accionTomada.trim() || !formSeguimiento.piezas.trim() || !formSeguimiento.tiempo) {
-      alert("Por favor llena todos los campos obligatorios (*)");
-      return;
+  // Validaciones básicas del frontend
+  if (!formSeguimiento.accionTomada.trim() || !formSeguimiento.piezas.trim() || !formSeguimiento.tiempo) {
+    alert("Por favor llena todos los campos obligatorios (*)");
+    return;
+  }
+
+  if (formSeguimiento.estado === 'resuelto' && !formSeguimiento.fechaCierre) {
+    alert("Para poner el ticket en estado Resuelto, debes ingresar la Fecha de Cierre obligatoriamente.");
+    return;
+  }
+
+  try {
+    const datosParaBackend = {
+      estado: formSeguimiento.estado,
+      diagnostico: formSeguimiento.diagnostico || null,
+      fallaReal: formSeguimiento.fallaReal || null,
+      accionTomada: formSeguimiento.accionTomada,
+      piezas: formSeguimiento.piezas,
+      tiempo: parseInt(formSeguimiento.tiempo, 10),
+      id_tecnico: ticket_datosT_Tecnico.id_tecnico ? parseInt(ticket_datosT_Tecnico.id_tecnico, 10) : 6
+    };
+
+    console.log("Enviando datos al backend correcto:", datosParaBackend);
+
+    // 🚀 RUTA CORREGIDA: Se añade '/tecnico' para que coincida con tu backend y no devuelva 404
+    const response = await fetch(`https://sistema-tarelix.onrender.com/api/tecnico/detalle-ticket/seguimiento/${id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datosParaBackend)
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (response.ok) {
+      setModalSeguimiento(false); 
+      setModalExitoSeguimiento(true); 
+    } else {
+      // Si el servidor responde pero con un error (ej. 500), nos dirá el porqué real
+      alert(`El servidor rechazó el comentario: ${data.detalle || data.error || 'Error de procesamiento'}`);
     }
-
-    if (formSeguimiento.estado === 'resuelto' && !formSeguimiento.fechaCierre) {
-      alert("Para poner el ticket en estado Resuelto, debes ingresar la Fecha de Cierre obligatoriamente.");
-      return;
-    }
-
-    try {
-      // Enviar el historial de trazabilidad usando el endpoint validado
-      const response = await fetch(`https://sistema-tarelix.onrender.com/api/detalle-ticket/seguimiento/${id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          estado: formSeguimiento.estado,
-          diagnostico: formSeguimiento.diagnostico,
-          fallaReal: formSeguimiento.fallaReal,
-          accionTomada: formSeguimiento.accionTomada,
-          piezas: formSeguimiento.piezas,
-          tiempo: parseInt(formSeguimiento.tiempo, 10),
-          id_tecnico: ticket_datosT_Tecnico.id_tecnico || 1, 
-          fechaCierre: formSeguimiento.fechaCierre 
-        })
-      });
-
-      const data = await response.json().catch(() => ({}));
-
-      if (response.ok) {
-        setModalSeguimiento(false); 
-        setModalExitoSeguimiento(true); 
-      } else {
-        alert(`El servidor rechazó el comentario: ${data.mensaje || 'Error de procesamiento'}`);
-      }
-    } catch (error) {
-      console.error("Error de conexión con la API:", error);
-      alert("No se pudo conectar con el servidor.");
-    }
-  };
-
+  } catch (error) {
+    console.error("Error de conexión con la API:", error);
+    alert("No se pudo conectar con el servidor.");
+  }
+};
   const manejarAceptarExitoSeguimiento = () => {
     setModalExitoSeguimiento(false);
     navigate_datosT_Tecnico(`/pendientesTecnico`);
@@ -197,27 +190,27 @@ useEffect(() => {
               <div className="columna-datosT-Tecnico">
                 <div className="grupo-input-datosT-Tecnico">
                   <label>Nombre de usuario</label>
-                  <input type="text" value={ticket_datosT_Tecnico.nombre} readOnly />
+                  <input type="text" value={ticket_datosT_Tecnico.nombre || ''} readOnly />
                 </div>
                 <div className="grupo-input-datosT-Tecnico">
                   <label>Categoría</label>
-                  <input type="text" value={ticket_datosT_Tecnico.categoria} readOnly />
+                  <input type="text" value={ticket_datosT_Tecnico.categoria || ''} readOnly />
                 </div>
                 <div className="grupo-input-datosT-Tecnico">
                   <label>Subcategoría</label>
-                  <input type="text" value={ticket_datosT_Tecnico.subcategoria} readOnly />
+                  <input type="text" value={ticket_datosT_Tecnico.subcategoria || ''} readOnly />
                 </div>
                 <div className="grupo-input-datosT-Tecnico">
                   <label>Nivel de prioridad</label>
-                  <input type="text" value={ticket_datosT_Tecnico.prioridad} readOnly />
+                  <input type="text" value={ticket_datosT_Tecnico.prioridad || ''} readOnly />
                 </div>
                 <div className="grupo-input-datosT-Tecnico">
                   <label>Grado de impacto</label>
-                  <input type="text" value={ticket_datosT_Tecnico.impacto} readOnly />
+                  <input type="text" value={ticket_datosT_Tecnico.impacto || ''} readOnly />
                 </div>
                 <div className="grupo-input-datosT-Tecnico">
                   <label>Fecha de creación</label>
-                  <input type="text" value={ticket_datosT_Tecnico.fecha} readOnly />
+                  <input type="text" value={ticket_datosT_Tecnico.fecha || ''} readOnly />
                 </div>
               </div>
 
@@ -230,22 +223,22 @@ useEffect(() => {
                     value={
                       ticket_datosT_Tecnico.estado === 'en proceso' ? 'En proceso' :
                       ticket_datosT_Tecnico.estado === 'en espera de compra' ? 'En espera de compra' : 
-                      ticket_datosT_Tecnico.estado === 'Cerrado' || ticket_datosT_Tecnico.estado === 'resuelto' ? 'Resuelto' : ticket_datosT_Tecnico.estado
+                      ticket_datosT_Tecnico.estado === 'Cerrado' || ticket_datosT_Tecnico.estado === 'resuelto' ? 'Resuelto' : ticket_datosT_Tecnico.estado || ''
                     }
                     readOnly 
                   />
                 </div>
                 <div className="grupo-input-datosT-Tecnico">
                   <label>Título de la falla</label>
-                  <input type="text" value={ticket_datosT_Tecnico.titulo} readOnly />
+                  <input type="text" value={ticket_datosT_Tecnico.titulo || ''} readOnly />
                 </div>
                 <div className="grupo-input-datosT-Tecnico area-texto-datos">
                   <label>Descripción</label>
-                  <textarea className="textarea-datosT-Tecnico" value={ticket_datosT_Tecnico.descripcion} readOnly />
+                  <textarea className="textarea-datosT-Tecnico" value={ticket_datosT_Tecnico.descripcion || ''} readOnly />
                 </div>
                 <div className="grupo-input-datosT-Tecnico">
                   <label>Equipo afectado</label>
-                  <input type="text" value={ticket_datosT_Tecnico.equipo} readOnly />
+                  <input type="text" value={ticket_datosT_Tecnico.equipo || ''} readOnly />
                 </div>
                 <div className="grupo-input-datosT-Tecnico">
                   <label>Fecha de cierre (Lectura)</label>

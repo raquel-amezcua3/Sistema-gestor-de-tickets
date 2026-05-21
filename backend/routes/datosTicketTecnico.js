@@ -4,7 +4,7 @@ const router = express.Router();
 const pool = require('../db');
 
 // @route   GET /api/tecnico/detalle-ticket/detalle/:id
-// Esta es la ruta que manda a llamar DatosTicketTecnico.jsx al cargar la tarjeta
+// Trae toda la información formateada y los ID de enlace al frontend
 router.get('/detalle/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -27,6 +27,7 @@ router.get('/detalle/:id', async (req, res) => {
                 t.descripcion_falla AS descripcion,
                 COALESCE(e.tipo_equipo || ' - ' || e.marca, 'N/A') AS equipo_nombre,
                 COALESCE(bt.nombre, 'Sin asignar') AS tecnico,
+                t.id_tecnico AS id_tecnico_encargado,
                 (SELECT h.diagnostico_tecnico FROM historial_trazabilidad h WHERE h.id_ticket = t.id_ticket AND h.diagnostico_tecnico IS NOT NULL ORDER BY h.id_historial DESC LIMIT 1) AS ultimo_diagnostico,
                 (SELECT h.falla_real FROM historial_trazabilidad h WHERE h.id_ticket = t.id_ticket AND h.falla_real IS NOT NULL ORDER BY h.id_historial DESC LIMIT 1) AS ultima_falla_real
             FROM ticket t
@@ -70,6 +71,7 @@ router.get('/detalle/:id', async (req, res) => {
             fecha: ticket.fecha,
             estado: estadoFormateado,
             tecnico: ticket.tecnico,
+            id_tecnico: ticket.id_tecnico_encargado || 6, // Enviamos el ID para evitar el error NaN en cascada
             diagnosticoHistorico: ticket.ultimo_diagnostico || '',
             fallaRealHistorica: ticket.ultima_falla_real || ''
         };
@@ -83,9 +85,14 @@ router.get('/detalle/:id', async (req, res) => {
 });
 
 // @route   POST /api/tecnico/detalle-ticket/seguimiento/:id
+// Inserta en historial_trazabilidad y actualiza el estado general de la falla
+// @route   POST /api/tecnico/detalle-ticket/seguimiento/:id
 router.post('/seguimiento/:id', async (req, res) => {
     const { id } = req.params;
     const { estado, diagnostico, fallaReal, accionTomada, piezas, tiempo, id_tecnico } = req.body;
+
+    const tecnicoIdLimpio = isNaN(id_tecnico) ? 6 : parseInt(id_tecnico, 10);
+    const tiempoLaboradoLimpio = isNaN(tiempo) ? 0 : parseInt(tiempo, 10);
 
     const client = await pool.connect();
     try {
@@ -100,13 +107,13 @@ router.post('/seguimiento/:id', async (req, res) => {
 
         await client.query(insertHistorialQuery, [
             parseInt(id, 10),
-            parseInt(id_tecnico, 10),
+            tecnicoIdLimpio,
             estado,
             diagnostico || null,
             fallaReal || null,
             accionTomada,
             piezas, 
-            parseInt(tiempo, 10)
+            tiempoLaboradoLimpio
         ]);
 
         const updateTicketQuery = `UPDATE ticket SET estado = $1 WHERE id_ticket = $2;`;
@@ -116,7 +123,18 @@ router.post('/seguimiento/:id', async (req, res) => {
         res.status(201).json({ mensaje: "Seguimiento añadido correctamente" });
     } catch (error) {
         await client.query('ROLLBACK');
-        res.status(500).json({ error: "Error al guardar el seguimiento", detalle: error.message });
+        
+        // 🔍 MODIFICACIÓN DE DIAGNÓSTICO:
+        // Imprime el error completo en la consola de tu servidor (Render / VS Code)
+        console.error("❌ ERROR REAL DE BD:", error); 
+        
+        // Le regresa al Frontend el detalle exacto del fallo (ej: qué restricción se rompió)
+        res.status(500).json({ 
+            error: "Error en la Base de Datos", 
+            detalle: error.message,
+            columna: error.column,
+            tabla: error.table 
+        });
     } finally {
         client.release();
     }
