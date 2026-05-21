@@ -148,8 +148,17 @@ app.use('/api/datos-ticket-admin', datosTicketAdminRouter);
 app.use('/api/admin/busqueda', todosLosTicketsRouter);
 app.use('/api/admin', detallesAdminRouter);
 
-// 📌 5. Rutas del Técnico y Seguimiento Directo
-app.use('/api/tecnico/tickets', require('./routes/ticketsTecnico'));
+// =========================================================================
+// 📌 5. Rutas del Técnico y Seguimiento Directo (REORGANIZADO)
+// =========================================================================
+
+// Esta ruta maneja el listado global de tickets resueltos o pendientes del técnico
+app.use('/api/tecnico/tickets', ticketsTecnico);
+
+// ✨ CAMBIO AQUÍ: Separamos por completo la ruta de los detalles individuales 
+// para evitar que interfiera o sobreescriba a la lista de resueltos
+app.use('/api/tecnico/detalle-ticket', require('./routes/datosTicketTecnico'));
+
 
 app.use('/api/tecnico/perfil', require('./routes/perfilTecnico'));
 app.use('/api/datos-resuelto', datosResueltoRouter);
@@ -180,7 +189,7 @@ app.post('/api/tecnico/tickets/seguimiento/:id', async (req, res) => {
   }
 });
 
-// 📌 6. Rutas de Equipos (Se colocan al final del prefijo /api/equipo para no interceptar subrutas)
+// 📌 6. Rutas de Equipos
 app.post('/api/registrar-nuevo-equipo', async (req, res) => {
   const { id_usuario, id_base, tipo_equipo, marca, numero_serie } = req.body;
   if (!id_usuario || !id_base || !tipo_equipo || !marca) {

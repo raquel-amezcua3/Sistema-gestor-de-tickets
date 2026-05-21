@@ -3,7 +3,8 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// @route   GET /api/tecnico/tickets/detalle/:id
+// @route   GET /api/tecnico/detalle-ticket/detalle/:id
+// Esta es la ruta que manda a llamar DatosTicketTecnico.jsx al cargar la tarjeta
 router.get('/detalle/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -12,11 +13,10 @@ router.get('/detalle/:id', async (req, res) => {
     }
 
     try {
-        // 🔥 AGREGAMOS SUBQUERIES para traer el último diagnóstico y falla real del historial si existen
         const query = `
             SELECT 
                 t.id_ticket AS id,
-                bu.nombre AS nombre,
+                COALESCE(bu.nombre, 'Usuario del Sistema') AS nombre,
                 t.categoria_servicio AS categoria,
                 t.subcategoria_falla AS subcategoria,
                 t.nivel_prioridad AS prioridad,
@@ -30,7 +30,8 @@ router.get('/detalle/:id', async (req, res) => {
                 (SELECT h.diagnostico_tecnico FROM historial_trazabilidad h WHERE h.id_ticket = t.id_ticket AND h.diagnostico_tecnico IS NOT NULL ORDER BY h.id_historial DESC LIMIT 1) AS ultimo_diagnostico,
                 (SELECT h.falla_real FROM historial_trazabilidad h WHERE h.id_ticket = t.id_ticket AND h.falla_real IS NOT NULL ORDER BY h.id_historial DESC LIMIT 1) AS ultima_falla_real
             FROM ticket t
-            JOIN base bu ON t.id_base = bu.id_base
+            LEFT JOIN usuario u ON t.id_usuario = u.id_usuario
+            LEFT JOIN base bu ON u.id_base = bu.id_base
             LEFT JOIN equipo e ON t.id_equipo = e.id_equipo
             LEFT JOIN tecnico tec ON t.id_tecnico = tec.id_tecnico
             LEFT JOIN base bt ON tec.id_base = bt.id_base
@@ -45,7 +46,6 @@ router.get('/detalle/:id', async (req, res) => {
 
         const ticket = resultado.rows[0];
 
-        // --- NORMALIZACIÓN DEL ESTADO ---
         let estadoFormateado = 'en proceso'; 
         const estadoBD = ticket.estado_crudo ? ticket.estado_crudo.toLowerCase().trim() : '';
 
@@ -57,21 +57,19 @@ router.get('/detalle/:id', async (req, res) => {
             estadoFormateado = 'en proceso';
         }
 
-        // Construimos la respuesta mapeada perfectamente para tu DatosTicketTecnico.jsx
         const respuestaFormateada = {
             id: ticket.id,
-            nombre: ticket.nombre || 'Usuario del Sistema',
-            categoria: ticket.categoria || 'Sin categoría',
-            subcategoria: ticket.subcategoria || 'General',
-            prioridad: ticket.prioridad || 'Baja',
-            impacto: ticket.impacto || 'Bajo',
-            titulo: ticket.titulo || 'Sin título',
-            descripcion: ticket.descripcion || 'Sin descripción',
+            nombre: ticket.nombre,
+            categoria: ticket.categoria,
+            subcategoria: ticket.subcategoria,
+            prioridad: ticket.prioridad,
+            impacto: ticket.impacto,
+            titulo: ticket.titulo,
+            descripcion: ticket.descripcion,
             equipo: ticket.equipo_nombre, 
-            fecha: ticket.fecha || '',
+            fecha: ticket.fecha,
             estado: estadoFormateado,
             tecnico: ticket.tecnico,
-            // 🔥 Nuevos campos históricos añadidos de la trazabilidad
             diagnosticoHistorico: ticket.ultimo_diagnostico || '',
             fallaRealHistorica: ticket.ultima_falla_real || ''
         };
@@ -84,7 +82,7 @@ router.get('/detalle/:id', async (req, res) => {
     }
 });
 
-// @route   POST /api/tecnico/tickets/seguimiento/:id
+// @route   POST /api/tecnico/detalle-ticket/seguimiento/:id
 router.post('/seguimiento/:id', async (req, res) => {
     const { id } = req.params;
     const { estado, diagnostico, fallaReal, accionTomada, piezas, tiempo, id_tecnico } = req.body;
@@ -107,7 +105,7 @@ router.post('/seguimiento/:id', async (req, res) => {
             diagnostico || null,
             fallaReal || null,
             accionTomada,
-            piezas,
+            piezas, 
             parseInt(tiempo, 10)
         ]);
 
@@ -122,7 +120,6 @@ router.post('/seguimiento/:id', async (req, res) => {
     } finally {
         client.release();
     }
-    
 });
 
 module.exports = router;
