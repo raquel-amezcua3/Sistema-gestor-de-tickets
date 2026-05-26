@@ -11,7 +11,6 @@ function DatosResueltoTecnico() {
   const navigate_datos_resuelto_tecnico = useNavigate();
   const { id } = useParams();
 
-  // Estado inicial limpio del ticket
   const [ticket_datos_resuelto_tecnico, setTicket_datos_resuelto_tecnico] = useState({
     id: '', 
     nombre: 'Cargando...', 
@@ -19,42 +18,63 @@ function DatosResueltoTecnico() {
     telefono: 'Cargando...', 
     titulo: 'Cargando...', 
     descripcion: 'Cargando...', 
-    fecha: 'Cargando...', 
-    estado: 'Cargando...', 
-    tecnico: 'Cargando...', 
-    fechaCierre: 'Cargando...'
+    fecha: '', 
+    estado: '', 
+    tecnico: '', 
+    fechaCierre: ''
   });
 
-  useEffect(() => {
-    if (!id) return; // Guardián por si el parámetro de react-router-dom no está listo
+  const formatearFecha = (fechaRaw) => {
+    if (!fechaRaw || fechaRaw === 'Sin registrar') return 'Sin registrar';
+    try {
+      const fecha = new Date(fechaRaw);
+      if (isNaN(fecha.getTime())) return fechaRaw; 
+      return fecha.toISOString().split('T')[0];
+    } catch (e) {
+      return fechaRaw;
+    }
+  };
 
+  useEffect(() => {
     const obtenerDetallesTicket = async () => {
+      if (!id || id === 'undefined' || id === 'null') {
+        console.error("❌ ID de ticket no válido recibido en la URL");
+        return;
+      }
+
       try {
-        // 🔥 Llamada directa a tu API de Render usando el ID del ticket
-        const response = await fetch(`https://sistema-tarelix.onrender.com/api/datosResueltoTecnico/${id}`);
+        // 🛠️ RUTA PARA PRUEBA LOCAL (Puerto 3000):
+       /*  const url = `http://localhost:3000/api/datos-resuelto/${id}`; */
+        const url = `https://sistema-tarelix.onrender.com/api/datos-resuelto/${id}`;
+        
+        // 🌐 DESCOMENTA ESTA LÍNEA CUANDO LO SUBAS A RENDER:
+        // const url = `https://sistema-tarelix.onrender.com/api/datos-resuelto/${id}`;
+
+        const response = await fetch(url);
         const data = await response.json();
 
         if (response.ok) {
-          // Asignamos directamente los valores estructurados desde el backend
+          const fechaCierreRaw = data.fecha_cierre || data.fechaCierre || data.fechacierre || '';
+
           setTicket_datos_resuelto_tecnico({
             id: data.id ? data.id.toString() : id,
-            nombre: data.nombre,
-            correo: data.correo,
-            telefono: data.telefono,
-            titulo: data.titulo,
-            descripcion: data.descripcion,
-            fecha: data.fecha, // Ya viene en formato DD/MM/YYYY del backend
-            estado: data.estado,
-            tecnico: data.tecnico,
-            fechaCierre: data.fechaCierre
+            nombre: data.nombre || 'Sin nombre',
+            correo: data.correo || 'Sin correo',
+            telefono: data.telefono || 'Sin teléfono',
+            titulo: data.titulo || 'Sin título',
+            descripcion: data.descripcion || 'Sin descripción',
+            fecha: formatearFecha(data.fecha),
+            estado: data.estado || 'Resuelto',
+            tecnico: data.tecnico || 'Sin asignar',
+            fechaCierre: fechaCierreRaw ? formatearFecha(fechaCierreRaw) : 'Sin registrar'
           });
         } else {
           console.error("⚠️ El servidor respondió con un error:", data.error);
-          setTicket_datos_resuelto_tecnico(prev => ({ ...prev, nombre: 'Error al cargar' }));
+          setTicket_datos_resuelto_tecnico(prev => ({ ...prev, nombre: "Error en servidor" }));
         }
       } catch (error) {
         console.error("❌ Error de red al conectar con el servidor:", error);
-        setTicket_datos_resuelto_tecnico(prev => ({ ...prev, nombre: 'Error de conexión' }));
+        setTicket_datos_resuelto_tecnico(prev => ({ ...prev, nombre: "Error de conexión" }));
       }
     };
 
@@ -66,7 +86,7 @@ function DatosResueltoTecnico() {
       <EncabezadoTecnico />
 
       <main className="contenido-datos-resuelto-tecnico">
-        <h2 className="titulo-pagina-datos-resuelto-tecnico">Detalles del ticket resuelto #{id}</h2>
+        <h2 className="titulo-pagina-datos-resuelto-tecnico">Detalles del ticket resuelto</h2>
 
         <div className="card-datos-resuelto-tecnico">
           <div className="seccion-info-datos-resuelto-tecnico">
@@ -92,7 +112,7 @@ function DatosResueltoTecnico() {
                   <input type="text" value={ticket_datos_resuelto_tecnico.fecha} readOnly />
                 </div>
                 <div className="grupo-input-datos-resuelto-tecnico">
-                  <label>Técnico encargado</label>
+                  <label>Tecnico encargado</label>
                   <input type="text" value={ticket_datos_resuelto_tecnico.tecnico} readOnly className="tecnico-bold-datos-resuelto-tecnico" />
                 </div>
                 <div className="grupo-input-datos-resuelto-tecnico">
@@ -112,11 +132,11 @@ function DatosResueltoTecnico() {
 
               <div className="columna-datos-resuelto-tecnico">
                 <div className="grupo-input-datos-resuelto-tecnico">
-                  <label>Teléfono</label>
+                  <label>Telefono</label>
                   <input type="text" value={ticket_datos_resuelto_tecnico.telefono} readOnly />
                 </div>
                 <div className="grupo-input-datos-resuelto-tecnico">
-                  <label>Título del ticket</label>
+                  <label>Titulo del ticket</label>
                   <input type="text" value={ticket_datos_resuelto_tecnico.titulo} readOnly />
                 </div>
                 <div className="grupo-input-datos-resuelto-tecnico">
