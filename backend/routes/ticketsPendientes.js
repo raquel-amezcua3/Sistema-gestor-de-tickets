@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// Obtener la lista de tickets pendientes del usuario
+// Obtener la lista de tickets pendientes del técnico logueado
 router.get('/:id_usuario', async (req, res) => {
     const { id_usuario } = req.params;
 
@@ -14,31 +14,33 @@ router.get('/:id_usuario', async (req, res) => {
     }
 
     try {
-        // Consulta SQL limpia mapeando tus columnas exactas (titulo_falla, descripcion_falla, etc.)
+        // 🔥 SOLUCIÓN: Agregamos b_usr.nombre para el usuario que reportó y filtramos por el id_tecnico real del usuario logueado
         const query = `
             SELECT 
                 t.id_ticket,
+                b_usr.nombre AS nombre_usuario,
                 t.titulo_falla AS titulo,
                 t.descripcion_falla AS descripcion,
-                TO_CHAR(t.fecha_creacion, 'YYYY-MM-DD') AS fecha,
+                TO_CHAR(t.fecha_creacion, 'DD/MM/YYYY') AS fecha,
                 t.estado,
                 COALESCE(bt.nombre, 'Sin técnico') AS tecnico
             FROM ticket t
+            JOIN base b_usr ON t.id_base = b_usr.id_base -- Trae el nombre de quien reportó
             LEFT JOIN tecnico tec ON t.id_tecnico = tec.id_tecnico
-            LEFT JOIN base bt ON tec.id_base = bt.id_base
-            WHERE t.id_base = $1 
+            LEFT JOIN base bt ON tec.id_base = bt.id_base -- Trae el nombre del técnico
+            WHERE tec.id_base = $1 
               AND LOWER(t.estado) NOT IN ('resuelto', 'cerrado')
             ORDER BY t.id_ticket DESC
         `;
 
-        console.log(`🔍 [Backend Local] Buscando tickets pendientes para el id_base: ${id_usuario}`);
+        console.log(`🔍 [Backend] Buscando tickets asignados al id_base técnico: ${id_usuario}`);
         const resultado = await pool.query(query, [parseInt(id_usuario, 10)]);
 
-        console.log(`✅ [Backend Local] Tickets pendientes enviados: ${resultado.rows.length}`);
+        console.log(`✅ [Backend] Tickets pendientes enviados: ${resultado.rows.length}`);
         return res.json(resultado.rows);
 
     } catch (error) {
-        console.error("❌ [Backend Local] ERROR CRÍTICO EN TICKETS PENDIENTES:", error.message);
+        console.error("❌ [Backend] ERROR CRÍTICO EN TICKETS PENDIENTES:", error.message);
         return res.status(500).json({ 
             error: "Error interno del servidor al procesar los tickets pendientes",
             detalle: error.message 

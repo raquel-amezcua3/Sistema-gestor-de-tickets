@@ -1,12 +1,11 @@
 // Archivos detalleTicketU.jsx y detalleTicket.js
 //Esta pantalla es para ver los detalles del ticket del usaurio, el .js es detalleTicket.js
 // USUARIO
-
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// 1. OBTENER DETALLES DEL TICKET Y SU HISTORIAL (GET)
+// 1. OBTENER DETALLES DEL TICKET Y SU HISTORIAL (GET) WITH AUTO-SET FECHA_CIERRE
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     
@@ -15,7 +14,35 @@ router.get('/:id', async (req, res) => {
     }
 
     try {
-        // 1. Obtener la información principal del ticket
+        // 1. Verificar el estado actual del ticket y si tiene fecha_cierre física
+        const checkTicket = await pool.query(
+            "SELECT estado, fecha_cierre FROM ticket WHERE id_ticket = $1", 
+            [id]
+        );
+
+        if (checkTicket.rows.length === 0) {
+            return res.status(404).json({ error: "Ticket no encontrado" });
+        }
+
+        const tActual = checkTicket.rows[0];
+        const estadoClean = tActual.estado ? tActual.estado.toLowerCase().trim() : '';
+
+        // 🔥 LOGICA CORE: Si está Resuelto o Cerrado pero la columna fecha_cierre está vacía [NULL] en la BD, la rellenamos
+        if ((estadoClean === 'resuelto' || estadoClean === 'cerrado') && !tActual.fecha_cierre) {
+            console.log(`💾 [Backend] Detectado ticket #${id} en estado "${tActual.estado}" sin fecha_cierre física. Registrando en BD...`);
+            
+            // Intenta traer la fecha del último movimiento en el historial; si no hay, pone la fecha de HOY (NOW())
+            await pool.query(`
+                UPDATE ticket 
+                SET fecha_cierre = COALESCE(
+                    (SELECT fecha_registro FROM historial_trazabilidad WHERE id_ticket = $1 ORDER BY fecha_registro DESC LIMIT 1),
+                    NOW()
+                )
+                WHERE id_ticket = $1
+            `, [id]);
+        }
+
+        // 2. Ejecutar la consulta principal para traer los datos formateados a la interfaz
         const queryTicket = `
             SELECT 
                 t.id_ticket, 
@@ -31,7 +58,6 @@ router.get('/:id', async (req, res) => {
                 t.grado_impacto,
                 t.estado, 
                 t.id_tecnico,
-                -- 🔥 OBTENEMOS EL NOMBRE DEL TÉCNICO ENCARGADO
                 COALESCE(b_tec.nombre, 'Pendiente de asignar') AS tecnico_encargado,
                 CASE 
                     WHEN e.id_equipo IS NOT NULL THEN 
@@ -39,39 +65,21 @@ router.get('/:id', async (req, res) => {
                     ELSE 'Ninguno'
                 END AS equipo_afectado, 
                 TO_CHAR(t.fecha_creacion, 'DD/MM/YYYY') as fecha_creacion,
-                
-                -- 🔥 LOGICA DE FECHA DE CIERRE CONTROLADA
-                CASE 
-                    WHEN LOWER(t.estado) IN ('resuelto', 'cerrado') THEN
-                        TO_CHAR(
-                            COALESCE(
-                                t.fecha_cierre, 
-                                (SELECT fecha_registro FROM historial_trazabilidad WHERE id_ticket = t.id_ticket ORDER BY fecha_registro DESC LIMIT 1)
-                            ), 
-                            'DD/MM/YYYY'
-                        )
-                    ELSE '—'
-                END AS fecha_cierre,
-                
+                -- Ahora leemos con total seguridad la columna física ya actualizada
+                COALESCE(TO_CHAR(t.fecha_cierre, 'DD/MM/YYYY'), '—') AS fecha_cierre,
                 (NOW() > t.fecha_cierre + INTERVAL '24 hours') as superar_limite
             FROM ticket t
             JOIN base b ON t.id_base = b.id_base
             LEFT JOIN equipo e ON t.id_equipo = e.id_equipo
-            -- 🔥 JOIN ADICIONAL PARA EXTRAER EL NOMBRE DEL TÉCNICO ENCARGADO
             LEFT JOIN tecnico tec ON t.id_tecnico = tec.id_tecnico
             LEFT JOIN base b_tec ON tec.id_base = b_tec.id_base
             WHERE t.id_ticket = $1
         `;
         
         const resultadoTicket = await pool.query(queryTicket, [id]);
-
-        if (resultadoTicket.rows.length === 0) {
-            return res.status(404).json({ error: "Ticket no encontrado" });
-        }
-
         let ticket = resultadoTicket.rows[0];
 
-        // Lógica de 24 horas para cierre automático
+        // Lógica existente de 24 horas para cierre automático
         if (ticket.estado === 'Resuelto' && ticket.superar_limite) {
             ticket.estado = 'Cerrado';
             await pool.query("UPDATE ticket SET estado = 'Cerrado' WHERE id_ticket = $1", [id]);
@@ -79,7 +87,7 @@ router.get('/:id', async (req, res) => {
 
         ticket.tecnico_status = ticket.id_tecnico ? "Asignado" : "Pendiente de asignar"; 
 
-        // 2. Obtener el historial de trazabilidad del ticket
+        // 3. Obtener el historial de trazabilidad del ticket
         const queryHistorial = `
             SELECT 
                 h.id_historial,

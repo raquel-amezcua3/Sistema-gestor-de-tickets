@@ -20,7 +20,7 @@ function PendientesTecnico() {
         const idUsuario = localStorage.getItem('id_usuario');
         const idGenerico = localStorage.getItem('id');
         
-        const idIdentificador = idTecnico || idBase || idUsuario || idGenerico;
+        const idIdentificador = idBase || idTecnico || idUsuario || idGenerico;
         
         if (!idIdentificador || idIdentificador === 'undefined' || idIdentificador === 'null') {
           console.error("❌ No se encontró un ID válido para el técnico en el localStorage");
@@ -30,24 +30,30 @@ function PendientesTecnico() {
 
         console.log("Consultando tickets pendientes para el ID:", idIdentificador);
 
-        // SOLUCIÓN CLAVE: Eliminamos http://localhost:3000 para que funcione dinámicamente en producción
-        const response = await fetch(`/api/tickets-pendientes/${idIdentificador}`);
+        // 🔥 SOLUCIÓN PRODUCCIÓN: Detecta la URL del Backend dinámicamente
+        const API_URL = import.meta.env?.VITE_API_URL || process.env?.REACT_APP_API_URL || '';
+        
+        // Si estás en producción, usará la URL de Render; si estás en local, usará la ruta relativa con el proxy
+        const response = await fetch(`${API_URL}/api/tickets-pendientes/${idIdentificador}`);
         const data = await response.json();
 
-        if (response.ok) {
+        if (response.ok && Array.isArray(data)) {
           const dataFormateada = data.map(t => ({
             id: t.id_ticket ? t.id_ticket.toString() : '',
             nombre: t.nombre_usuario || 'Usuario Sistema', 
             titulo: t.titulo || 'Sin título',
             descripcion: t.descripcion || 'Sin descripción',
-            fecha: t.fecha,
-            estado: t.estado,
+            fecha: t.fecha || '—',
+            estado: t.estado || 'Abierto',
             tecnico: t.tecnico || 'Sin asignar'
           }));
           setTickets_pendientes_tecnico(dataFormateada);
+        } else {
+          setTickets_pendientes_tecnico([]);
         }
       } catch (error) {
         console.error("❌ Error al conectar con el servidor:", error);
+        setTickets_pendientes_tecnico([]);
       } finally {
         setCargando(false);
       }
