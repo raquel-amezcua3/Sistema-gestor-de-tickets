@@ -6,9 +6,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db'); 
 
-// =========================================================================
 // 1. GET: Obtener el historial de la bitácora de un equipo para la Vista de Usuario
-// =========================================================================
 // @route   GET /api/bitacora-usuario/:id_equipo
 router.get('/:id_equipo', async (req, res) => {
     const { id_equipo } = req.params;

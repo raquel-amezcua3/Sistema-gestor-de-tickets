@@ -1,4 +1,5 @@
-// Login que utilizan los 3 roles de usuarios
+// Archivo login.jsx 
+// Login que utilizan los 3 usuario de mi sistema
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/login.css';
@@ -33,7 +34,7 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        // 🕵️‍♂️ RASTREADOR DE SEGURIDAD: Esto te dirá en la consola exactamente qué propiedades trae tu usuario.
+        //  RASTREADOR DE SEGURIDAD: Esto te dirá en la consola exactamente qué propiedades trae tu usuario.
         console.log("🚨 REVISIÓN DE DATOS DEL BACKEND. El objeto usuario contiene exactamente esto:", data.usuario);
 
         // 1. Convertimos el rol a número inmediatamente para evitar errores de comparación

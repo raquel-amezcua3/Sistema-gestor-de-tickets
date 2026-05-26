@@ -1,4 +1,7 @@
-//La funcion de .js es la buscarTicketU.jsx
+//Archivo buscarTicketU.jsx y buscarTicket.js
+// Es el buscador de ticket para el usuario
+// USUARIO
+
 import React, { useState, useEffect } from 'react';
 import '../styles/buscarTicketU.css';
 import { useNavigate } from 'react-router-dom';

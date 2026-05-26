@@ -1,3 +1,7 @@
+//Archivos equiposU.jsx y equipo.js (solo una parte)
+//Sirve para ver todos los equipos registrados por ese usuario.
+// USUARIO
+
 import React, { useState, useEffect } from 'react';
 import '../styles/equiposU.css';
 import { useNavigate } from 'react-router-dom';
@@ -11,33 +15,38 @@ function EquiposU() {
     const [cargando, setCargando] = useState(true);
 
     // 1. Cargar los equipos desde la base de datos al montar el componente
-    useEffect(() => {
-        const obtenerEquiposUser = async () => {
-            const idUsuario = localStorage.getItem('id_base') || localStorage.getItem('id_usuario') || localStorage.getItem('id'); 
+useEffect(() => {
+    const obtenerEquiposUser = async () => {
+        // CAMBIO AQUÍ: Priorizamos id_usuario que es el id relacional directo de la persona
+        const idUsuario = localStorage.getItem('id_usuario') || localStorage.getItem('id_base') || localStorage.getItem('id'); 
 
-            if (!idUsuario || idUsuario === 'undefined' || idUsuario === 'null') {
-                console.error("No se encontró un ID válido en el storage");
-                setCargando(false);
-                return;
+        if (!idUsuario || idUsuario === 'undefined' || idUsuario === 'null') {
+            console.error("No se encontró un ID válido en el storage");
+            setCargando(false);
+            return;
+        }
+
+        try {
+            setCargando(true);
+            // Agregamos un console.log temporal para que veas exactamente qué ID está viajando al backend
+            console.log("Consultando equipos para el ID:", idUsuario);
+            
+            const respuesta = await fetch(`http://localhost:3000/api/equipo/usuario/${idUsuario}`);
+            if (!respuesta.ok) {
+                throw new Error("Error en la respuesta del servidor");
             }
+            const datos = await respuesta.json();
+            console.log("Equipos recibidos del servidor:", datos);
+            setEquipos(datos);
+        } catch (error) {
+            console.error("❌ Error al conectar con la API de equipos:", error);
+        } finally {
+            setCargando(false);
+        }
+    };
 
-            try {
-                setCargando(true);
-                const respuesta = await fetch(`http://localhost:3000/api/equipo/usuario/${idUsuario}`);
-                if (!respuesta.ok) {
-                    throw new Error("Error en la respuesta del servidor");
-                }
-                const datos = await respuesta.json();
-                setEquipos(datos);
-            } catch (error) {
-                console.error("❌ Error al conectar con la API de equipos:", error);
-            } finally {
-                setCargando(false);
-            }
-        };
-
-        obtenerEquiposUser();
-    }, []);
+    obtenerEquiposUser();
+}, []);
 
     // 2. Filtrado en tiempo real según lo que escriba el usuario en el input
     const equiposFiltrados = equipos.filter((equipo) => {
@@ -49,7 +58,7 @@ function EquiposU() {
         return marca.includes(termino) || tipo.includes(termino) || serie.includes(termino);
     });
 
-    // 📌 Redirección inteligente corregida
+    //Redirección 
     const manejarDobleClick = (id) => {
         try {
             const usuarioLogueado = localStorage.getItem('usuario') || sessionStorage.getItem('usuario');

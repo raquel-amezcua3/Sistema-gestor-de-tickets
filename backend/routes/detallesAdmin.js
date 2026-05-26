@@ -1,12 +1,14 @@
-//La pantalla de este .js es detallesAdmin.jsx
+//Archivos detallesAdmin.jsx y detallesAdmin.js
+//Sirve para ver los detalles de los tecnicos registrados en el sistema
+// ADMIN
+
 // routes/detallesAdmin.js
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// ============================================================================
+
 // 1. ENDPOINT PUT: Actualiza los datos combinados del técnico (base + tecnico)
-// ============================================================================
 router.put('/usuarios/tecnicos/:id', async (req, res) => {
     const { id } = req.params; // id_tecnico recibido desde la URL
     let { nombre, correo, telefono, extension, especialidad, contrasena } = req.body;
@@ -15,7 +17,6 @@ router.put('/usuarios/tecnicos/:id', async (req, res) => {
     console.log(`> Recibido id_tecnico: ${id}`);
     console.log(`> Datos body:`, { nombre, correo, especialidad });
 
-    // 🔥 CORRECCIÓN DE LA LIMPIEZA: Quitamos el "honesty =" que rompía el código
     if (!especialidad || especialidad.trim() === '' || especialidad.trim().toLowerCase() === 'sin asignar') {
         especialidad = null; 
     } else {
@@ -83,9 +84,7 @@ router.put('/usuarios/tecnicos/:id', async (req, res) => {
     }
 });
 
-// ============================================================================
 // 2. ENDPOINT DELETE: Dar de baja/eliminar técnico
-// ============================================================================
 router.delete('/usuarios/tecnicos/:id', async (req, res) => {
     const { id } = req.params;
     const client = await pool.connect();

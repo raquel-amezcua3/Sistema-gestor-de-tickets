@@ -1,3 +1,7 @@
+//Esta pantalla es asignarAdmin.jsx y la de asignarAdmin.js
+//Esta pantalla es para asignar tickets abiertos a los tecnicos
+// ADMIN
+
 import React, { useState, useEffect } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import '../styles/asignarAdmin.css';

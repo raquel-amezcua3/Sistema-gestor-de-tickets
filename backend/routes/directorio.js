@@ -1,3 +1,6 @@
+//Sirve para mostrar el diretorio de los usuario 
+// USUARIO, TECNICO Y ADMIN
+
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');

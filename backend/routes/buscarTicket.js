@@ -1,4 +1,7 @@
-//La pantalla de este .js es buscarTicket.jsx
+//Archivo buscarTicketU.jsx y buscarTicket.js
+// Es el buscador de ticket para el usuario
+// USUARIO
+
 // routes/buscarTicket.js
 const express = require('express');
 const router = express.Router();

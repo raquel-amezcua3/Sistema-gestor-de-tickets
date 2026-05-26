@@ -1,4 +1,7 @@
-//Este es el .js de la pantalla de datosTicketTecnico.jsx
+//La pantalla datosTicketTecnico.jsx su .js es datosTicketTecnico.js
+//Es la pantalla donde aparecen los datos del ticket para que el tecnico lo pueda ver
+// TECNICO  
+
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
@@ -84,7 +87,7 @@ router.get('/detalle/:id', async (req, res) => {
     }
 });
 
-// @route   POST /api/tecnico/detalle-ticket/seguimiento/:id
+
 // Inserta en historial_trazabilidad y actualiza el estado general de la falla
 // @route   POST /api/tecnico/detalle-ticket/seguimiento/:id
 router.post('/seguimiento/:id', async (req, res) => {
@@ -124,11 +127,10 @@ router.post('/seguimiento/:id', async (req, res) => {
     } catch (error) {
         await client.query('ROLLBACK');
         
-        // 🔍 MODIFICACIÓN DE DIAGNÓSTICO:
-        // Imprime el error completo en la consola de tu servidor (Render / VS Code)
+        // Imprime el error completo en la consola del servidor (Render / VS Code)
         console.error("❌ ERROR REAL DE BD:", error); 
         
-        // Le regresa al Frontend el detalle exacto del fallo (ej: qué restricción se rompió)
+        // Le regresa al Frontend el detalle exacto del fallo
         res.status(500).json({ 
             error: "Error en la Base de Datos", 
             detalle: error.message,

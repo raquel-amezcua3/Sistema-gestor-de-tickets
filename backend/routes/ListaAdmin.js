@@ -1,6 +1,10 @@
+// Archivos listaAdmin.jsx y ListaAdmin.js
+// Es para que aparazca en una tabla todos los tecnicos registrados en el lista
+// ADMIN
+
 const express = require('express');
 const router = express.Router();
-const pool = require('../db'); // Conexión centralizada
+const pool = require('../db'); 
 
 // @route   GET /api/admin/lista-tecnicos
 router.get('/', async (req, res) => {

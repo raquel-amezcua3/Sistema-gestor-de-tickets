@@ -1,4 +1,4 @@
-// Pantalla inicial del sistema de Tarelix
+// Pantalla inicial del sistema de Tarelix.
 import React from 'react';
 import '../styles/home.css';
 

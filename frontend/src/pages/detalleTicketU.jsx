@@ -1,5 +1,5 @@
-//Esta pantalla es para ver los detalles del ticket del usaurio, el .js es detalleTicket.js
 // Archivos detalleTicketU.jsx y detalleTicket.js
+//Esta pantalla es para ver los detalles del ticket del usaurio, el .js es detalleTicket.js
 // USUARIO
 
 import React, { useState, useEffect } from 'react';
@@ -11,7 +11,6 @@ function DetalleTicketU() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Estados limpios y perfectamente alineados con las respuestas del Backend
   const [ticketData, setTicketData] = useState({
     nombre_usuario: '',
     categoria_servicio: '',

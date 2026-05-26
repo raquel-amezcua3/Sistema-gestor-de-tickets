@@ -1,3 +1,6 @@
+//Sirve para mostrar el diretorio de los usuario al tecnico
+// TECNICO
+
 import React, { useState, useEffect } from 'react';
 import '../styles/directorioTecnico.css';
 import { useNavigate } from 'react-router-dom';

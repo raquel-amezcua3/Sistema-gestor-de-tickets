@@ -1,5 +1,6 @@
-//Ña pantalla datosTicketTecnico.jsx su .js es datosTicketTecnico.js
-//Ña pantalla datosTicketTecnico.jsx su .js es datosTicketTecnico.js
+//La pantalla datosTicketTecnico.jsx su .js es datosTicketTecnico.js
+//Es la pantalla donde aparecen los datos del ticket para que el tecnico lo pueda ver
+// TECNICO  
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/datosTicketTecnico.css';
@@ -30,7 +31,7 @@ function DatosTicketTecnico() {
   const [tieneDiagnosticoPrevio, setTieneDiagnosticoPrevio] = useState(false);
   const [tieneFallaPrevia, setTieneFallaPrevia] = useState(false);
 
-  // Carga inicial de datos (Corregido para evitar retrasos y usar la ruta correcta de técnico)
+  // Carga inicial de datos 
   useEffect(() => {
     if (!id) return; // Guardián si el ID de la URL no está listo inmediatamente
 
@@ -53,7 +54,7 @@ function DatosTicketTecnico() {
             fecha: data.fecha,
             estado: data.estado,
             tecnico: data.tecnico,
-            id_tecnico: data.id_tecnico || 6, // Respaldo ID por defecto si viene nulo de la consulta
+            id_tecnico: data.id_tecnico || 6,
             fechaCierre: data.fechaCierre || '' 
           });
 
@@ -134,7 +135,7 @@ function DatosTicketTecnico() {
 
     console.log("Enviando datos al backend correcto:", datosParaBackend);
 
-    // 🚀 RUTA CORREGIDA: Se añade '/tecnico' para que coincida con tu backend y no devuelva 404
+    // Se añade '/tecnico' para que coincida con el backend
     const response = await fetch(`https://sistema-tarelix.onrender.com/api/tecnico/detalle-ticket/seguimiento/${id}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -147,7 +148,7 @@ function DatosTicketTecnico() {
       setModalSeguimiento(false); 
       setModalExitoSeguimiento(true); 
     } else {
-      // Si el servidor responde pero con un error (ej. 500), nos dirá el porqué real
+      // Si el servidor responde pero con un error (ej. 500)
       alert(`El servidor rechazó el comentario: ${data.detalle || data.error || 'Error de procesamiento'}`);
     }
   } catch (error) {

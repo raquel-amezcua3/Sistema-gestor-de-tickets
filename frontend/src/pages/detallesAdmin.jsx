@@ -1,5 +1,7 @@
-//El .js de esta pantalla es detallesAdmin.js
-// detallesAdmin.jsx
+//Archivos detallesAdmin.jsx y detallesAdmin.js
+//Sirve para ver los detalles de los tecnicos registrados en el sistema
+// ADMIN
+
 import React, { useState, useEffect } from 'react';
 import '../styles/detallesAdmin.css';
 import { useNavigate, useParams } from 'react-router-dom';

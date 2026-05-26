@@ -1,3 +1,6 @@
+//Pantalla de la bitacora equipo
+// USUARIO Y TECNICO
+
 import React, { useState, useEffect } from 'react';
 import '../styles/bitacoraEquipo.css';
 import { useNavigate, useParams } from 'react-router-dom';

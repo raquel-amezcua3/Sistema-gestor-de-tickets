@@ -6,9 +6,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db'); 
 
-// =========================================================================
 // 1. GET: Obtener el historial completo y cruzar nombres de la tabla Base
-// =========================================================================
 router.get('/:id_equipo', async (req, res) => {
     const { id_equipo } = req.params;
 
@@ -44,9 +42,8 @@ router.get('/:id_equipo', async (req, res) => {
     }
 });
 
-// =========================================================================
+
 // 2. POST: Insertar un nuevo comentario en la bitácora de manera dinámica
-// =========================================================================
 router.post('/', async (req, res) => {
     const { 
         id_equipo, 

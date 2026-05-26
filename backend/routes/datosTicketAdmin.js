@@ -4,7 +4,7 @@
 
 const express = require('express');
 const router = express.Router();
-const pool = require('../db'); // Verifica que la ruta hacia tu conexión 'db' sea correcta
+const pool = require('../db'); 
 
 // Obtener el detalle completo de un ticket por su ID
 

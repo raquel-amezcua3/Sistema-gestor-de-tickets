@@ -1,8 +1,10 @@
+//Este archivo sirve para cambiar la contraseña del administrador
+// ADMIN
 import React, { useState } from 'react';
 
 function CambiarPasswordAdmin() {
   const [datos, setDatos] = useState({
-    correo: 'admin@bodesa.com', // Lo dejamos por defecto para tu comodidad
+    correo: 'admin@bodesa.com', 
     nuevaContrasena: ''
   });
   const [mensaje, setMensaje] = useState('');

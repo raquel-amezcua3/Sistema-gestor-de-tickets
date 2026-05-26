@@ -1,3 +1,7 @@
+// Archivos listaAdmin.jsx y ListaAdmin.js
+// Es para que aparazca en una tabla todos los tecnicos registrados en el lista
+// ADMIN
+
 import React, { useState, useEffect } from 'react'; 
 import '../styles/listaAdmin.css';
 import { useNavigate } from 'react-router-dom';

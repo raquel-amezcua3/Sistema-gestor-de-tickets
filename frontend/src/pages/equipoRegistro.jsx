@@ -1,4 +1,8 @@
-// El .js de esta pantalla es equipo.js
+// Archivos equipoRegistro.jsx y equipo.js
+// Sirve para que el usuario pueda registrar su equipo o mas equipos, y una vez regisrado
+// pueda levantar un ticket
+// USUARIO
+
 import React, { useState } from 'react';
 import '../styles/equipoRegistro.css';
 import { useNavigate } from 'react-router-dom';
@@ -22,20 +26,19 @@ function EquipoRegistro() {
       return;
     }
 
-    // 🔥 CORREGIDO: Búsqueda en cascada inteligente para evitar nulos en Admins/Técnicos
+    // Búsqueda en cascada inteligente para evitar nulos
     const idBaseActiva = localStorage.getItem('id_base');
-    const idUsuarioActivo = localStorage.getItem('id_usuario') || localStorage.getItem('id') || null; 
+    const idUsuarioActivo = localStorage.getItem('id_usuario') || localStorage.getItem('id'); 
 
-    // Validamos que por lo menos exista la cuenta global activa en el navegador
-    if (!idBaseActiva) {
+    // Validamos sesión activa
+    if (!idBaseActiva || idBaseActiva === 'null' || idBaseActiva === 'undefined') {
       alert("No se detectó una sesión activa. Por favor, vuelve a iniciar sesión para registrar tu equipo.");
       navigate_equipo_formularioR('/login'); 
       return;
     }
 
-    // Armamos el paquete de datos (Payload) exacto que espera recibir equipo.js
+    // Armamos el paquete de datos limpio
     const payload = {
-      // Si eres administrador, idUsuarioActivo será null y se enviará limpio a PostgreSQL
       id_usuario: (idUsuarioActivo && idUsuarioActivo !== 'null' && idUsuarioActivo !== 'undefined') ? parseInt(idUsuarioActivo, 10) : null,
       id_base: parseInt(idBaseActiva, 10),
       tipo_equipo: datos_equipo_formularioR.tipo,
@@ -44,8 +47,8 @@ function EquipoRegistro() {
     };
 
     try {
-      // 🔥 URL CORREGIDA: Apunta con precisión milimétrica al enrutador unificado de tu backend
-      const respuesta = await fetch('http://localhost:3000/api/equipo/registrar', {
+      // CORRECCIÓN: Al estar en el mismo Render, usamos solo la ruta relativa '/api/...'
+      const respuesta = await fetch('/api/equipo/registrar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -124,7 +127,7 @@ function EquipoRegistro() {
         </div>
       </main>
 
-      {/* VENTANA EMERGENTE CORREGIDA E IGUAL A LAS DEMÁS */}
+      {/* VENTANA EMERGENTE */}
       {mostrarModal_equipo_formularioR && (
         <div className='overlay-modal'>
           <div className='modal-exito'>

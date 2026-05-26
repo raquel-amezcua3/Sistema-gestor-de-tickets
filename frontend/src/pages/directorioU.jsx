@@ -1,3 +1,6 @@
+//Sirve par ver todos los usuarios deñ sistema, directorio.
+// USUARIO
+
 import React, { useState, useEffect } from 'react';
 import '../styles/directorioU.css';
 import { useNavigate } from 'react-router-dom';

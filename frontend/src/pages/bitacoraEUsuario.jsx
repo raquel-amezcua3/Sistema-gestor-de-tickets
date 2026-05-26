@@ -8,16 +8,15 @@ import { useParams, useLocation } from 'react-router-dom';
 import HeaderPU from '../components/HeaderPU';
 
 function BitacoraEUsuario() {
-    const { id_equipo } = useParams(); // Captura el :id_equipo de la URL definida en App.jsx
+    const { id_equipo } = useParams(); // Captura el :id_equipo 
     const location = useLocation();
     
     // --- ESTADOS ---
-    // Si viene por state se usa, si no, toma directamente el de la URL
     const [idEquipoReal, setIdEquipoReal] = useState(location.state?.idEquipoReal || id_equipo || 22);
     const [registros_bitacora_usuario, setRegistros_bitacora_usuario] = useState([]); 
     const [cargando_bitacora_usuario, setCargando_bitacora_usuario] = useState(false);
 
-    // 📌 OBTENER EL ID DEL USUARIO DESDE LA SESIÓN
+    // Obtener el ID del usuario desde la sesion
     const [usuarioAutenticado, setUsuarioAutenticado] = useState(() => {
         try {
             const usuarioLogueado = localStorage.getItem('usuario') || sessionStorage.getItem('usuario');
@@ -34,9 +33,7 @@ function BitacoraEUsuario() {
         return { id_usuario: null, nombre: "Usuario General" };
     });
 
-    // =========================================================================
     // 1. CARGA INICIAL: CONSULTA DE HISTORIAL (GET /api/bitacora-usuario/:id)
-    // =========================================================================
     useEffect(() => {
         const cargarBitacoraUsuario = async () => {
             if (!idEquipoReal) return;
@@ -47,7 +44,6 @@ function BitacoraEUsuario() {
 
                 console.log(`📡 Consultando bitácora (Vista Usuario) para el equipo ID: ${idNumerico}`);
                 
-                // Conectamos a tu endpoint dinámico local
                 const response = await fetch(`http://localhost:3000/api/bitacora-usuario/${idNumerico}`);
                 
                 if (response.ok) {

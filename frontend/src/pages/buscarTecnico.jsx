@@ -1,4 +1,7 @@
 //Pantalla buscarTecnico.jsx su .js es todosLosTickets.js
+//Esta pantalla sirve para que el tecnico busque cualquier ticket en el sistema
+// TECNICO
+
 import React, { useState, useEffect } from 'react';
 import '../styles/buscarTecnico.css';
 import { useNavigate } from 'react-router-dom';

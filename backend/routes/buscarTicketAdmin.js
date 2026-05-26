@@ -1,5 +1,7 @@
-//Este .js es para buscar todos los tickets que hay en el sistema y el admin los pueda ver, la pantalla buscarAdmin.jsx
-// routes/buscarTicketAdmin.js
+//Pantalla buscarAdmin.jsx su .js es todosLosTickets.js
+// Sirve para buscar tikckets 
+// ADMIN
+
 const express = require('express');
 const router = express.Router();
 const pool = require('../db'); 

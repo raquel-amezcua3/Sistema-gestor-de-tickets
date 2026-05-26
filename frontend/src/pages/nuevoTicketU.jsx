@@ -2,10 +2,16 @@
 //Esta pantalla es para que el usuario levante un ticket en el sistema.
 // USUARIO
 
+
 import React, { useState, useEffect } from 'react'; 
 import '../styles/nuevoTicketU.css';
 import { useNavigate, Link } from 'react-router-dom';
 import HeaderPU from '../components/HeaderPU';
+
+// 🚀 CONMUTADOR INTELIGENTE DE URL: Detecta automáticamente si usas localhost o producción en Render
+const API_BASE_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:3000'
+  : 'https://sistema-tarelix.onrender.com';
 
 // 1. Mapeo de subcategorías por categoría
 const SUBCATEGORIAS_MAP = {
@@ -93,7 +99,8 @@ function NuevoTicketU() {
       const obtenerEquipos = async () => {
          if (!idBaseLogueado) return; 
          try {
-            const response = await fetch(`http://localhost:3000/api/equipo/usuario/${idBaseLogueado}`);
+            // 🚀 CORREGIDO: Ahora usa la constante dinámica en lugar de localhost fijo
+            const response = await fetch(`${API_BASE_URL}/api/equipo/usuario/${idBaseLogueado}`);
             if (response.ok) {
                const datos = await response.json();
                setMisEquipos(datos);
@@ -118,7 +125,7 @@ function NuevoTicketU() {
             otra_categoria: '',
             subcategoria: '',
             otra_subcategoria: '',
-            equipo_id: '' // Reiniciamos el equipo al cambiar categoría
+            equipo_id: '' 
          });
       } else if (name === "subcategoria") {
          setTicket({
@@ -142,14 +149,11 @@ function NuevoTicketU() {
          return;
       }
 
-      // Validación Condicional: Si NO es préstamo, obligar a seleccionar un equipo
       if (ticket.categoria !== 'Prestamo' && !ticket.equipo_id) {
          alert("Por favor, selecciona el equipo afectado.");
          return;
       }
 
-      // Definimos qué ID numérico enviar al backend
-      // Si es préstamo, enviamos un ID comodín existente (ej. 1). Si tienes otro ID asignado para "General", cámbialo aquí.
       const idEquipoFinal = ticket.categoria === 'Prestamo' ? 1 : parseInt(ticket.equipo_id, 10);
 
       const bodyData = {
@@ -167,7 +171,8 @@ function NuevoTicketU() {
       console.log("Datos enviados al servidor en bodyData:", bodyData);
 
       try {
-         const response = await fetch('http://localhost:3000/api/tickets/crear', {
+         // 🚀 CORREGIDO: Ahora usa la constante dinámica para crear el ticket también
+         const response = await fetch(`${API_BASE_URL}/api/tickets/crear`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(bodyData),
@@ -302,7 +307,6 @@ function NuevoTicketU() {
                            <textarea name='descripcion' value={ticket.descripcion} onChange={handleChange} required placeholder="Detalla el problema..."/>
                         </div>
 
-                        {/* El campo Equipo afectado cambia dinámicamente si es un préstamo */}
                         <div className='grupo-input'>
                            <label>
                               {ticket.categoria !== 'Prestamo' && <span className='requerido'>*</span>}

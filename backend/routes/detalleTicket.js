@@ -1,12 +1,12 @@
-//Esta pantalla es para ver los detalles del ticket del usaurio, el .js es detalleTicket.js
 // Archivos detalleTicketU.jsx y detalleTicket.js
+//Esta pantalla es para ver los detalles del ticket del usaurio, el .js es detalleTicket.js
 // USUARIO
 
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// --- 1. OBTENER DETALLES DEL TICKET Y SU HISTORIAL (GET) ---
+// 1. OBTENER DETALLES DEL TICKET Y SU HISTORIAL (GET)
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     
@@ -109,7 +109,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// --- 2. ACTUALIZAR TÍTULO Y DESCRIPCIÓN (PUT) ---
+//  2. ACTUALIZAR TÍTULO Y DESCRIPCIÓN (PUT)
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
     const { titulo_falla, descripcion_falla } = req.body;

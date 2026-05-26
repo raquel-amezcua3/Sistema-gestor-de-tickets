@@ -1,11 +1,12 @@
 //La pantalla de nuevoTicketU.jsx y nuevoTicket.js
 //Esta pantalla es para que el usuario levante un ticket en el sistema.
 // USUARIO
-
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
+// @route   POST /api/tickets/crear
+// Registra un nuevo ticket de soporte en la base de datos central
 router.post('/crear', async (req, res) => {
     let { 
         id_base, 
@@ -51,11 +52,12 @@ router.post('/crear', async (req, res) => {
             }
         }
 
-        // 3. Insertar el ticket con los datos validados y completos
+        // 3. Insertar el ticket con id_admin quemado como 1 de forma automática
         const query = `
             INSERT INTO ticket (
                 id_base, 
                 id_usuario, 
+                id_admin, 
                 id_equipo, 
                 categoria_servicio, 
                 subcategoria_falla, 
@@ -66,10 +68,11 @@ router.post('/crear', async (req, res) => {
                 fecha_creacion, 
                 estado
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), 'Abierto')
+            VALUES ($1, $2, 1, $3, $4, $5, $6, $7, $8, $9, NOW(), 'Abierto')
             RETURNING *; 
         `;
         
+        // Nota: Quitamos id_admin de las variables dinámicas porque ya pusimos el '1' directo en la consulta
         const values = [
             id_base, 
             id_usuario, 

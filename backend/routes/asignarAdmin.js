@@ -1,3 +1,7 @@
+//Esta pantalla es asignarAdmin.jsx y la de asignarAdmin.js
+//Esta pantalla es para asignar tickets abiertos a los tecnicos
+// ADMIN
+
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
@@ -32,7 +36,7 @@ router.get('/tickets-por-asignar', async (req, res) => {
   }
 });
 
-// NUEVO 👉 2. Obtener el detalle completo de UN ticket por su ID (Para la pantalla de asignación)
+// 2. Obtener el detalle completo de UN ticket por su ID (Para la pantalla de asignación)
 router.get('/detalle-ticket/:id', async (req, res) => {
   const { id } = req.params;
   try {

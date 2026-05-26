@@ -1,4 +1,7 @@
 //Pantalla buscarAdmin.jsx su .js es todosLosTickets.js
+// Sirve para buscar tikckets 
+// ADMIN
+
 import React, { useState, useEffect } from 'react';
 import '../styles/buscarAdmin.css';
 import { useNavigate } from 'react-router-dom';

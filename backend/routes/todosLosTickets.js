@@ -1,5 +1,6 @@
 //Funcion para ver todos los tickets que hay en el sistema, pantalla buscarAdmin.jsx y buscarTecnico.jsx
 // routes/todosLosTickets.js
+// TECNICO
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');

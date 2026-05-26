@@ -30,7 +30,7 @@ function DatosResueltoTecnico() {
     if (!fechaRaw || fechaRaw === 'Sin registrar') return 'Sin registrar';
     try {
       const fecha = new Date(fechaRaw);
-      if (isNaN(fecha.getTime())) return fechaRaw; // Si ya es texto plano, lo deja igual
+      if (isNaN(fecha.getTime())) return fechaRaw; 
       return fecha.toISOString().split('T')[0]; // Extrae solo la parte de la fecha YYYY-MM-DD
     } catch (e) {
       return fechaRaw;
@@ -158,7 +158,7 @@ function DatosResueltoTecnico() {
                 onClick={() => navigate_datos_resuelto_tecnico(`/seguimientoTicketU/${id}`)}
                 style={{
                   backgroundColor: '#848484', // Azul si está seleccionado, gris si no
-                  color: '#ffffff', // Texto blanco para ambos casos
+                  color: '#ffffff',
                   transition: 'background-color 0.2s ease', // Suaviza la transición del cambio de color
                   marginLeft: '20px'
                 }}

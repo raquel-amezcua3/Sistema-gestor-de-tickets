@@ -18,10 +18,10 @@ function BitacoraETecnico() {
     const [registros_bitacora_tecnico, setRegistros_bitacora_tecnico] = useState([]); 
     const [cargando_bitacora_tecnico, setCargando_bitacora_tecnico] = useState(false);
 
-    // 📌 OBTENER EL TÉCNICO AUTENTICADO AUTOMÁTICAMENTE DESDE LA SESIÓN
+    //Esto es para obtener el tecnico autenticado automaticamente desde la sesion
     const [tecnicoAutenticado, setTecnicoAutenticado] = useState(() => {
         try {
-            // Intenta leer el usuario que inició sesión guardado por tu Login
+            // Intenta leer el usuario que inició sesión guardado por el login
             const usuarioLogueado = localStorage.getItem('usuario') || sessionStorage.getItem('usuario');
             if (usuarioLogueado) {
                 const parsed = JSON.parse(usuarioLogueado);
@@ -35,7 +35,7 @@ function BitacoraETecnico() {
             console.error("Error leyendo la sesión del técnico:", error);
         }
         
-        // Retorno de respaldo por defecto (Itzel Amezcua) para desarrollo seguro
+        // Retorno de respaldo por defecto (Itzel Amezcua) 
         return {
             id_tecnico: 6,
             id_base: 15,
@@ -50,9 +50,7 @@ function BitacoraETecnico() {
         estado_actual: ''
     });
 
-    // =========================================================================
     // 1. CARGA INICIAL: CONSULTA DE HISTORIAL REAL (GET)
-    // =========================================================================
     useEffect(() => {
         const cargarDatosIniciales = async () => {
             if (!idEquipoReal) return;
@@ -100,9 +98,7 @@ function BitacoraETecnico() {
         }
     };
 
-    // =========================================================================
     // 2. GUARDAR NUEVO COMENTARIO CON USUARIO DINÁMICO (POST)
-    // =========================================================================
     const manejarEnvioComentario = async () => {
         const { componente_afectado, tipo_modificacion, referencia_pieza, estado_actual } = formComentario_bitacora_tecnico;
 
