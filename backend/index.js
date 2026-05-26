@@ -19,6 +19,7 @@ const detallesAdminRouter = require('./routes/detallesAdmin');
 const bitacoraEquipoRouter = require('./routes/bitacoraETecnico');
 const bitacoraUsuarioRouter = require('./routes/bitacoraEUsuario');
 
+
 // Enrutadores adicionales
 const listaAdminRouter = require('./routes/ListaAdmin');
 const cargaticketsAdminRouter = require('./routes/cargaticketsAdmin');

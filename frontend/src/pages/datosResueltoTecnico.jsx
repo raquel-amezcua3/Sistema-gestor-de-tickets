@@ -44,11 +44,9 @@ function DatosResueltoTecnico() {
 
       try {
         // 🛠️ RUTA PARA PRUEBA LOCAL (Puerto 3000):
-       /*  const url = `http://localhost:3000/api/datos-resuelto/${id}`; */
+       /*  const url = `http://localhost:3000/api/datos-resuelto/${id}`;  De manera local*/
         const url = `https://sistema-tarelix.onrender.com/api/datos-resuelto/${id}`;
         
-        // 🌐 DESCOMENTA ESTA LÍNEA CUANDO LO SUBAS A RENDER:
-        // const url = `https://sistema-tarelix.onrender.com/api/datos-resuelto/${id}`;
 
         const response = await fetch(url);
         const data = await response.json();

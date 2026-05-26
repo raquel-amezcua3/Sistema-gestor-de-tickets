@@ -7,36 +7,41 @@ import HeaderPU from '../components/HeaderPU';
 function PendientesTicketU() {
   const navigate = useNavigate();
   
-  // Estados para los datos reales
   const [tickets, setTickets] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [cargando, setCargando] = useState(true);
+  const [errorSesion, setErrorSesion] = useState(false);
 
-  // Cargar tickets pendientes al montar el componente
-// Cargar tickets pendientes al montar el componente
   useEffect(() => {
     const obtenerPendientes = async () => {
-      // 🔥 CORREGIDO: Búsqueda en cascada inteligente usando id_base
+      // Intentamos recuperar el ID del usuario en sesión
       const id_usuario = localStorage.getItem('id_base') || localStorage.getItem('id_usuario') || localStorage.getItem('id');
       
-      // Validamos que el ID exista y no sea una palabra corrupta de texto
+      // Control de seguridad estricto para producción
       if (!id_usuario || id_usuario === 'undefined' || id_usuario === 'null') {
-        console.error("No se encontró un ID válido en el storage");
+        console.error("❌ No se detectó ninguna sesión activa en este navegador.");
+        setErrorSesion(true);
         setCargando(false);
         return;
       }
 
       try {
-        const response = await fetch(`/api/tickets-pendientes/${id_usuario}`);
+        // 🛠️ RUTA PARA PRUEBA LOCAL (Coméntala cuando subas a Render):
+        // const url = `http://localhost:3000/api/tickets-pendientes/${id_usuario}`;
+        
+        // 🌐 RUTA PARA PRODUCCIÓN EN RENDER (Déjala activa para la web):
+        const url = `https://sistema-tarelix.onrender.com/api/tickets-pendientes/${id_usuario}`;
+        
+        const response = await fetch(url);
         const data = await response.json();
         
         if (response.ok) {
           setTickets(data);
         } else {
-          console.error("Error del servidor:", data.error);
+          console.error("⚠️ Error en el servidor de producción:", data.error);
         }
       } catch (error) {
-        console.error("Error de conexión al backend:", error);
+        console.error("❌ Error de red al conectar con Render:", error);
       } finally {
         setCargando(false);
       }
@@ -45,18 +50,15 @@ function PendientesTicketU() {
     obtenerPendientes();
   }, []);
 
-  // Función auxiliar para recortar texto a lo que quepa visualmente
   const recortarTexto = (texto, maximo = 45) => {
     if (!texto) return "";
     return texto.length > maximo ? texto.substring(0, maximo) + "..." : texto;
   };
 
-  // Lógica de filtrado para el buscador (ID o Título)
   const ticketsFiltrados = tickets.filter((ticket) => {
     const idStr = ticket.id_ticket?.toString() || "";
     const tituloStr = ticket.titulo?.toLowerCase() || "";
     const termino = busqueda.toLowerCase();
-
     return idStr.includes(termino) || tituloStr.includes(termino);
   });
 
@@ -93,10 +95,16 @@ function PendientesTicketU() {
               </tr>
             </thead>
             <tbody>
-              {cargando ? (
+              {errorSesion ? (
+                <tr>
+                  <td colSpan="7" style={{ textAlign: 'center', padding: '30px', color: '#d9534f', fontWeight: 'bold' }}>
+                    ⚠️ Por favor, vuelve a iniciar sesión en el sitio web para cargar tus tickets.
+                  </td>
+                </tr>
+              ) : cargando ? (
                 <tr>
                   <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>
-                    Cargando tickets pendientes...
+                    Cargando tickets pendientes desde el servidor...
                   </td>
                 </tr>
               ) : ticketsFiltrados.length > 0 ? (
@@ -107,8 +115,7 @@ function PendientesTicketU() {
                     onDoubleClick={() => navigate(`/detalle-ticket/${ticket.id_ticket}`)} 
                   >
                     <td>{ticket.id_ticket}</td>
-                    <td>{localStorage.getItem('usuarioNombre') || 'Prueba'}</td>
-                    {/* Aplicamos recorte visual preventivo */}
+                    <td>{localStorage.getItem('usuarioNombre') || 'Usuario'}</td>
                     <td title={ticket.titulo}>{recortarTexto(ticket.titulo, 30)}</td>
                     <td title={ticket.descripcion}>{recortarTexto(ticket.descripcion, 45)}</td>
                     <td>{ticket.fecha}</td>

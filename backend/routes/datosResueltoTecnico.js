@@ -16,6 +16,7 @@ router.get('/:id_ticket', async (req, res) => {
 
     try {
         // 🔥 CORREGIDO: bu.telefono::TEXT convierte el número a texto para que sea compatible con 'Sin teléfono'
+        // Reemplaza tu bloque de consulta query dentro de datosResueltoTecnico.js por este:
         const query = `
             SELECT 
                 t.id_ticket AS id,
@@ -27,7 +28,15 @@ router.get('/:id_ticket', async (req, res) => {
                 TO_CHAR(t.fecha_creacion, 'YYYY-MM-DD') AS fecha,
                 t.estado AS estado,
                 COALESCE(bt.nombre, 'Sin técnico asignado') AS tecnico,
-                TO_CHAR(COALESCE(t.fecha_cierre, t.fecha_creacion), 'YYYY-MM-DD') AS fecha_cierre
+                -- 🔥 CORREGIDO: Si es resuelto y fecha_cierre es NULL, muestra la fecha de HOY en la pantalla
+                TO_CHAR(
+                    CASE 
+                        WHEN t.fecha_cierre IS NOT NULL THEN t.fecha_cierre
+                        WHEN LOWER(t.estado) = 'resuelto' THEN CURRENT_DATE
+                        ELSE t.fecha_creacion
+                    END, 
+                    'YYYY-MM-DD'
+                ) AS fecha_cierre
             FROM ticket t
             LEFT JOIN base bu ON t.id_base = bu.id_base
             LEFT JOIN tecnico tec ON t.id_tecnico = tec.id_tecnico
