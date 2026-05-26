@@ -18,9 +18,9 @@ router.get('/:id_ticket', async (req, res) => {
         const query = `
             SELECT 
                 t.id_ticket AS id,
-                bu.nombre AS nombre,
-                bu.correo AS correo,
-                bu.telefono AS telefono,
+                COALESCE(bu.nombre, 'Usuario Sistema') AS nombre,
+                COALESCE(bu.correo, 'Sin correo electrónico') AS correo,
+                COALESCE(bu.telefono, 'Sin teléfono') AS telefono,
                 t.titulo_falla AS titulo,
                 t.descripcion_falla AS descripcion,
                 TO_CHAR(t.fecha_creacion, 'YYYY-MM-DD') AS fecha,
@@ -29,8 +29,8 @@ router.get('/:id_ticket', async (req, res) => {
                     WHEN LOWER(t.estado) = 'cerrado' THEN 'Cerrado'
                     ELSE t.estado 
                 END AS estado,
-                bt.nombre AS tecnico,
-                -- 🔥 COALESCE: Si por alguna razón fecha_cierre es null, intenta usar la fecha del último historial
+                COALESCE(bt.nombre, 'Sin asignar') AS tecnico,
+                -- COALESCE: Si fecha_cierre es null, intenta usar la fecha del último historial registrado
                 TO_CHAR(
                     COALESCE(
                         t.fecha_cierre, 
@@ -52,7 +52,7 @@ router.get('/:id_ticket', async (req, res) => {
             return res.status(404).json({ error: "No se encontró ningún ticket con el ID solicitado" });
         }
 
-        // Enviamos el registro completo
+        // Enviamos el registro completo encontrado
         res.json(resultado.rows[0]);
     } catch (error) {
         console.error("❌ ERROR AL OBTENER DETALLES DEL TICKET:", error.message);

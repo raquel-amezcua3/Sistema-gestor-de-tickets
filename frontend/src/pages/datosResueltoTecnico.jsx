@@ -45,7 +45,8 @@ function DatosResueltoTecnico() {
       }
 
       try {
-        const url = `http://localhost:3000/api/datos-resuelto/${id}`;
+        // CORREGIDO: Ruta relativa para que funcione dinámicamente tanto en local como en producción (Render)
+        const url = `/api/datos-resuelto/${id}`;
         const response = await fetch(url);
         const data = await response.json();
 
@@ -107,7 +108,7 @@ function DatosResueltoTecnico() {
                   <input type="text" value={ticket_datos_resuelto_tecnico.fecha} readOnly />
                 </div>
                 <div className="grupo-input-datos-resuelto-tecnico">
-                  <label>Tecnico encargado</label>
+                  <label>Técnico encargado</label>
                   <input type="text" value={ticket_datos_resuelto_tecnico.tecnico} readOnly className="tecnico-bold-datos-resuelto-tecnico" />
                 </div>
                 <div className="grupo-input-datos-resuelto-tecnico">
@@ -127,11 +128,11 @@ function DatosResueltoTecnico() {
 
               <div className="columna-datos-resuelto-tecnico">
                 <div className="grupo-input-datos-resuelto-tecnico">
-                  <label>Telefono</label>
+                  <label>Teléfono</label>
                   <input type="text" value={ticket_datos_resuelto_tecnico.telefono} readOnly />
                 </div>
                 <div className="grupo-input-datos-resuelto-tecnico">
-                  <label>Titulo del ticket</label>
+                  <label>Título del ticket</label>
                   <input type="text" value={ticket_datos_resuelto_tecnico.titulo} readOnly />
                 </div>
                 <div className="grupo-input-datos-resuelto-tecnico">
@@ -157,9 +158,9 @@ function DatosResueltoTecnico() {
                 className="btn-azul-datos-resuelto-tecnico" 
                 onClick={() => navigate_datos_resuelto_tecnico(`/seguimientoTicketU/${id}`)}
                 style={{
-                  backgroundColor: '#848484', // Azul si está seleccionado, gris si no
+                  backgroundColor: '#848484', 
                   color: '#ffffff',
-                  transition: 'background-color 0.2s ease', // Suaviza la transición del cambio de color
+                  transition: 'background-color 0.2s ease', 
                   marginLeft: '20px'
                 }}
               >
