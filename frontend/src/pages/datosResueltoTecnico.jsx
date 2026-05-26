@@ -45,13 +45,12 @@ function DatosResueltoTecnico() {
       }
 
       try {
-        // CORREGIDO: Ruta relativa para que funcione dinámicamente tanto en local como en producción (Render)
-        const url = `/api/datos-resuelto/${id}`;
+        // 🔥 CORREGIDO: Ajustado al nombre exacto de tu API en el backend usando rutas relativas para Render
+        const url = `/api/datosResueltoTecnico/${id}`;
         const response = await fetch(url);
         const data = await response.json();
 
         if (response.ok) {
-          // Extraemos la fecha buscando todas las combinaciones posibles que mande tu consulta SQL
           const fechaCierreRaw = data.fecha_cierre || data.fechaCierre || data.fechacierre || '';
 
           setTicket_datos_resuelto_tecnico({

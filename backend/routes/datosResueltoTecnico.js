@@ -7,6 +7,7 @@ const router = express.Router();
 const pool = require('../db');
 
 // Obtener detalles completos de un ticket específico por su ID
+// 🔥 Recuerda que en Express este el parámetro base, el prefijo /api/datosResueltoTecnico se define en tu server.js
 router.get('/:id_ticket', async (req, res) => {
     const { id_ticket } = req.params;
 
@@ -30,7 +31,6 @@ router.get('/:id_ticket', async (req, res) => {
                     ELSE t.estado 
                 END AS estado,
                 COALESCE(bt.nombre, 'Sin asignar') AS tecnico,
-                -- COALESCE: Si fecha_cierre es null, intenta usar la fecha del último historial registrado
                 TO_CHAR(
                     COALESCE(
                         t.fecha_cierre, 
@@ -52,7 +52,6 @@ router.get('/:id_ticket', async (req, res) => {
             return res.status(404).json({ error: "No se encontró ningún ticket con el ID solicitado" });
         }
 
-        // Enviamos el registro completo encontrado
         res.json(resultado.rows[0]);
     } catch (error) {
         console.error("❌ ERROR AL OBTENER DETALLES DEL TICKET:", error.message);
