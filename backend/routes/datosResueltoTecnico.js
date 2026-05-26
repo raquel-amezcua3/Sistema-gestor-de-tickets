@@ -6,8 +6,8 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// Obtener detalles completos de un ticket específico por su ID
-// 🔥 Recuerda que en Express este el parámetro base, el prefijo /api/datosResueltoTecnico se define en tu server.js
+// @route   GET /api/datosResueltoTecnico/:id_ticket
+// 🔥 Escucha directo el ID sin sub-rutas intermedias
 router.get('/:id_ticket', async (req, res) => {
     const { id_ticket } = req.params;
 
@@ -24,19 +24,15 @@ router.get('/:id_ticket', async (req, res) => {
                 COALESCE(bu.telefono, 'Sin teléfono') AS telefono,
                 t.titulo_falla AS titulo,
                 t.descripcion_falla AS descripcion,
-                TO_CHAR(t.fecha_creacion, 'YYYY-MM-DD') AS fecha,
-                CASE 
-                    WHEN LOWER(t.estado) = 'resuelto' THEN 'Resuelto'
-                    WHEN LOWER(t.estado) = 'cerrado' THEN 'Cerrado'
-                    ELSE t.estado 
-                END AS estado,
+                TO_CHAR(t.fecha_creacion, 'DD/MM/YYYY') AS fecha,
+                t.estado AS estado_crudo,
                 COALESCE(bt.nombre, 'Sin asignar') AS tecnico,
                 TO_CHAR(
                     COALESCE(
                         t.fecha_cierre, 
                         (SELECT fecha_registro FROM historial_trazabilidad WHERE id_ticket = t.id_ticket ORDER BY fecha_registro DESC LIMIT 1)
                     ), 
-                    'YYYY-MM-DD'
+                    'DD/MM/YYYY'
                 ) AS fecha_cierre
             FROM ticket t
             LEFT JOIN usuario u ON t.id_usuario = u.id_usuario
@@ -52,9 +48,34 @@ router.get('/:id_ticket', async (req, res) => {
             return res.status(404).json({ error: "No se encontró ningún ticket con el ID solicitado" });
         }
 
-        res.json(resultado.rows[0]);
+        const ticket = resultado.rows[0];
+
+        // Mapeo manual del estado para consistencia visual
+        let estadoFormateado = 'Resuelto';
+        const estadoBD = ticket.estado_crudo ? ticket.estado_crudo.toLowerCase().trim() : '';
+        if (estadoBD === 'cerrado' || estadoBD === 'resuelto') {
+            estadoFormateado = 'Resuelto';
+        } else {
+            estadoFormateado = ticket.estado_crudo;
+        }
+
+        // Estructura de respuesta idéntica al mapeo del módulo de pendientes
+        const respuestaFormateada = {
+            id: ticket.id,
+            nombre: ticket.nombre,
+            correo: ticket.correo,
+            telefono: ticket.telefono,
+            titulo: ticket.titulo,
+            descripcion: ticket.descripcion,
+            fecha: ticket.fecha,
+            estado: estadoFormateado,
+            tecnico: ticket.tecnico,
+            fechaCierre: ticket.fecha_cierre || 'Sin registrar'
+        };
+
+        res.status(200).json(respuestaFormateada);
     } catch (error) {
-        console.error("❌ ERROR AL OBTENER DETALLES DEL TICKET:", error.message);
+        console.error("❌ ERROR AL OBTENER DETALLES DEL TICKET RESUELTO:", error.message);
         res.status(500).json({ 
             error: "Error en el servidor al obtener los datos del ticket", 
             detalle: error.message 

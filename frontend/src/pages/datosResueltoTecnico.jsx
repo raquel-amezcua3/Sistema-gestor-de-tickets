@@ -25,45 +25,27 @@ function DatosResueltoTecnico() {
     fechaCierre: ''
   });
 
-  // Función para formatear la fecha ISO de la base de datos a algo legible (AAAA-MM-DD)
-  const formatearFecha = (fechaRaw) => {
-    if (!fechaRaw || fechaRaw === 'Sin registrar') return 'Sin registrar';
-    try {
-      const fecha = new Date(fechaRaw);
-      if (isNaN(fecha.getTime())) return fechaRaw; 
-      return fecha.toISOString().split('T')[0]; // Extrae solo la parte de la fecha YYYY-MM-DD
-    } catch (e) {
-      return fechaRaw;
-    }
-  };
-
   useEffect(() => {
-    const obtenerDetallesTicket = async () => {
-      if (!id || id === 'undefined' || id === 'null') {
-        console.error("❌ ID de ticket no válido recibido en la URL");
-        return;
-      }
+    if (!id) return; // Guardián por si el ID tarda en llegar
 
+    const obtenerDetallesTicket = async () => {
       try {
-        // 🔥 CORREGIDO: Ajustado al nombre exacto de tu API en el backend usando rutas relativas para Render
-        const url = `/api/datosResueltoTecnico/${id}`;
-        const response = await fetch(url);
+        // 🔥 CORREGIDO: Apuntando directo al endpoint sin el sub-camino "/detalle"
+        const response = await fetch(`https://sistema-tarelix.onrender.com/api/datosResueltoTecnico/${id}`);
         const data = await response.json();
 
         if (response.ok) {
-          const fechaCierreRaw = data.fecha_cierre || data.fechaCierre || data.fechacierre || '';
-
           setTicket_datos_resuelto_tecnico({
             id: data.id ? data.id.toString() : id,
-            nombre: data.nombre || 'Sin nombre',
-            correo: data.correo || 'Sin correo',
-            telefono: data.telefono || 'Sin teléfono',
-            titulo: data.titulo || 'Sin título',
-            descripcion: data.descripcion || 'Sin descripción',
-            fecha: formatearFecha(data.fecha),
-            estado: data.estado || 'Resuelto',
-            tecnico: data.tecnico || 'Sin asignar',
-            fechaCierre: fechaCierreRaw ? formatearFecha(fechaCierreRaw) : 'Sin registrar'
+            nombre: data.nombre,
+            correo: data.correo,
+            telefono: data.telefono,
+            titulo: data.titulo,
+            descripcion: data.descripcion,
+            fecha: data.fecha, 
+            estado: data.estado,
+            tecnico: data.tecnico,
+            fechaCierre: data.fechaCierre || 'Sin registrar'
           });
         } else {
           console.error("⚠️ El servidor respondió con un error:", data.error);
@@ -81,7 +63,7 @@ function DatosResueltoTecnico() {
       <EncabezadoTecnico />
 
       <main className="contenido-datos-resuelto-tecnico">
-        <h2 className="titulo-pagina-datos-resuelto-tecnico">Detalles del ticket resuelto</h2>
+        <h2 className="titulo-pagina-datos-resuelto-tecnico">Detalles del ticket resuelto #{id}</h2>
 
         <div className="card-datos-resuelto-tecnico">
           <div className="seccion-info-datos-resuelto-tecnico">
