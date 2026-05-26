@@ -15,38 +15,43 @@ function EquiposU() {
     const [cargando, setCargando] = useState(true);
 
     // 1. Cargar los equipos desde la base de datos al montar el componente
-useEffect(() => {
-    const obtenerEquiposUser = async () => {
-        // CAMBIO AQUÍ: Priorizamos id_usuario que es el id relacional directo de la persona
-        const idUsuario = localStorage.getItem('id_usuario') || localStorage.getItem('id_base') || localStorage.getItem('id'); 
+    useEffect(() => {
+        const obtenerEquiposUser = async () => {
+            // Recogemos los posibles identificadores del almacenamiento local
+            const idUsuario = localStorage.getItem('id_usuario');
+            const idBase = localStorage.getItem('id_base');
+            const idGenerico = localStorage.getItem('id');
 
-        if (!idUsuario || idUsuario === 'undefined' || idUsuario === 'null') {
-            console.error("No se encontró un ID válido en el storage");
-            setCargando(false);
-            return;
-        }
+            // Enviamos con prioridad id_usuario, si no id_base, si no el id genérico
+            const idIdentificador = idUsuario || idBase || idGenerico;
 
-        try {
-            setCargando(true);
-            // Agregamos un console.log temporal para que veas exactamente qué ID está viajando al backend
-            console.log("Consultando equipos para el ID:", idUsuario);
-            
-            const respuesta = await fetch(`http://localhost:3000/api/equipo/usuario/${idUsuario}`);
-            if (!respuesta.ok) {
-                throw new Error("Error en la respuesta del servidor");
+            if (!idIdentificador || idIdentificador === 'undefined' || idIdentificador === 'null') {
+                console.error("❌ No se encontró un ID válido en el storage");
+                setCargando(false);
+                return;
             }
-            const datos = await respuesta.json();
-            console.log("Equipos recibidos del servidor:", datos);
-            setEquipos(datos);
-        } catch (error) {
-            console.error("❌ Error al conectar con la API de equipos:", error);
-        } finally {
-            setCargando(false);
-        }
-    };
 
-    obtenerEquiposUser();
-}, []);
+            try {
+                setCargando(true);
+                console.log("Consultando equipos para el ID:", idIdentificador);
+                
+                // SOLUCIÓN: Usamos la ruta relativa sin 'http://localhost:3000' para que funcione en Render
+                const respuesta = await fetch(`/api/equipo/usuario/${idIdentificador}`);
+                if (!respuesta.ok) {
+                    throw new Error("Error en la respuesta del servidor");
+                }
+                const datos = await respuesta.json();
+                console.log("Equipos recibidos del servidor:", datos);
+                setEquipos(datos);
+            } catch (error) {
+                console.error("❌ Error al conectar con la API de equipos:", error);
+            } finally {
+                setCargando(false);
+            }
+        };
+
+        obtenerEquiposUser();
+    }, []);
 
     // 2. Filtrado en tiempo real según lo que escriba el usuario en el input
     const equiposFiltrados = equipos.filter((equipo) => {
@@ -58,19 +63,16 @@ useEffect(() => {
         return marca.includes(termino) || tipo.includes(termino) || serie.includes(termino);
     });
 
-    //Redirección 
+    // Redirección al hacer doble click
     const manejarDobleClick = (id) => {
         try {
             const usuarioLogueado = localStorage.getItem('usuario') || sessionStorage.getItem('usuario');
             
             if (usuarioLogueado) {
                 const parsed = JSON.parse(usuarioLogueado);
-                
-                // Buscamos si explícitamente es un usuario común
                 const esUsuario = parsed.id_usuario || parsed.rol?.toLowerCase() === 'usuario' || !parsed.id_tecnico;
 
                 if (esUsuario) {
-                    // Redirige a la ruta asignada para los usuarios ordinarios
                     navigate(`/bitacoraU/${id}`, { state: { idEquipoReal: id } });
                     return;
                 }
@@ -79,7 +81,6 @@ useEffect(() => {
             console.error("Error al detectar el rol en el doble click:", error);
         }
 
-        // Si es técnico o falla la comprobación, va a la del técnico
         navigate(`/bitacoraEquipo/${id}`, { state: { idEquipoReal: id } });
     };
 
@@ -119,19 +120,19 @@ useEffect(() => {
                                 <th>ID</th>
                                 <th>Tipo de equipo</th>
                                 <th>Marca</th>
-                                <th>Numero de serie</th>
+                                <th>Número de serie</th>
                             </tr>
                         </thead>
                         <tbody>
                             {cargando ? (
                                 <tr>
-                                    <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
+                                    <td colSpan="4" style={{ textAlign: 'center', padding: '20px' }}>
                                         Cargando equipos...
                                     </td>
                                 </tr>
                             ) : equiposFiltrados.length === 0 ? (
                                 <tr>
-                                    <td colSpan="5" style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                                    <td colSpan="4" style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
                                         {busqueda ? `No se encontraron equipos que coincidan con "${busqueda}"` : "No tienes equipos registrados actualmente."}
                                     </td>
                                 </tr>

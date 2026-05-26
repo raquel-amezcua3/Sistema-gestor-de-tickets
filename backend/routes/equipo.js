@@ -13,7 +13,6 @@ const pool = require('../db');
 router.post('/registrar', async (req, res) => {
     let { id_usuario, id_base, tipo_equipo, marca, numero_serie } = req.body;
 
-    // 1. Validaciones obligatorias
     if (!id_base || isNaN(Number(id_base)) || !marca || !tipo_equipo) {
         return res.status(400).json({ 
             error: "Faltan datos obligatorios para el registro (Base, Marca o Tipo)." 
@@ -21,7 +20,6 @@ router.post('/registrar', async (req, res) => {
     }
 
     try {
-        // 2. SALVAVIDAS AUTOMÁTICO: Si id_usuario viene nulo o vacío, lo recuperamos usando id_base
         if (!id_usuario || id_usuario === 'null' || id_usuario === 'undefined' || isNaN(Number(id_usuario))) {
             console.log(`⚠️ id_usuario no recibido en registro de equipo. Buscando para id_base: ${id_base}`);
             
@@ -32,13 +30,11 @@ router.post('/registrar', async (req, res) => {
                 id_usuario = usuarioEncontrado.rows[0].id_usuario;
                 console.log(`✅ id_usuario recuperado con éxito de la DB: ${id_usuario}`);
             } else {
-                // Si no se encuentra en la tabla usuario, significa que podría ser un Admin puro o cuenta sin perfil
                 id_usuario = null; 
                 console.log(`ℹ️ No se encontró perfil en la tabla 'usuario'. Se registrará con id_usuario como NULL.`);
             }
         }
 
-        // 3. Insertar el equipo con la seguridad de tener el id_usuario correcto
         const query = `
             INSERT INTO equipo (id_usuario, id_base, tipo_equipo, marca, numero_serie)
             VALUES ($1, $2, $3, $4, $5)
@@ -46,7 +42,7 @@ router.post('/registrar', async (req, res) => {
         `;
         
         const values = [
-            id_usuario, // Ya viene corregido o validado desde la DB
+            id_usuario, 
             parseInt(id_base, 10), 
             tipo_equipo, 
             marca, 
