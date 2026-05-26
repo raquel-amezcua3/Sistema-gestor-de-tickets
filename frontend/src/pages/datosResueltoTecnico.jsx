@@ -11,7 +11,7 @@ function DatosResueltoTecnico() {
   const navigate_datos_resuelto_tecnico = useNavigate();
   const { id } = useParams();
 
-  // Inicialización limpia de los campos del ticket
+  // Estado inicial limpio del ticket
   const [ticket_datos_resuelto_tecnico, setTicket_datos_resuelto_tecnico] = useState({
     id: '', 
     nombre: 'Cargando...', 
@@ -19,22 +19,23 @@ function DatosResueltoTecnico() {
     telefono: 'Cargando...', 
     titulo: 'Cargando...', 
     descripcion: 'Cargando...', 
-    fecha: '', 
-    estado: '', 
-    tecnico: '', 
-    fechaCierre: ''
+    fecha: 'Cargando...', 
+    estado: 'Cargando...', 
+    tecnico: 'Cargando...', 
+    fechaCierre: 'Cargando...'
   });
 
   useEffect(() => {
-    if (!id) return; // Guardián por si el ID tarda en llegar
+    if (!id) return; // Guardián por si el parámetro de react-router-dom no está listo
 
     const obtenerDetallesTicket = async () => {
       try {
-        // 🔥 CORREGIDO: Apuntando directo al endpoint sin el sub-camino "/detalle"
+        // 🔥 Llamada directa a tu API de Render usando el ID del ticket
         const response = await fetch(`https://sistema-tarelix.onrender.com/api/datosResueltoTecnico/${id}`);
         const data = await response.json();
 
         if (response.ok) {
+          // Asignamos directamente los valores estructurados desde el backend
           setTicket_datos_resuelto_tecnico({
             id: data.id ? data.id.toString() : id,
             nombre: data.nombre,
@@ -42,16 +43,18 @@ function DatosResueltoTecnico() {
             telefono: data.telefono,
             titulo: data.titulo,
             descripcion: data.descripcion,
-            fecha: data.fecha, 
+            fecha: data.fecha, // Ya viene en formato DD/MM/YYYY del backend
             estado: data.estado,
             tecnico: data.tecnico,
-            fechaCierre: data.fechaCierre || 'Sin registrar'
+            fechaCierre: data.fechaCierre
           });
         } else {
           console.error("⚠️ El servidor respondió con un error:", data.error);
+          setTicket_datos_resuelto_tecnico(prev => ({ ...prev, nombre: 'Error al cargar' }));
         }
       } catch (error) {
         console.error("❌ Error de red al conectar con el servidor:", error);
+        setTicket_datos_resuelto_tecnico(prev => ({ ...prev, nombre: 'Error de conexión' }));
       }
     };
 
