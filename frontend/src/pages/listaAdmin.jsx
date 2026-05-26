@@ -1,7 +1,6 @@
 // Archivos listaAdmin.jsx y ListaAdmin.js
 // Es para que aparazca en una tabla todos los tecnicos registrados en el lista
 // ADMIN
-
 import React, { useState, useEffect } from 'react'; 
 import '../styles/listaAdmin.css';
 import { useNavigate } from 'react-router-dom';
@@ -26,14 +25,33 @@ function ListaAdmin() {
 
           // Unificamos usando id_tecnico de forma explícita
           const dataFormateada = tecnicos.map(tec => {
+            // Buscamos la info de carga asociada al técnico
             const infoCarga = cargas.find(c => c.id_tecnico === tec.id_tecnico);
+            
+            let cargaValida = 0;
+
+            if (infoCarga) {
+              // Si tu API secundaria 'carga-tickets' devuelve un número directo ya procesado por la DB:
+              cargaValida = infoCarga.carga_actual;
+
+              // FILTRO DE SEGURIDAD EXPLICITO EN FRONTEND:
+              // Por si acaso 'cargas' fuera un arreglo de tickets individuales en lugar de un contador:
+              if (Array.isArray(infoCarga.tickets)) {
+                cargaValida = infoCarga.tickets.filter(ticket => {
+                  const estadoLimpio = ticket.estado?.toLowerCase().trim();
+                  return estadoLimpio === 'en proceso' || estadoLimpio === 'en espera de compra';
+                }).length;
+              }
+            }
+
             return {
               id: tec.id_tecnico, // ID asignado directamente de id_tecnico para render en tabla
               nombre: tec.nombre,
               correo: tec.correo || 'N/A',
               telefono: tec.telefono || 'N/A',
               especialidad: tec.especialidad,
-              carga: infoCarga ? infoCarga.carga_actual : 0
+              // Prioriza la columna ya calculada de forma limpia
+              carga: tec.carga_actual !== undefined ? tec.carga_actual : cargaValida
             };
           });
 
@@ -58,7 +76,7 @@ function ListaAdmin() {
       <EncabezadoAdmin />
       <main className="contenido-lista-admin">
         <div className="encabezado-seccion-lista-admin">
-          <h2 className='titulo-lista-admin'>Lista de tecnicos</h2>
+          <h2 className='titulo-lista-admin'>Lista de técnicos</h2>
           <div className="buscador-lista-admin">
             <input 
               type="text" 
@@ -76,8 +94,8 @@ function ListaAdmin() {
               <tr>
                 <th className="col-id-lista-admin">ID</th>
                 <th>Nombre de usuario</th>
-                <th>Correo electronico</th>
-                <th>Telefono</th>
+                <th>Correo electrónico</th>
+                <th>Teléfono</th>
                 <th>Especialidad</th>
                 <th>Carga actual</th>
               </tr>

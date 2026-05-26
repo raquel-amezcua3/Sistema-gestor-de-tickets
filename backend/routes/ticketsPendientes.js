@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// Obtener tickets pendientes usando el id_base global del técnico o usuario
+// Obtener tickets pendientes usando cualquier identificador del técnico enviado por URL
 router.get('/:id_identificador', async (req, res) => {
     const { id_identificador } = req.params;
 
@@ -14,8 +14,10 @@ router.get('/:id_identificador', async (req, res) => {
     }
 
     try {
-        // 🔥 CORREGIDO: Ahora unimos al creador del ticket con la tabla 'base' (bu) 
-        // para garantizar que la columna 'nombre' exista y no rompa la base de datos.
+        const idNumerico = parseInt(id_identificador, 10);
+
+        // CONSULTA DE ALTA COMPATIBILIDAD:
+        // Busca si coincide con id_tecnico directo o si corresponde al id_base de ese técnico.
         const query = `
             SELECT 
                 t.id_ticket, 
@@ -39,12 +41,18 @@ router.get('/:id_identificador', async (req, res) => {
             LEFT JOIN base bt ON tec.id_base = bt.id_base
             LEFT JOIN Usuario u ON t.id_usuario = u.id_usuario
             LEFT JOIN base bu ON u.id_base = bu.id_base
-            WHERE (u.id_base = $1 OR t.id_base = $1 OR tec.id_base = $1) 
-              AND LOWER(t.estado) IN ('abierto', 'en proceso', 'en espera de compra')
+            WHERE 
+                (
+                    t.id_tecnico = $1 
+                    OR tec.id_base = $1
+                    OR t.id_tecnico = (SELECT id_tecnico FROM tecnico WHERE id_base = $1 LIMIT 1)
+                ) 
+                AND LOWER(t.estado) IN ('abierto', 'en proceso', 'en espera de compra')
             ORDER BY t.id_ticket DESC
         `;
         
-        const resultado = await pool.query(query, [parseInt(id_identificador, 10)]);
+        const resultado = await pool.query(query, [idNumerico]);
+        console.log(`📥 Tickets pendientes cargados para el Técnico (ID: ${idNumerico}): ${resultado.rows.length}`);
         res.json(resultado.rows);
 
     } catch (error) {

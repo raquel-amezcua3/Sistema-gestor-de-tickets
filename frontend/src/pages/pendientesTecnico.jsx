@@ -14,15 +14,24 @@ function PendientesTecnico() {
   useEffect(() => {
     const obtenerTicketsPendientes = async () => {
       try {
-        const idTecnico = localStorage.getItem('id_base') || localStorage.getItem('id_usuario') || localStorage.getItem('id');
+        // Obtenemos los posibles identificadores del storage para máxima compatibilidad
+        const idTecnico = localStorage.getItem('id_tecnico');
+        const idBase = localStorage.getItem('id_base');
+        const idUsuario = localStorage.getItem('id_usuario');
+        const idGenerico = localStorage.getItem('id');
         
-        if (!idTecnico || idTecnico === 'undefined' || idTecnico === 'null') {
+        const idIdentificador = idTecnico || idBase || idUsuario || idGenerico;
+        
+        if (!idIdentificador || idIdentificador === 'undefined' || idIdentificador === 'null') {
           console.error("❌ No se encontró un ID válido para el técnico en el localStorage");
           setCargando(false);
           return;
         }
 
-        const response = await fetch(`http://localhost:3000/api/tickets-pendientes/${idTecnico}`);
+        console.log("Consultando tickets pendientes para el ID:", idIdentificador);
+
+        // SOLUCIÓN CLAVE: Eliminamos http://localhost:3000 para que funcione dinámicamente en producción
+        const response = await fetch(`/api/tickets-pendientes/${idIdentificador}`);
         const data = await response.json();
 
         if (response.ok) {
@@ -49,7 +58,7 @@ function PendientesTecnico() {
 
   const filtrados_pendientes_tecnico = tickets_pendientes_tecnico.filter((ticket) => {
     return Object.values(ticket).some((valor) =>
-      valor.toString().toLowerCase().includes(busqueda_pendientes_tecnico.toLowerCase())
+      valor ? valor.toString().toLowerCase().includes(busqueda_pendientes_tecnico.toLowerCase()) : false
     );
   });
 
@@ -78,11 +87,11 @@ function PendientesTecnico() {
               <tr>
                 <th>ID</th>
                 <th>Usuario</th>
-                <th>Titulo</th>
+                <th>Título</th>
                 <th>Descripción</th>
                 <th className="col-fecha-pendientes-tecnico">Fecha de creación</th>
                 <th>Estado</th>
-                <th className="col-tecnico-pendientes-tecnico">Tecnico</th>
+                <th className="col-tecnico-pendientes-tecnico">Técnico</th>
               </tr>
             </thead>
             <tbody>
