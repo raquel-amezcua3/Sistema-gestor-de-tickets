@@ -19,6 +19,9 @@ const detallesAdminRouter = require('./routes/detallesAdmin');
 const bitacoraEquipoRouter = require('./routes/bitacoraETecnico');
 const bitacoraUsuarioRouter = require('./routes/bitacoraEUsuario');
 
+// 🔥 NUESTROS DOS ARCHIVOS DE RUTAS SEPARADOS
+const pendientesTecnicoRoute = require('./routes/pendientesTecnico');
+const ticketsPendientesUsuarioRoute = require('./routes/ticketsPendientes');
 
 // Enrutadores adicionales
 const listaAdminRouter = require('./routes/ListaAdmin');
@@ -44,19 +47,21 @@ pool.query('SELECT NOW()', (err, res) => {
 // --- RUTAS DE LA APP ---
 // =========================================================================
 
-// 📌 1. Bitácora de equipo (Prioridad Alta)
+// 📌 1. Bitácoras
 app.use('/api/bitacora-equipo', bitacoraEquipoRouter);
 app.use('/api/bitacora-usuario', bitacoraUsuarioRouter);
 
-// 📌 2. Gestión de Tickets y Flujos Generales
+// 📌 2. Gestión de Tickets y Flujos de Usuarios Clientes
 app.use('/api/tickets', nuevoticketRoutes);
 app.use('/api/mis-tickets', require('./routes/misTickets'));
 app.use('/api/buscar-ticket', require('./routes/buscarTicket'));
 app.use('/api/todos-los-tickets', require('./routes/buscarTicket'));
-app.use('/api/tickets-pendientes', require('./routes/ticketsPendientes'));
 app.use('/api/detalle-ticket', require('./routes/detalleTicket'));
 app.use('/api/perfil', require('./routes/perfil'));
 app.use('/api/directorio', require('./routes/directorio'));
+
+// 🔥 RUTA EXCLUSIVA: Listado de pendientes para los USUARIOS CLIENTES
+app.use('/api/tickets-pendientes-usuario', ticketsPendientesUsuarioRoute);
 
 // 📌 3. Autenticación y Registro Directo
 app.post('/api/registro', async (req, res) => {
@@ -150,17 +155,14 @@ app.use('/api/admin/busqueda', todosLosTicketsRouter);
 app.use('/api/admin', detallesAdminRouter);
 
 // =========================================================================
-// 📌 5. Rutas del Técnico y Seguimiento Directo (REORGANIZADO)
+// 📌 5. Rutas del Técnico y Seguimiento Directo
 // =========================================================================
-
-// Esta ruta maneja el listado global de tickets resueltos o pendientes del técnico
 app.use('/api/tecnico/tickets', ticketsTecnico);
 
-// ✨ CAMBIO AQUÍ: Separamos por completo la ruta de los detalles individuales 
-// para evitar que interfiera o sobreescriba a la lista de resueltos
+// 🔥 RUTA EXCLUSIVA: Listado de pendientes para los TÉCNICOS
+app.use('/api/tickets-pendientes-tecnico', pendientesTecnicoRoute);
+
 app.use('/api/tecnico/detalle-ticket', require('./routes/datosTicketTecnico'));
-
-
 app.use('/api/tecnico/perfil', require('./routes/perfilTecnico'));
 app.use('/api/datos-resuelto', datosResueltoRouter);
 

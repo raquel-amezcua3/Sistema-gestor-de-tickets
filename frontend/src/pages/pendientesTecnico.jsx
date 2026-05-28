@@ -1,4 +1,6 @@
-// El .js de esta pantalla es el de ticketsPendientes.js
+// Archivos pendientesTecnico.jsx y pendientesTecnico.js
+//TECNICO
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/pendientesTecnico.css';
@@ -14,7 +16,6 @@ function PendientesTecnico() {
   useEffect(() => {
     const obtenerTicketsPendientes = async () => {
       try {
-        // Obtenemos los posibles identificadores del storage para máxima compatibilidad
         const idTecnico = localStorage.getItem('id_tecnico');
         const idBase = localStorage.getItem('id_base');
         const idUsuario = localStorage.getItem('id_usuario');
@@ -23,21 +24,24 @@ function PendientesTecnico() {
         const idIdentificador = idBase || idTecnico || idUsuario || idGenerico;
         
         if (!idIdentificador || idIdentificador === 'undefined' || idIdentificador === 'null') {
-          console.error("❌ No se encontró un ID válido para el técnico en el localStorage");
+          console.error("❌ Frontend Técnico: No se encontró un ID válido en LocalStorage");
           setCargando(false);
           return;
         }
 
-        console.log("Consultando tickets pendientes para el ID:", idIdentificador);
-
-        // 🔥 SOLUCIÓN PRODUCCIÓN: Detecta la URL del Backend dinámicamente
-        const API_URL = import.meta.env?.VITE_API_URL || process.env?.REACT_APP_API_URL || '';
+        // 🛠️ RUTA PARA PRUEBA LOCAL (Coméntala cuando subas a Render):
+        //const rutaCompleta = `http://localhost:3000/api/tickets-pendientes-tecnico/${idIdentificador}`;
         
-        // Si estás en producción, usará la URL de Render; si estás en local, usará la ruta relativa con el proxy
-        const response = await fetch(`${API_URL}/api/tickets-pendientes/${idIdentificador}`);
+        // 🌐 RUTA PARA PRODUCCIÓN EN RENDER (Déjala activa para la web):
+        const rutaCompleta = `https://sistema-tarelix.onrender.com/api/tickets-pendientes-tecnico/${idIdentificador}`; 
+
+        console.log(`📡 Fetch Técnico -> Realizando petición a: ${rutaCompleta}`);
+
+        const response = await fetch(rutaCompleta);
         const data = await response.json();
 
         if (response.ok && Array.isArray(data)) {
+          console.log("✅ Datos de técnico recibidos del servidor:", data);
           const dataFormateada = data.map(t => ({
             id: t.id_ticket ? t.id_ticket.toString() : '',
             nombre: t.nombre_usuario || 'Usuario Sistema', 
@@ -49,10 +53,11 @@ function PendientesTecnico() {
           }));
           setTickets_pendientes_tecnico(dataFormateada);
         } else {
+          console.warn("⚠️ El servidor no retornó filas válidas.");
           setTickets_pendientes_tecnico([]);
         }
       } catch (error) {
-        console.error("❌ Error al conectar con el servidor:", error);
+        console.error("❌ Error de red al comunicar con el servidor:", error);
         setTickets_pendientes_tecnico([]);
       } finally {
         setCargando(false);
@@ -117,7 +122,11 @@ function PendientesTecnico() {
                     <td>{ticket.titulo}</td>
                     <td>{ticket.descripcion}</td>
                     <td>{ticket.fecha}</td>
-                    <td className="estado-abierto-pendientes-tecnico">{ticket.estado}</td>
+                    <td>
+                      <span className="estado-badge-tecnico">
+                        {ticket.estado}
+                      </span>
+                    </td>
                     <td>{ticket.tecnico}</td>
                   </tr>
                 ))
