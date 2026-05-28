@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// Obtener la lista de tickets pendientes del técnico logueado
+// Obtener la lista de tickets pendientes del USUARIO CLIENTE logueado
 router.get('/:id_usuario', async (req, res) => {
     const { id_usuario } = req.params;
 
@@ -14,7 +14,8 @@ router.get('/:id_usuario', async (req, res) => {
     }
 
     try {
-        // 🔥 SOLUCIÓN: Agregamos b_usr.nombre para el usuario que reportó y filtramos por el id_tecnico real del usuario logueado
+        // 🔥 CORRECCIÓN CRÍTICA: Cambiamos "tec.id_base = $1" por "t.id_base = $1" 
+        // para buscar los tickets que creados/pertenecientes a este usuario cliente.
         const query = `
             SELECT 
                 t.id_ticket,
@@ -23,24 +24,24 @@ router.get('/:id_usuario', async (req, res) => {
                 t.descripcion_falla AS descripcion,
                 TO_CHAR(t.fecha_creacion, 'DD/MM/YYYY') AS fecha,
                 t.estado,
-                COALESCE(bt.nombre, 'Sin técnico') AS tecnico
+                COALESCE(bt.nombre, 'Sin técnico asignado') AS tecnico
             FROM ticket t
-            JOIN base b_usr ON t.id_base = b_usr.id_base -- Trae el nombre de quien reportó
+            JOIN base b_usr ON t.id_base = b_usr.id_base -- Creador del ticket
             LEFT JOIN tecnico tec ON t.id_tecnico = tec.id_tecnico
-            LEFT JOIN base bt ON tec.id_base = bt.id_base -- Trae el nombre del técnico
-            WHERE tec.id_base = $1 
+            LEFT JOIN base bt ON tec.id_base = bt.id_base -- Nombre del técnico asignado
+            WHERE t.id_base = $1 
               AND LOWER(t.estado) NOT IN ('resuelto', 'cerrado')
             ORDER BY t.id_ticket DESC
         `;
 
-        console.log(`🔍 [Backend] Buscando tickets asignados al id_base técnico: ${id_usuario}`);
+        console.log(`🔍 [Backend User] Buscando tickets creados por el usuario id_base: ${id_usuario}`);
         const resultado = await pool.query(query, [parseInt(id_usuario, 10)]);
 
-        console.log(`✅ [Backend] Tickets pendientes enviados: ${resultado.rows.length}`);
+        console.log(`✅ [Backend User] Tickets pendientes del usuario enviados: ${resultado.rows.length}`);
         return res.json(resultado.rows);
 
     } catch (error) {
-        console.error("❌ [Backend] ERROR CRÍTICO EN TICKETS PENDIENTES:", error.message);
+        console.error("❌ [Backend] ERROR CRÍTICO EN TICKETS PENDIENTES USUARIO:", error.message);
         return res.status(500).json({ 
             error: "Error interno del servidor al procesar los tickets pendientes",
             detalle: error.message 
