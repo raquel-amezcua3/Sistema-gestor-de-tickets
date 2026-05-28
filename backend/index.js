@@ -19,7 +19,7 @@ const detallesAdminRouter = require('./routes/detallesAdmin');
 const bitacoraEquipoRouter = require('./routes/bitacoraETecnico');
 const bitacoraUsuarioRouter = require('./routes/bitacoraEUsuario');
 
-// 🔥 NUESTROS DOS ARCHIVOS DE RUTAS SEPARADOS
+// NUESTROS DOS ARCHIVOS DE RUTAS SEPARADOS Y CORRECTOS
 const pendientesTecnicoRoute = require('./routes/pendientesTecnico');
 const ticketsPendientesUsuarioRoute = require('./routes/ticketsPendientes');
 
@@ -60,8 +60,8 @@ app.use('/api/detalle-ticket', require('./routes/detalleTicket'));
 app.use('/api/perfil', require('./routes/perfil'));
 app.use('/api/directorio', require('./routes/directorio'));
 
-// 🔥 RUTA EXCLUSIVA: Listado de pendientes para los USUARIOS CLIENTES
-app.use('/api/tickets-pendientes-usuario', ticketsPendientesUsuarioRoute);
+// ✨ CORRECCIÓN: Esta es la ruta exacta que busca el frontend del usuario (pendientesTicketU.jsx)
+app.use('/api/tickets-pendientes', ticketsPendientesUsuarioRoute);
 
 // 📌 3. Autenticación y Registro Directo
 app.post('/api/registro', async (req, res) => {
@@ -159,7 +159,7 @@ app.use('/api/admin', detallesAdminRouter);
 // =========================================================================
 app.use('/api/tecnico/tickets', ticketsTecnico);
 
-// 🔥 RUTA EXCLUSIVA: Listado de pendientes para los TÉCNICOS
+// ✨ CORRECCIÓN: Ruta exclusiva asignada a los tickets del Técnico
 app.use('/api/tickets-pendientes-tecnico', pendientesTecnicoRoute);
 
 app.use('/api/tecnico/detalle-ticket', require('./routes/datosTicketTecnico'));

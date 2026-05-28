@@ -27,7 +27,7 @@ function PendientesTicketU() {
 
       try {
         // 🛠️ RUTA PARA PRUEBA LOCAL (Coméntala cuando subas a Render):
-        // const url = `http://localhost:3000/api/tickets-pendientes/${id_usuario}`;
+        //const url = `http://localhost:3000/api/tickets-pendientes/${id_usuario}`;
         
         // 🌐 RUTA PARA PRODUCCIÓN EN RENDER (Déjala activa para la web):
         const url = `https://sistema-tarelix.onrender.com/api/tickets-pendientes/${id_usuario}`;
